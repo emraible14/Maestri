@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Artist } from "../utils/interfaces";
+import RadarChart from "../components/RadarChart";
 
-function Comparison(props) {
+interface ComparisonProps {
+   readonly artists?: Array<Artist>;
+}
+
+function Comparison(props: ComparisonProps) {
 
     const [artists, setArtists] = useState(props.artists || []);
 
@@ -39,17 +44,24 @@ function Comparison(props) {
       <>
         <h1>Compare Artists</h1>
 
-        <div className="flex flex-row">
+        <div className="px-8 grid grid-cols-5">
           { artists.map(singleArtist) }
+        </div>
+        <div>
+          <RadarChart data={null}></RadarChart>
         </div>
       </>
     );
 
     function singleArtist(artist: Artist) {
-
-      return <div key={artist.id}>
-        <h2>{ artist.name }</h2>
-      </div>
+      return (
+        <div key={artist.id}>
+          <h2>{ artist.name }</h2>
+          <img src={artist.image} width={150} alt={"image of " + artist.name}></img>
+          <br/>
+          <div>TBD</div>
+        </div>
+      )
     }
   }
   
