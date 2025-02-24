@@ -26,3 +26,9 @@ package-lock.json
 
 # Deps directory generated during vite runtime
 .vite/*
+
+.idea/
+
+.ipynb_checkpoints/
+
+data/datasets/
