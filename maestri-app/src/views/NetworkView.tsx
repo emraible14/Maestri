@@ -1,6 +1,6 @@
 import { Button } from "primereact/button";
 import { ResponsiveNetwork } from '@nivo/network'
-import NetworkData from './network.json'  
+import NetworkData from '../../../data/network.json'  
 import { useState } from "react";
 import { Card } from 'primereact/card';
 
