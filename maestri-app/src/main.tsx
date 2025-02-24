@@ -6,7 +6,7 @@ import { PrimeReactProvider } from 'primereact/api'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <PrimeReactProvider>
+    <PrimeReactProvider value={{ unstyled: false }}>
       <App />
     </PrimeReactProvider>
   </StrictMode>,

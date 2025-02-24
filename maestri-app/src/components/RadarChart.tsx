@@ -1,61 +1,35 @@
 import { ResponsiveRadar } from '@nivo/radar'
+import { getTheme } from '../utilities';
+import RadarChartLabel from './RadarChartLabel';
 
 interface RadarChartProps {
-    data: null;
+    readonly data: Array<{[key: string]: string | number}>;
+    readonly keys: Array<string>;
 }
 
 function RadarChart(props: RadarChartProps) {
 
-    const data = [
-        {
-          "taste": "fruity",
-          "chardonay": 49,
-          "carmenere": 66,
-          "syrah": 20
-        },
-        {
-          "taste": "bitter",
-          "chardonay": 26,
-          "carmenere": 60,
-          "syrah": 85
-        },
-        {
-          "taste": "heavy",
-          "chardonay": 28,
-          "carmenere": 24,
-          "syrah": 118
-        },
-        {
-          "taste": "strong",
-          "chardonay": 26,
-          "carmenere": 101,
-          "syrah": 56
-        },
-        {
-          "taste": "sunny",
-          "chardonay": 76,
-          "carmenere": 83,
-          "syrah": 63
-        }
-    ]
-
     return (
         <div className='chart-box'>
             <ResponsiveRadar
-                data={data}
-                keys={[ 'chardonay', 'carmenere', 'syrah' ]}
+                data={props.data}
+                keys={props.keys}
                 indexBy="taste"
                 valueFormat=">-.2f"
                 margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-                borderColor={{ from: 'color' }}
+                borderWidth={2}
+                borderColor="#ffffff"
                 gridShape="linear"
                 gridLabelOffset={36}
                 dotSize={10}
                 dotColor={{ theme: 'background' }}
                 dotBorderWidth={2}
-                colors={{ scheme: 'nivo' }}
-                blendMode="multiply"
+                theme={getTheme()}
+                colors={{ scheme: 'red_yellow_green' }}
+                fillOpacity={0.4}
                 motionConfig="wobbly"
+                onClick={clickedSomething}
+                gridLabel={RadarChartLabel}
                 legends={[
                     {
                         anchor: 'top-left',
@@ -71,7 +45,7 @@ function RadarChart(props: RadarChartProps) {
                             {
                                 on: 'hover',
                                 style: {
-                                    itemTextColor: '#000'
+                                    itemTextColor: '#fff'
                                 }
                             }
                         ]
@@ -81,6 +55,10 @@ function RadarChart(props: RadarChartProps) {
         </div>
     );
 
+}
+
+function clickedSomething(event) {
+    console.log(event);
 }
 
 export default RadarChart;
