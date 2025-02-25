@@ -5,6 +5,7 @@ import RadarChartLabel from './RadarChartLabel';
 interface RadarChartProps {
     readonly data: Array<{[key: string]: string | number}>;
     readonly keys: Array<string>;
+    readonly indexKey: string;
 }
 
 function RadarChart(props: RadarChartProps) {
@@ -14,19 +15,19 @@ function RadarChart(props: RadarChartProps) {
             <ResponsiveRadar
                 data={props.data}
                 keys={props.keys}
-                indexBy="taste"
+                indexBy={props.indexKey}
                 valueFormat=">-.2f"
                 margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-                borderWidth={2}
-                borderColor="#ffffff"
+                borderWidth={6}
+                // borderColor="#ffffff"
                 gridShape="linear"
                 gridLabelOffset={36}
                 dotSize={10}
                 dotColor={{ theme: 'background' }}
                 dotBorderWidth={2}
                 theme={getTheme()}
-                colors={{ scheme: 'red_yellow_green' }}
-                fillOpacity={0.4}
+                colors={{ scheme: 'set2' }}
+                fillOpacity={0}
                 motionConfig="wobbly"
                 onClick={clickedSomething}
                 gridLabel={RadarChartLabel}

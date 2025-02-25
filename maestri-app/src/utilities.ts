@@ -1,4 +1,4 @@
-const colorPalette: { [key: string]: string } = {
+export const colorPalette: { [key: string]: string } = {
     black: "#111827",
     brown_sugar: "#c57b57",
     beaver: "#ae9487",
@@ -54,7 +54,7 @@ const theme = {
     },
     "grid": {
         "line": {
-            "stroke": "#ffffff",
+            "stroke": "#999",
             "strokeWidth": 1
         }
     },
