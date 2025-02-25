@@ -9,10 +9,13 @@ import Artist from './views/ArtistView';
 import Comparison from './views/ComparisonView';
 import Network from './views/NetworkView';
 import MapView from './views/MapView';
+import Navbar from './components/Navbar';
 
 function App() {
   return (
-    <Router>
+    <div>
+      <Navbar/>
+      <Router>
         <Routes>
           <Route path="/" element={<Home/>}></Route>
           <Route path="/artist" element={<Artist/>}></Route>
@@ -20,7 +23,8 @@ function App() {
           <Route path="/network" element={<Network/>}></Route>
           <Route path="/mapview" element={<MapView/>}></Route>
         </Routes>
-    </Router>
+      </Router>
+    </div>
   )
 }
 
