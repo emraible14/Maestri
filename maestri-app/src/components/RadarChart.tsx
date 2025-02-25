@@ -26,7 +26,7 @@ function RadarChart(props: RadarChartProps) {
                 dotColor={{ theme: 'background' }}
                 dotBorderWidth={2}
                 theme={getTheme()}
-                colors={{ scheme: 'set2' }}
+                colors={{ scheme: 'dark2' }}
                 fillOpacity={0}
                 motionConfig="wobbly"
                 onClick={clickedSomething}

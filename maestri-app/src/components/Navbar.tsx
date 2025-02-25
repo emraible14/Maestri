@@ -20,7 +20,7 @@ const Navbar = memo(function Navbar() {
     {
       label: 'Compare artists',
       icon: 'pi pi-user',
-      url: '/compare'
+      url: '/comparison'
     },
     {
       label: 'Explore influences',
