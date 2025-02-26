@@ -44,3 +44,26 @@ export interface Chart {
     "num_streams": number, 
     "weeks_on_chart": number
 }
+
+export interface MapDatum {
+    id: string | number;
+    value: number;
+}
+
+export interface Network {
+    "nodes": Array<NetworkNode>,
+    "links": Array<NetworkLink>, 
+    "total_contributions": number, 
+}
+
+export interface NetworkNode {
+    "id": string,
+    "name": string, 
+    "num_collaborations": number,
+}
+
+export interface NetworkLink {
+    "source": string, 
+    "target": string,
+    "distance": number,
+}

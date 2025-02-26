@@ -44707,7 +44707,46 @@ const mapDataSets = [
 
 ];
 
+// convert country codes from the Spotify to nivo-map
+const countryCodeMapping: Record<string, string> = {
+    "IT": "ITA",  // italy
+    "GB": "GBR",  // uk
+    "DE": "DEU",  // germany
+    "SE": "SWE",
+    "ES": "ESP",
+    "AR":"ARG",
+    "AT":"AUT",
+    "BE":"BEL",
+    "BG":"BGR",
+    "CA":"CAN",
+    "CY":"CYP",
+    "CZ":"CZE",
+    "DK":"DNK",
+    "EE":"EST",
+    "FI":"FIN",
+    "FR":"FRA",
+    "GR":"GRC",
+    "HU":"HUN",
+    "IS":"ISL",
+    "IE":"IRL",
+    "LV":"LVA",
+    "LT":"LTU",
+    "LU":"LUX",
+    "MX":"MEX",
+    "NL":"NLD",
+    "NO":"NOR",
+    "PL":"POL",
+    "PT":"PRT",
+    "RO":"ROU",
+    "SK":"SVK",
+    "CH":"CHE",
+    "UA":"UKR",
+    "US":"USA",
+
+    // add more as needed
+};
+
 const getMapData = () => mapDataSets;
 
-export {getFeaturesArray, getMapData}
+export {getFeaturesArray, getMapData, countryCodeMapping}
 

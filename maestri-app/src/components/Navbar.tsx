@@ -1,7 +1,7 @@
 import { Menubar } from 'primereact/menubar';
 import { MenuItem } from 'primereact/menuitem';
 
-import { memo, Fragment } from 'react';
+import { memo } from 'react';
 
 const Navbar = memo(function Navbar() {
 
@@ -15,7 +15,7 @@ const Navbar = memo(function Navbar() {
     {
       label: 'Artist',
       icon: 'pi pi-star',
-      url: '/artist'
+      url: '/artist?id=123'
     },
     {
       label: 'Compare artists',
