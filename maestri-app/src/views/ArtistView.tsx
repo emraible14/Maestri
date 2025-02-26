@@ -22,17 +22,17 @@ function Artist(props: ArtistProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(true);
     const [currentArtist, setCurrentArtist] = useState(artistId ? props.model.getArtist(artistId) : props.model.getArtist('45'));
-    const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.name));
+    const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.artist_id));
     const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
     
     // compute all map data for each week when artistName changes 
     const allMapData = useMemo(() => {
-        return props.model.allWeeks.map((week) => props.model.generateMapDataForWeek(week, currentArtist.name));
+        return props.model.allWeeks.map((week) => props.model.generateMapDataForWeek(week, currentArtist.artist_id));
     }, [currentArtist]);
 
     // filter week when week or artistName changes
     const filterTracksForCurrentWeek = useMemo(() => {
-        return props.model.filterTracksByWeekAndArtist(props.model.allWeeks[currentIndex], currentArtist.name);
+        return props.model.filterTracksByWeekAndArtist(props.model.allWeeks[currentIndex], currentArtist.artist_id);
     }, [currentIndex, currentArtist]);
   
     useEffect(() => {
@@ -107,6 +107,7 @@ function Artist(props: ArtistProps) {
                     className="w-full md:w-14rem"
                     checkmark={true}
                     highlightOnSelect={false}
+                    filter
                 />
                 <button onClick={handleTogglePause} style={{padding: '10px 20px'}}>{isPaused ? "Play" : "Pause"}</button>
                 <p>Current week {props.model.allWeeks[currentIndex]}</p>

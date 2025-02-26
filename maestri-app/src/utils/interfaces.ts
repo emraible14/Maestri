@@ -11,7 +11,7 @@ export interface Contribution {
     "contribution_type": string
 }
 
-export interface Stats {
+export interface Stats { // will be added to
     "contributions": {
         "avg": number,
         "one": number,
@@ -21,22 +21,16 @@ export interface Stats {
     }
 }
 
-// export interface Contributor {
-//     "track_id": number,
-//     "track_name": string,
-//     "contributor_artist_id": number,
-//     "contributor_name": string,
-//     "contribution_type": string
-// }
-
 export interface Track {
-    "track_id": number,
+    "track_id": string,
     "spotify_id": string,
     "name": string, 
     "release_date": string, 
+    "image_url": string,
     "primary_artist_name": string, 
     "primary_artist_id": number, 
     "chartings": Array<Chart>,
+    "credits": Array<Credit>,
 }
 
 export interface Chart {
@@ -46,6 +40,11 @@ export interface Chart {
     "entry_date": string, 
     "num_streams": number, 
     "weeks_on_chart": number
+}
+
+export interface Credit {
+    "artist_id": number,
+    "contribution_type": string,
 }
 
 export interface MapDatum {

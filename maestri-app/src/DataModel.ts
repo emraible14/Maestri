@@ -7,7 +7,7 @@ import { nivoDarkColorPalette } from "./utils/colorUtilities";
 
 export class DataModel {
     artists: {[key: string]: Artist};
-    tracks: Array<Track>;
+    tracks: {[key: string]: Track};
     allWeeks: Array<string>;
     networkData: {[key: string]: Network };
 
@@ -17,12 +17,16 @@ export class DataModel {
         this.networkData = networkJson;
 
         this.allWeeks = Array.from(
-            new Set(this.tracks.flatMap((track) => track.chartings.map((charting) => charting.week)))
+            new Set(Object.values(this.tracks).flatMap((track) => track.chartings.map((charting) => charting.week)))
         ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
         // hotfix to add artist_id field
         Object.keys(this.artists).forEach((id) => {
             this.artists[id].artist_id = id;
+        });
+        // hotfix to add track_id field
+        Object.keys(this.tracks).forEach((id) => {
+            this.tracks[id].track_id = id;
         });
 
     }
@@ -49,18 +53,29 @@ export class DataModel {
         return this.networkData[artistId] || {};
     }
 
-    filterTracksByWeekAndArtist(targetWeek: string, artistName: string) {
-        return this.tracks
+    getSpecificTracks(ids: Array<string>): Array<Track> {
+        const result: Array<Track> = [];
+        ids.forEach((id) => {
+            if (this.tracks[id]) {
+                result.push(this.tracks[id]);
+            }
+        });
+        return result;
+    }
+
+    filterTracksByWeekAndArtist(targetWeek: string, id: string) {
+        const contributionIds = [...new Set(this.artists[id].contributions.map((cont) => { return cont.song_id.toString() }))];
+        const result = this.getSpecificTracks(contributionIds)
             .filter((track) => track.chartings.some((charting) => charting.week === targetWeek))
             .map((track) => {
                 const filteredChartings = track.chartings.filter((charting) => charting.week === targetWeek);
                 return { ...track, chartings: filteredChartings };
             })
-            .filter((track) => track.primary_artist_name.includes(artistName));
+        return result;
     }
 
-    generateMapDataForWeek(week: string, artistName: string) {
-        const tracksForWeek = this.filterTracksByWeekAndArtist(week, artistName);
+    generateMapDataForWeek(week: string, artistId: string) {
+        const tracksForWeek = this.filterTracksByWeekAndArtist(week, artistId);
       
         const countryData: Record<string, Set<number>> = {};
       
@@ -79,7 +94,7 @@ export class DataModel {
                 countryData[mappedCountry] = new Set();
                 }
         
-                countryData[mappedCountry].add(track.track_id); // Add unique track_id per country
+                countryData[mappedCountry].add(+track.track_id); // Add unique track_id per country
             });
         });
       
