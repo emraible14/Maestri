@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Artist } from "../utils/interfaces";
 import RadarChart from "../components/RadarChart";
 import { Card } from "primereact/card";
@@ -15,52 +15,17 @@ interface ComparisonProps {
 }
 
 function Comparison(props: ComparisonProps) {
-    const [searchParams] = useSearchParams();
-    const [currentArtists, setCurrentArtists] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [currentArtists, setCurrentArtists] = useState<Array<Artist>>([]);
+
     useEffect(() => {
-        const artistIds = searchParams.get("artists")?.split(',');
-        console.log(artistIds)
-        const defaultArtists = props.model.getSpecificArtists(artistIds);
-        setCurrentArtists(defaultArtists);
-        console.log(defaultArtists)
+        // get artists on mount
+        const artistIds = searchParams.get("ids")?.split(',');
+        if (artistIds) {
+            const defaultArtists = props.model.getSpecificArtists(artistIds);
+            setCurrentArtists(defaultArtists);
+        }
     }, []);
-
-
-    const radarPoints = [
-        "avg. team size",
-        "# weeks on chart",
-        "# top 10 tracks",
-        'avg. samples/interpolations used',
-        "# charting tracks",
-    ];
-    const radarIndexKey = "attribute";
-    const radarData: Array<{[key: string]: string | number}> = [];
-    radarPoints.forEach((point) => {
-        const result: {[key: string]: string | number} = {};
-        result[radarIndexKey] = point;
-        currentArtists.forEach((artist) => {
-            result[artist.name] = Math.floor(Math.random() * (Math.floor(20) - Math.ceil(1) + 1) + Math.ceil(1)); // random value
-        });
-        radarData.push(result);
-    })
-    const radarKeys = currentArtists.map((artist) => { return artist.name });
-
-    const barIndexKey = "artist";
-    const barType = "# weeks on charts";
-    const barKeys = getBarKeysFromType(barType);
-    const darkColors = Object.keys(nivoDarkColorPalette);
-
-    const barData: Array<{[key: string]: string | number}> = [];
-    currentArtists.forEach((artist, i1) => {
-      const result: {[key: string]: string | number} = {};
-      result[barIndexKey] = artist.name;
-      const artistColor = darkColors[i1];
-      barKeys.forEach((key, i2) => {
-        result[key] = Math.floor(Math.random() * (Math.floor(20) - Math.ceil(1) + 1) + Math.ceil(1)); // random value
-        result[key+"Color"] = nivoDarkColorPalette[artistColor][i2];
-      });
-      barData.push(result);
-    });
 
     return (
         <>
@@ -69,20 +34,30 @@ function Comparison(props: ComparisonProps) {
                 { addArtistCard() }
             </div>
             <div className="flex justify-around">
-                <RadarChart data={radarData} keys={radarKeys} indexKey={radarIndexKey}></RadarChart>
-                <BarChart data={barData} keys={barKeys} indexKey={barIndexKey} type={barType}></BarChart>
+                <RadarChart data={props.model.getRadarData(currentArtists, "attribute")} 
+                    keys={currentArtists.map((artist) => { return artist.name })} indexKey={"attribute"}></RadarChart>
+                <BarChart data={props.model.getBarData(currentArtists, "artist", getBarKeysFromType("# weeks on charts"))} 
+                    keys={getBarKeysFromType("# weeks on charts")} indexKey={"artist"} type={"# weeks on charts"}></BarChart>
             </div>
         </>
     );
 
     function singleArtist(artist: Artist, index: number) {
         function removeArtist() {
-            setCurrentArtists(currentArtists.filter((art) => art.artist_id !== artist.artist_id))
+            // update search params
+            const newArtistIds = searchParams.get("ids")?.split(',').filter((art) => art !== artist.artist_id);
+            if (newArtistIds) {
+                const newQueryParameters : URLSearchParams = new URLSearchParams();
+                newQueryParameters.set("ids",  newArtistIds?.join(","))
+                setSearchParams(newQueryParameters);
+                // update current artists list
+                setCurrentArtists(currentArtists.filter((art) => art.artist_id !== artist.artist_id))
+            }
         }
 
-        const artistImageLink = artist.image_link || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg";
+        const artistImageLink = artist.image_url || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg";
         const header = (
-            <div className="rounded-s header-image" style={{ border: "7px solid " +  darkColors[index]}}>
+            <div className="rounded-s header-image" style={{ border: "7px solid " +  Object.keys(nivoDarkColorPalette)[index]}}>
             <img src={artistImageLink} alt={"image of " + artist.name} ></img>
             </div>
         );
@@ -101,7 +76,17 @@ function Comparison(props: ComparisonProps) {
 
     function addArtistCard() {
         function addArtist(event) {
-            console.log(event)
+            const newArtistIds = searchParams.get("ids")?.split(',') || [];
+            // add new artist
+            newArtistIds.push(event.target?.value?.artist_id.toString());
+
+            // update search params
+            const newQueryParameters : URLSearchParams = new URLSearchParams();
+            newQueryParameters.set("ids",  newArtistIds?.join(","))
+            setSearchParams(newQueryParameters);
+
+            // update current artists list
+            setCurrentArtists(props.model.getSpecificArtists(newArtistIds))
         }
 
         const header = (

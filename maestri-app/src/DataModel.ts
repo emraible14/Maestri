@@ -1,11 +1,12 @@
 import { Artist, Network, NetworkNode, Track } from "./utils/interfaces";
-import artistsJson from "../../data/artists.json";
+import artistsJson from "../../data/artists_v2.json";
 import tracksJson from "../../data/tracks.json";
 import networkJson from '../../data/network.json'  
 import { countryCodeMapping } from "./utils/mapUtilities";
+import { nivoDarkColorPalette } from "./utils/colorUtilities";
 
 export class DataModel {
-    artists: Array<Artist>;
+    artists: {[key: string]: Artist};
     tracks: Array<Track>;
     allWeeks: Array<string>;
     networkData: {[key: string]: Network };
@@ -17,16 +18,31 @@ export class DataModel {
 
         this.allWeeks = Array.from(
             new Set(this.tracks.flatMap((track) => track.chartings.map((charting) => charting.week)))
-          ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+        ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+        // hotfix to add artist_id field
+        Object.keys(this.artists).forEach((id) => {
+            this.artists[id].artist_id = id;
+        });
 
     }
 
     getArtists() {
-        return this.artists;
+        return Object.values(this.artists)
+    }
+
+    getArtist(id: string) {
+        return this.artists[id];
     }
 
     getSpecificArtists(ids: Array<string>): Array<Artist> {
-        return [...this.artists].filter((art: Artist) => ids.includes(art.artist_id.toString()))
+        const result: Array<Artist> = [];
+        ids.forEach((id) => {
+            if (this.artists[id]) {
+                result.push(this.artists[id]);
+            }
+        });
+        return result;
     }
 
     getNetworkDataForArtist(artistId: string) {
@@ -35,12 +51,12 @@ export class DataModel {
 
     filterTracksByWeekAndArtist(targetWeek: string, artistName: string) {
         return this.tracks
-          .filter((track) => track.chartings.some((charting) => charting.week === targetWeek))
-          .map((track) => {
-            const filteredChartings = track.chartings.filter((charting) => charting.week === targetWeek);
-            return { ...track, chartings: filteredChartings };
-          })
-          .filter((track) => track.primary_artist_name.includes(artistName));
+            .filter((track) => track.chartings.some((charting) => charting.week === targetWeek))
+            .map((track) => {
+                const filteredChartings = track.chartings.filter((charting) => charting.week === targetWeek);
+                return { ...track, chartings: filteredChartings };
+            })
+            .filter((track) => track.primary_artist_name.includes(artistName));
     }
 
     generateMapDataForWeek(week: string, artistName: string) {
@@ -50,27 +66,27 @@ export class DataModel {
       
         // initilize each country to fill with number of tracking songs
         Object.keys(countryCodeMapping).forEach(country => {
-          const mappedCountry = countryCodeMapping[country];
-          countryData[mappedCountry] = new Set(); // Initialize empty set for each country
+            const mappedCountry = countryCodeMapping[country];
+            countryData[mappedCountry] = new Set(); // Initialize empty set for each country
         });
       
         tracksForWeek.forEach((track) => {
-          track.chartings.forEach((charting) => {
-            const country = charting.country;
-            const mappedCountry = countryCodeMapping[country] || country;
-      
-            if (!countryData[mappedCountry]) {
-              countryData[mappedCountry] = new Set();
-            }
-      
-            countryData[mappedCountry].add(track.track_id); // Add unique track_id per country
-          });
+            track.chartings.forEach((charting) => {
+                const country = charting.country;
+                const mappedCountry = countryCodeMapping[country] || country;
+        
+                if (!countryData[mappedCountry]) {
+                countryData[mappedCountry] = new Set();
+                }
+        
+                countryData[mappedCountry].add(track.track_id); // Add unique track_id per country
+            });
         });
       
         // Convert to the map data format
         return Object.entries(countryData).map(([countryCode, trackIds]) => ({
-          id: countryCode,
-          value: trackIds.size, // Number of charting songs in that country
+            id: countryCode,
+            value: trackIds.size, // Number of charting songs in that country
         }));
     };
 
@@ -101,5 +117,40 @@ export class DataModel {
         const max_size = 100;
         const min_size = 45;
         return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
+    }
+
+    getBarData(currentArtists: Array<Artist>, indexKey: string, keys: Array<string>) {
+        const barData: Array<{[key: string]: string | number}> = [];
+        currentArtists.forEach((artist, i1) => {
+            const result: {[key: string]: string | number} = {};
+            result[indexKey] = artist.name;
+            const artistColor = Object.keys(nivoDarkColorPalette)[i1];
+            keys.forEach((key, i2) => {
+                result[key] = Math.floor(Math.random() * (Math.floor(20) - Math.ceil(1) + 1) + Math.ceil(1)); // random value
+                result[key+"Color"] = nivoDarkColorPalette[artistColor][i2];
+            });
+            barData.push(result);
+        });
+        return barData;
+    }
+
+    getRadarData(currentArtists: Array<Artist>, indexKey: string) {
+        const radarPoints = [
+            "avg. team size",
+            "# weeks on chart",
+            "# top 10 tracks",
+            'avg. samples/interpolations used',
+            "# charting tracks",
+        ];
+        const radarData: Array<{[key: string]: string | number}> = [];
+        radarPoints.forEach((point) => {
+            const result: {[key: string]: string | number} = {};
+            result[indexKey] = point;
+            currentArtists.forEach((artist) => {
+                result[artist.name] = Math.floor(Math.random() * (Math.floor(20) - Math.ceil(1) + 1) + Math.ceil(1)); // random value
+            });
+            radarData.push(result);
+        })
+        return radarData;
     }
 }

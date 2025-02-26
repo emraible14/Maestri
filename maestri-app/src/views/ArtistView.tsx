@@ -15,23 +15,25 @@ interface ArtistProps {
 
 function Artist(props: ArtistProps) {
     // const id = window.location.href.split('/').pop() // the id from the URL
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     console.log(searchParams.get("id"))
+    const artistId = searchParams.get("id");
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(true);
-    const [artistName, setArtistName] = useState('Eminem'); //to be changed
-    const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], artistName));
+    const [currentArtist, setCurrentArtist] = useState(artistId ? props.model.getArtist(artistId) : props.model.getArtist('45'));
+    const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.name));
     const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
     
     // compute all map data for each week when artistName changes 
     const allMapData = useMemo(() => {
-        return props.model.allWeeks.map((week) => props.model.generateMapDataForWeek(week, artistName));
-    }, [artistName]);
+        return props.model.allWeeks.map((week) => props.model.generateMapDataForWeek(week, currentArtist.name));
+    }, [currentArtist]);
 
     // filter week when week or artistName changes
     const filterTracksForCurrentWeek = useMemo(() => {
-        return props.model.filterTracksByWeekAndArtist(props.model.allWeeks[currentIndex], artistName);
-    }, [currentIndex, artistName]);
+        return props.model.filterTracksByWeekAndArtist(props.model.allWeeks[currentIndex], currentArtist.name);
+    }, [currentIndex, currentArtist]);
   
     useEffect(() => {
         setChartingTracks(filterTracksForCurrentWeek); // Update charting tracks
@@ -42,7 +44,7 @@ function Artist(props: ArtistProps) {
     useEffect(() => {
         // update map data when artistName changes, allows map to change when we change artist from menu
         setMapData(allMapData[currentIndex]); // Start with map data for the current week
-    }, [artistName, currentIndex, allMapData]);
+    }, [currentArtist, currentIndex, allMapData]);
 
     useEffect(() => {
         //update if playing, else do nothing, basically do this manually in handleSliderChange
@@ -54,7 +56,7 @@ function Artist(props: ArtistProps) {
 
         return () => clearInterval(interval);
         }
-    }, [artistName, currentIndex, isPaused, allMapData]);
+    }, [currentArtist, currentIndex, isPaused, allMapData]);
 
     const handleTogglePause = () => {
         setIsPaused((prev) => !prev);
@@ -72,10 +74,10 @@ function Artist(props: ArtistProps) {
   
     return (
         <div>
-        <Image src='https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg' height='100px' width='100px'></Image>
-        <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{artistName}</h1>
+        <Image src={currentArtist.image_url} height='200px' width='200px'></Image>
+        <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{currentArtist.name}</h1>
         
-        <div style={{ position: "absolute", left: 50, top: 240, height: "50vh", width: "30hw" }}>
+        <div style={{ position: "absolute", left: 50, top: 350, height: "50vh", width: "30hw" }}>
             <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
             <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
                 <ul>
@@ -95,31 +97,37 @@ function Artist(props: ArtistProps) {
         <div className='clipped'>
             <ChoroplethChart mapData={mapData} />   
         </div>
-        
-
-        <div style={{ position: "absolute", bottom: 50, left: 10, height: "10%", width: "99%" }}>
-        <Dropdown
-            value={artistName}
-            onChange={(e) => setArtistName(e.value)}
-            options={["Eminem", "Billie Eilish", "Beyoncé", "Kendrick Lamar"]} //hardcoded just to test shifting artist
-            optionLabel="name"
-            placeholder={artistName}
-            className="w-full md:w-14rem"
-            checkmark={true}
-            highlightOnSelect={false}
-        />
-        <button onClick={handleTogglePause} style={{padding: '10px 20px'}}>{isPaused ? "Play" : "Pause"}</button>
-            <p>Current week {props.model.allWeeks[currentIndex]}</p>
-            <Slider
-                value={currentIndex}
-                min={0}
-                max={props.model.allWeeks.length - 1}
-                onChange={handleSliderChange}
-                //onSlideEnd={handleSliderEnd}
-            />
-        </div>
+            <div style={{ position: "absolute", bottom: 50, left: 10, height: "10%", width: "99%" }}>
+                <Dropdown
+                    value={currentArtist}
+                    onChange={selectArtist}
+                    options={props.model.getArtists()} //hardcoded just to test shifting artist
+                    optionLabel="name"
+                    placeholder={currentArtist.name}
+                    className="w-full md:w-14rem"
+                    checkmark={true}
+                    highlightOnSelect={false}
+                />
+                <button onClick={handleTogglePause} style={{padding: '10px 20px'}}>{isPaused ? "Play" : "Pause"}</button>
+                <p>Current week {props.model.allWeeks[currentIndex]}</p>
+                <Slider
+                    value={currentIndex}
+                    min={0}
+                    max={props.model.allWeeks.length - 1}
+                    onChange={handleSliderChange}
+                    //onSlideEnd={handleSliderEnd}
+                />
+            </div>
         </div>
     );
+
+    function selectArtist(e) {
+        // update search params
+        const newQueryParameters : URLSearchParams = new URLSearchParams();
+        newQueryParameters.set("id",  e.value.artist_id)
+        setSearchParams(newQueryParameters);
+        setCurrentArtist(e.value)
+    }
 }
 
 export default Artist;

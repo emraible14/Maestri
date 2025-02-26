@@ -1,30 +1,33 @@
 export interface Artist {
-    "artist_id": number,
+    "artist_id": string,
     "name": string,
-    "image_link": string,
+    "image_url": string,
     "contributions": Array<Contribution>,
-    "contributors": Array<Contributor>
-    "top chart": number,
-    "avg. team size": number,
-    "# weeks on chart": number,
-    "# top 5 tracks": number,
-    "# credits": number
+    "stats": Stats
 }
 
 export interface Contribution {
-    "track_id": number,
-    "track_name": string,
-    "primary_artist_id": number,
+    "song_id": number,
     "contribution_type": string
 }
 
-export interface Contributor {
-    "track_id": number,
-    "track_name": string,
-    "contributor_artist_id": number,
-    "contributor_name": string,
-    "contribution_type": string
+export interface Stats {
+    "contributions": {
+        "avg": number,
+        "one": number,
+        "twoToFive": number,
+        "sixToTen": number,
+        "elevenOrMore": number
+    }
 }
+
+// export interface Contributor {
+//     "track_id": number,
+//     "track_name": string,
+//     "contributor_artist_id": number,
+//     "contributor_name": string,
+//     "contribution_type": string
+// }
 
 export interface Track {
     "track_id": number,
