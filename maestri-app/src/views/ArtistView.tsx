@@ -35,6 +35,11 @@ function Artist() {
   }, [filterTracksForCurrentWeek]);
 
   useEffect(() => {
+    // update map data when artistName changes, allows map to change when we change artist from menu
+    setMapData(allMapData[currentIndex]); // Start with map data for the current week
+  }, [artistName, currentIndex, allMapData]);
+
+  useEffect(() => {
     //update if playing, else do nothing, basically do this manually in handleSliderChange
     if (!isPaused) {
       const interval = setInterval(() => {
@@ -44,7 +49,7 @@ function Artist() {
 
       return () => clearInterval(interval);
     }
-  }, [currentIndex, isPaused, allMapData]);
+  }, [artistName, currentIndex, isPaused, allMapData]);
 
   const handleTogglePause = () => {
     setIsPaused((prev) => !prev);
