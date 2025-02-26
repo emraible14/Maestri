@@ -9,7 +9,7 @@ import { allWeeks, filterTracksByWeekAndArtist, generateMapDataForWeek, Track } 
 
 
 function Artist() {
-  const id = window.location.href.split('/').pop() // the id 
+  const id = window.location.href.split('/').pop() // the id from the URL
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(true);
   const [artistName, setArtistName] = useState(id !== 'artist' ? id || 'Eminem' : 'Eminem'); //to be changed
@@ -74,7 +74,7 @@ function Artist() {
       <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{artistName}</h1>
       
       <div style={{ position: "absolute", left: 50, top: 200, height: "50vh", width: "30hw" }}>
-        <h2 style={{ color: getColorPalette().amber }}>Globally charting {allWeeks[currentIndex]} <br></br>{id}</h2>
+        <h2 style={{ color: getColorPalette().amber }}>Globally charting {allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
         <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
         <ul>
           {chartingTracks.length === 0 ? (
