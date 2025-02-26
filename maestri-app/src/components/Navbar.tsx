@@ -1,9 +1,7 @@
 import { Menubar } from 'primereact/menubar';
 import { MenuItem } from 'primereact/menuitem';
 
-import { memo, Fragment } from 'react';
-
-const Navbar = memo(function Navbar() {
+function Navbar() {
 
   const start = (
       <a href="/">
@@ -41,6 +39,6 @@ const Navbar = memo(function Navbar() {
       <Menubar model={items} start={start}/>
     </div>
   )
-}); 
+}; 
 
 export default Navbar;
