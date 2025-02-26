@@ -2,7 +2,6 @@ import { Image } from 'primereact/image';
 import { getColorPalette, getTheme , getFeaturesArray, getMapData} from '../utilities';
 import { ResponsiveChoropleth } from '@nivo/geo'
 import { useState, useEffect, useMemo, } from 'react';
-import { useParams } from "react-router-dom";
 import { Dropdown } from 'primereact/dropdown';
 import { Slider } from "primereact/slider";
 import { allWeeks, filterTracksByWeekAndArtist, generateMapDataForWeek, Track } from '../ArtistPageUtilities';
@@ -16,8 +15,6 @@ function Artist() {
   const [mapData, setMapData] = useState(generateMapDataForWeek(allWeeks[0], artistName));
   const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
   
-
-
   // compute all map data for each week when artistName changes 
   const allMapData = useMemo(() => {
     return allWeeks.map((week) => generateMapDataForWeek(week, artistName));
@@ -65,20 +62,13 @@ function Artist() {
     setIsPaused(false); // Resume when slider is released
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      setArtistName(e.currentTarget.value);  // Set the artistName on Enter key press
-    }
-  };
-
   
-
   return (
     <div>
       <Image src='https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg' height='100px' width='100px'></Image>
       <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{artistName}</h1>
       
-      <div style={{ position: "absolute", left: 50, top: 200, height: "50vh", width: "30hw" }}>
+      <div style={{ position: "absolute", left: 50, top: 240, height: "50vh", width: "30hw" }}>
         <h2 style={{ color: getColorPalette().amber }}>Globally charting {allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
         <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
         <ul>
