@@ -12,22 +12,32 @@ function Network() {
 // you'll often use just a few of them.
 
 const [artistId, setArtistId] = useState("-4676264453581091479");
+const biggest_global_contributor = Object.values(NetworkData).reduce(function(prev, current) {
+  return (prev && prev.total_contributions > current.total_contributions) ? prev : current
+})
+const max_contributions = biggest_global_contributor.total_contributions
+
+const biggest_local_collaborator = NetworkData[artistId]["nodes"].reduce(function(prev, current) {
+  return (prev && prev.num_collaborations > current.num_collaborations) ? prev : current
+})
+const max_local_collaborations = biggest_local_collaborator.num_collaborations;
+
 
   return (
     <div>
       <h1>Network View</h1>
       <div style={{height: "800px"}}>
         <ResponsiveNetwork
-        width={800}
+        width={1200}
         height={800}
         data={NetworkData[artistId]}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-        linkDistance={e=>e.distance}
-        centeringStrength={0.3}
-        repulsivity={6}
-        nodeSize={n=>n.size}
-        activeNodeSize={n=>1.5*n.size}
-        nodeColor={e=>e.color}
+        linkDistance={l=>(edgeDistance(l, max_local_collaborations))}
+        centeringStrength={0.1}
+        repulsivity={20}
+        nodeSize={n=>nodeSize(n, max_contributions)}
+        activeNodeSize={n=>1.5*nodeSize(n, max_contributions)}
+        nodeColor={n=>"rgb(97, 205, 187)"}
         nodeBorderWidth={1}
         nodeBorderColor={{
             from: 'color',
@@ -38,7 +48,7 @@ const [artistId, setArtistId] = useState("-4676264453581091479");
                 ]
             ]
         }}
-        linkThickness={n=>2+2*n.target.data.height}
+        linkThickness={n=>edgeSize(n.target.data, max_local_collaborations)}
         linkBlendMode="multiply"
         motionConfig="wobbly"
         onClick={(node: NetworkComputedNode, event: MouseEvent)=>{
@@ -52,11 +62,32 @@ const [artistId, setArtistId] = useState("-4676264453581091479");
           return <Card title={name}>
           </Card>
         }}
+        distanceMin={5}
 
         />
       </div>
     </div>
   )
+
+
+}
+
+function nodeSize(node, max_contributions){
+  // Normalize
+  var contributions = NetworkData[node.id].total_contributions;
+  var normalized_contributions = (contributions) / max_contributions;
+  const max_size = 64;
+  const min_size = 12
+  return Math.floor(normalized_contributions*(max_size-min_size) + min_size);
+}
+
+function edgeSize(node, max_local_collaborations){
+    // Normalize
+    var collaborations = node.num_collaborations;
+    var normalized_collaborations = (collaborations) / max_local_collaborations;
+    const max_size = 12;
+    const min_size = 2;
+    return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
 }
 
 export default Network
