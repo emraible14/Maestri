@@ -1,5 +1,5 @@
 import { ResponsiveBar } from '@nivo/bar'
-import { getTheme } from '../utilities';
+import { getTheme } from '../utils/colorUtilities';
 
 interface BarChartProps {
     readonly data: Array<{[key: string]: string | number}>
@@ -19,7 +19,7 @@ function BarChart(props: BarChartProps) {
         padding={0.3}
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}
-        colors={{ scheme: 'purple_orange' }}
+        colors={({ id, data }) => String(data[`${id}Color`])}
         theme={getTheme()}
         fill={[
             {

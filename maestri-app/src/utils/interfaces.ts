@@ -25,3 +25,22 @@ export interface Contributor {
     "contributor_name": string,
     "contribution_type": string
 }
+
+export interface Track {
+    "track_id": number,
+    "spotify_id": string,
+    "name": string, 
+    "release_date": string, 
+    "primary_artist_name": string, 
+    "primary_artist_id": number, 
+    "chartings": Array<Chart>,
+}
+
+export interface Chart {
+    "week": string, 
+    "rank": number, 
+    "country": string, 
+    "entry_date": string, 
+    "num_streams": number, 
+    "weeks_on_chart": number
+}

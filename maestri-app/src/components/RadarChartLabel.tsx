@@ -6,7 +6,7 @@ function RadarChartLabel({ id, x, y, anchor }: GridLabelProps) {
     const [fontSize, setFontSize] = useState(14)
     
     return ( <g transform={`translate(${x}, ${y})`}>
-        <g className="cursor-pointer" transform={`translate(${anchor === 'end' ? -50 : anchor === 'middle' ? -30 : -20}, 10)`} 
+        <g className="cursor-pointer" transform={`translate(${anchor === 'end' ? -110 : anchor === 'middle' ? -30 : -20}, 10)`} 
             onMouseOver={hoverOnLabel} onMouseOut={unhoverOnLabel}>
             <text style={{
                     fontSize: fontSize,

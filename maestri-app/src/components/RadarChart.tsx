@@ -1,5 +1,5 @@
 import { ResponsiveRadar } from '@nivo/radar'
-import { getTheme } from '../utilities';
+import { getTheme, NIVO_DARK } from '../utils/colorUtilities';
 import RadarChartLabel from './RadarChartLabel';
 
 interface RadarChartProps {
@@ -18,7 +18,7 @@ function RadarChart(props: RadarChartProps) {
                 indexBy={props.indexKey}
                 valueFormat=">-.2f"
                 margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-                borderWidth={6}
+                borderWidth={7}
                 // borderColor="#ffffff"
                 gridShape="linear"
                 gridLabelOffset={36}
@@ -26,7 +26,7 @@ function RadarChart(props: RadarChartProps) {
                 dotColor={{ theme: 'background' }}
                 dotBorderWidth={2}
                 theme={getTheme()}
-                colors={{ scheme: 'dark2' }}
+                colors={{ scheme: NIVO_DARK }}
                 fillOpacity={0}
                 motionConfig="wobbly"
                 onClick={clickedSomething}

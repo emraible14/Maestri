@@ -9,6 +9,21 @@ export const colorPalette: { [key: string]: string } = {
     amber: "#fbbf23"
 };
 
+export const NIVO_DARK = "dark2";
+
+export const nivoDarkColorPalette: {[key:string]: Array<string>} = {
+    '#1b9e77': ['#1b9e77', '#40d195', '#8edab3', '#d4eddd'],
+    '#d95f02': ['#d95f02', '#eb7d2a', '#e39f6c', '#e3c0a6'],
+    '#7570b3': ['#7570b3', '#9994c4', '#bbb6d5', '#dbd8e8'],
+    '#e7298a': ['#e7278a', '#ed5ba6', '#f38fc3','#f9c3df'],
+    '#66a61e': ['#65a41e', '#89cb3e', '#abd180', '#cddeba'],
+    '#e6ab02': [],
+    '#a6761d': [],
+    '#666666': [],
+}
+
+
+
 function getColorPalette(){
     return colorPalette;
 }
