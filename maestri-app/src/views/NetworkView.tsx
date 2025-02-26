@@ -3,6 +3,7 @@ import NetworkData from '../../../data/network.json'
 import { useState } from "react";
 import {animated, to} from "@react-spring/web";
 import { DataModel } from '../DataModel';
+import { useSearchParams } from 'react-router-dom';
 
 interface NetworkProps {
     model: DataModel
@@ -14,8 +15,10 @@ function Network(props: NetworkProps) {
     // no chart will be rendered.
     // website examples showcase many properties,
     // you'll often use just a few of them.
+    const [searchParams, setSearchParams] = useSearchParams();
+    const idParam = searchParams.get("id");
 
-    const [artistId, setArtistId] = useState("-4676264453581091479");
+    const [artistId, setArtistId] = useState(idParam || "-4676264453581091479");
     const biggest_global_contributor = Object.values(NetworkData).reduce(function(prev, current) {
         return (prev && prev.total_contributions > current.total_contributions) ? prev : current
     })
@@ -50,7 +53,7 @@ function Network(props: NetworkProps) {
                 }}
                 linkThickness={n=>props.model.getEdgeSize(n.target.data, max_local_collaborations)}
                 motionConfig="slow"
-                onClick={(node)=>{ setArtistId(node.id) }}
+                onClick={clickedNode}
                 nodeComponent={n=>nodeComponent(n)}
                 nodeTooltip={(node)=>{
                 let name = node.node.data.name
@@ -63,6 +66,14 @@ function Network(props: NetworkProps) {
             />
         </div>
     )
+
+    function clickedNode(node) {
+        // update search params
+        const newQueryParameters : URLSearchParams = new URLSearchParams();
+        newQueryParameters.set("id", node.id)
+        setSearchParams(newQueryParameters);
+        setArtistId(node.id)
+    }
 }
 
 

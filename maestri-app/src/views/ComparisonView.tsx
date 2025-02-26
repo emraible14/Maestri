@@ -8,7 +8,7 @@ import BarChart from "../components/BarChart";
 import { getBarKeysFromType } from "../utils/dataUtilities";
 import { DataModel } from "../DataModel";
 import { nivoDarkColorPalette } from "../utils/colorUtilities";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface ComparisonProps {
     readonly model: DataModel;
@@ -17,6 +17,7 @@ interface ComparisonProps {
 function Comparison(props: ComparisonProps) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentArtists, setCurrentArtists] = useState<Array<Artist>>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // get artists on mount
@@ -63,13 +64,14 @@ function Comparison(props: ComparisonProps) {
         );
         const footer = (
             <div>
-                <Button onClick={removeArtist} label={"Remove Arist"} icon="pi pi-times" rounded outlined severity="danger" aria-label="Cancel" disabled={currentArtists.length === 1}/>
+                <Button onClick={removeArtist} label={"Remove"} icon="pi pi-times" rounded outlined severity="danger" aria-label="Cancel" disabled={currentArtists.length === 1}/>
             </div>
         );
 
         return (
             <Card key={artist.artist_id} title={artist.name} header={header} footer={footer} className="margin-10">
-                <div>More details here</div>
+                <Button onClick={() => navigate('/artist?id=' + artist.artist_id)} label={"View"} icon="pi pi-star" rounded outlined/>
+                <Button onClick={() => navigate('/network?id=' + artist.artist_id)} label={"Explore"} icon="pi pi-users" rounded outlined aria-label="Cancel"/>
             </Card>
         )
     }

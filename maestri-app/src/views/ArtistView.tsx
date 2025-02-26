@@ -6,7 +6,8 @@ import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
 import { Track } from '../utils/interfaces';
 import ChoroplethChart from '../components/ChloroplethChart';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from 'primereact/button';
 
 
 interface ArtistProps {
@@ -14,10 +15,9 @@ interface ArtistProps {
 }
 
 function Artist(props: ArtistProps) {
-    // const id = window.location.href.split('/').pop() // the id from the URL
     const [searchParams, setSearchParams] = useSearchParams();
-    console.log(searchParams.get("id"))
     const artistId = searchParams.get("id");
+    const navigate = useNavigate();
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(true);
@@ -76,8 +76,9 @@ function Artist(props: ArtistProps) {
         <div>
         <Image src={currentArtist.image_url} height='200px' width='200px'></Image>
         <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{currentArtist.name}</h1>
+        <Button onClick={() => navigate('/comparison?ids=' + currentArtist.artist_id)} label={"Compare artists"} icon="pi pi-user" rounded outlined/>
         
-        <div style={{ position: "absolute", left: 50, top: 350, height: "50vh", width: "30hw" }}>
+        <div style={{ position: "absolute", left: 50, top: 420, height: "50vh", width: "30hw" }}>
             <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
             <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
                 <ul>
