@@ -51,5 +51,12 @@
   "volta": {
     "node": "20.18.3",
     "npm": "10.8.2"
+  },
+  "compilerOptions": {
+    "module": "ESNext",            
+    "resolveJsonModule": true,        
+    "esModuleInterop": true,          
+    "target": "ES6",               
+    "moduleResolution": "node"        
   }
 }
