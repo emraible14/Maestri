@@ -1,10 +1,11 @@
 import { Image } from 'primereact/image';
-import { getColorPalette, getTheme , getFeaturesArray, getMapData} from '../utilities';
 import { ResponsiveChoropleth } from '@nivo/geo'
 import { useState, useEffect, useMemo, } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Slider } from "primereact/slider";
 import { allWeeks, filterTracksByWeekAndArtist, generateMapDataForWeek, Track } from '../ArtistPageUtilities';
+import { getColorPalette, getTheme } from '../utils/colorUtilities';
+import { getFeaturesArray } from '../utils/mapUtilities';
 
 
 function Artist() {
