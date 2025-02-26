@@ -1,37 +1,31 @@
-import { Button } from "primereact/button";
 import { ResponsiveNetwork } from '@nivo/network'
 import NetworkData from '../../../data/network.json'  
-import ArtistImages from '../../../data/images.json'  
 import { useState } from "react";
 import { Card } from 'primereact/card';
 import {animated, to} from "@react-spring/web";
 
 function Network() {
   // make sure parent container have a defined height when using
-// responsive component, otherwise height will be 0 and
-// no chart will be rendered.
-// website examples showcase many properties,
-// you'll often use just a few of them.
+  // responsive component, otherwise height will be 0 and
+  // no chart will be rendered.
+  // website examples showcase many properties,
+  // you'll often use just a few of them.
 
-const [artistId, setArtistId] = useState("-4676264453581091479");
-const biggest_global_contributor = Object.values(NetworkData).reduce(function(prev, current) {
-  return (prev && prev.total_contributions > current.total_contributions) ? prev : current
-})
-const max_contributions = biggest_global_contributor.total_contributions
+  const [artistId, setArtistId] = useState("-4676264453581091479");
+  const biggest_global_contributor = Object.values(NetworkData).reduce(function(prev, current) {
+    return (prev && prev.total_contributions > current.total_contributions) ? prev : current
+  })
+  const max_contributions = biggest_global_contributor.total_contributions
 
-const biggest_local_collaborator = NetworkData[artistId]["nodes"].reduce(function(prev, current) {
-  return (prev && prev.num_collaborations > current.num_collaborations) ? prev : current
-})
-const max_local_collaborations = biggest_local_collaborator.num_collaborations;
-
+  const biggest_local_collaborator = NetworkData[artistId]["nodes"].reduce((prev, current) => {
+    return (prev && prev.num_collaborations > current.num_collaborations) ? prev : current
+  })
+  const max_local_collaborations = biggest_local_collaborator.num_collaborations;
 
   return (
     <div>
-      <h1>Network View</h1>
-      <div style={{height: "800px"}}>
+      <div style={{height: "800px", scale: "2"}}>
         <ResponsiveNetwork
-        width={1200}
-        height={800}
         data={NetworkData[artistId]}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         linkDistance={l=>(edgeDistance(l, max_local_collaborations))}
@@ -39,7 +33,7 @@ const max_local_collaborations = biggest_local_collaborator.num_collaborations;
         repulsivity={20}
         nodeSize={n=>nodeSize(n, max_contributions)}
         activeNodeSize={n=>1.5*nodeSize(n, max_contributions)}
-        nodeColor={n=>"rgb(97, 205, 187)"}
+        nodeColor={n =>"rgb(97, 205, 187)"}
         nodeBorderWidth={1}
         nodeBorderColor={{
             from: 'color',
@@ -51,8 +45,7 @@ const max_local_collaborations = biggest_local_collaborator.num_collaborations;
             ]
         }}
         linkThickness={n=>edgeSize(n.target.data, max_local_collaborations)}
-        linkBlendMode="multiply"
-        motionConfig="wobbly"
+        motionConfig="slow"
         onClick={(node: NetworkComputedNode, event: MouseEvent)=>{
           setArtistId(node.id)
         }}
@@ -65,7 +58,7 @@ const max_local_collaborations = biggest_local_collaborator.num_collaborations;
           return <Card title={name}>
           </Card>
         }}
-        distanceMin={5}
+        distanceMin={20}
 
         />
       </div>
@@ -77,8 +70,8 @@ const max_local_collaborations = biggest_local_collaborator.num_collaborations;
 
 function nodeSize(node, max_contributions){
   // Normalize
-  var contributions = NetworkData[node.id].total_contributions;
-  var normalized_contributions = (contributions) / max_contributions;
+  const contributions = NetworkData[node.id].total_contributions;
+  const normalized_contributions = (contributions) / max_contributions;
   const max_size = 64;
   const min_size = 12
   return Math.floor(normalized_contributions*(max_size-min_size) + min_size);
@@ -86,8 +79,8 @@ function nodeSize(node, max_contributions){
 
 function edgeSize(node, max_local_collaborations){
     // Normalize
-    var collaborations = node.num_collaborations;
-    var normalized_collaborations = (collaborations) / max_local_collaborations;
+    const collaborations = node.num_collaborations;
+    const normalized_collaborations = (collaborations) / max_local_collaborations;
     const max_size = 12;
     const min_size = 2;
     return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
@@ -101,11 +94,10 @@ function edgeDistance(edge, max_local_collaborations){
 
   const collaborations = nodes.find(n=>(n.id == collaborator_artist_id)).num_collaborations
 
-  var normalized_collaborations = (collaborations) / max_local_collaborations;
-  normalized_collaborations = 1 - normalized_collaborations; // Inverse relationship. More collaborations = closer to each other
+  const normalized_collaborations = 1 - ((collaborations) / max_local_collaborations); // Inverse relationship. More collaborations = closer to each other
   console.log(normalized_collaborations)
-  const max_size = 150;
-  const min_size = 75;
+  const max_size = 100;
+  const min_size = 45;
   return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
 }
 
@@ -119,7 +111,7 @@ function nodeComponent(nodeIn){
     onMouseLeave,
   } = nodeIn
 
-  var artistImageUrl = "https://images.genius.com/073372f6cd316f7c68b4c4b7d8c610c9.675x675x1.jpg"
+  const artistImageUrl = "https://images.genius.com/073372f6cd316f7c68b4c4b7d8c610c9.675x675x1.jpg"
   // TODO: Actually use the images when we have the genius ids for the artists
   // if (typeof node.id == 'undefined'){
   //   console.log(node)
