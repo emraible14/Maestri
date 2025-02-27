@@ -1,9 +1,10 @@
 import { Artist, Network, NetworkNode, Track } from "./utils/interfaces";
-import artistsJson from "../../data/artists_v2.json";
+import artistsJson from "../../data/artists_v3.json";
 import tracksJson from "../../data/tracks.json";
 import networkJson from '../../data/network.json'  
 import { countryCodeMapping } from "./utils/mapUtilities";
 import { nivoDarkColorPalette } from "./utils/colorUtilities";
+import { getBarKeyLabelsFromType } from "./utils/dataUtilities";
 
 export class DataModel {
     artists: {[key: string]: Artist};
@@ -20,9 +21,10 @@ export class DataModel {
             new Set(Object.values(this.tracks).flatMap((track) => track.chartings.map((charting) => charting.week)))
         ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-        // hotfix to add artist_id field
+        // hotfix to add artist_id field and adjust stats data
         Object.keys(this.artists).forEach((id) => {
             this.artists[id].artist_id = id;
+            this.artists[id].stats.overall.weeks_on_chart = this.artists[id].stats.weeks_on_chart;
         });
         // hotfix to add track_id field
         Object.keys(this.tracks).forEach((id) => {
@@ -134,38 +136,84 @@ export class DataModel {
         return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
     }
 
-    getBarData(currentArtists: Array<Artist>, indexKey: string, keys: Array<string>) {
+    getBarData(currentArtists: Array<Artist>, indexKey: string, barType: string) {
         const barData: Array<{[key: string]: string | number}> = [];
-        currentArtists.forEach((artist, i1) => {
-            const result: {[key: string]: string | number} = {};
-            result[indexKey] = artist.name;
-            const artistColor = Object.keys(nivoDarkColorPalette)[i1];
-            keys.forEach((key, i2) => {
-                result[key] = Math.floor(Math.random() * (Math.floor(20) - Math.ceil(1) + 1) + Math.ceil(1)); // random value
-                result[key+"Color"] = nivoDarkColorPalette[artistColor][i2];
+
+        const keys = getBarKeyLabelsFromType(barType);
+        let dataKeys: Array<string> = [];
+        let typeIndex = ""
+        if (barType === "avg. team size") {
+            typeIndex = "team_size";
+            dataKeys = ['one', 'two_to_five', 'six_to_ten', 'eleven_or_more'];
+        } else if (barType === "# weeks on charts") {
+            typeIndex = "weeks_on_chart";
+            dataKeys = ["oneWeek", "twoToFiveWeeks", "sixToTenWeeks", "overTenWeeks"];
+        } else if (barType === "#1 tracks") {
+            typeIndex = "top_songs";
+            dataKeys = ['num1', 'top10', 'top50', 'top200'];
+        } else if (barType === "total samples/interpolations used") {
+            typeIndex = "song_references";
+            dataKeys = ['nothing', 'samples', 'interpolations', 'samples_and_interpolations'];
+        } else if (barType === "# charting tracks") {
+            typeIndex = "contribution_counts";
+            dataKeys = ['primary', 'feature', 'producer', 'writer'];
+        }
+
+
+        if (typeIndex) {
+            currentArtists.forEach((artist, i1) => {
+                const result: {[key: string]: string | number} = {};
+                result[indexKey] = artist.name;
+                const artistColor = Object.keys(nivoDarkColorPalette)[i1];
+                keys.forEach((key, i2) => {
+                    result[key] = artist.stats.overall[typeIndex][dataKeys[i2]];
+                    result[key+"Color"] = nivoDarkColorPalette[artistColor][i2];
+                });
+                barData.push(result);
             });
-            barData.push(result);
-        });
+        }
         return barData;
     }
 
     getRadarData(currentArtists: Array<Artist>, indexKey: string) {
-        const radarPoints = [
-            "avg. team size",
-            "# weeks on chart",
-            "# top 10 tracks",
-            'avg. samples/interpolations used',
-            "# charting tracks",
-        ];
         const radarData: Array<{[key: string]: string | number}> = [];
-        radarPoints.forEach((point) => {
-            const result: {[key: string]: string | number} = {};
-            result[indexKey] = point;
-            currentArtists.forEach((artist) => {
-                result[artist.name] = Math.floor(Math.random() * (Math.floor(20) - Math.ceil(1) + 1) + Math.ceil(1)); // random value
-            });
-            radarData.push(result);
-        })
+
+        // I hate this, should be a loop but there isn't a consistent way to access the stats so forgive me
+        const result1: {[key: string]: string | number} = {};
+        result1[indexKey] = "avg. team size";
+        currentArtists.forEach((artist) => {
+            result1[artist.name] = artist.stats.overall.team_size.avg;
+        });
+        radarData.push(result1);
+
+        const result2: {[key: string]: string | number} = {};
+        result2[indexKey] = "# weeks on charts";
+        currentArtists.forEach((artist) => {
+            result2[artist.name] = artist.stats.weeks_on_chart.totalWeeksOnChart;
+        });
+        radarData.push(result2);
+
+        const result3: {[key: string]: string | number} = {};
+        result3[indexKey] = "#1 tracks";
+        currentArtists.forEach((artist) => {
+            result3[artist.name] = artist.stats.overall.top_songs.num1;
+        });
+        radarData.push(result3);
+
+        const result4: {[key: string]: string | number} = {};
+        result4[indexKey] = "total samples/interpolations used";
+        currentArtists.forEach((artist) => {
+            result4[artist.name] = artist.stats.overall.song_references.total;
+        });
+        radarData.push(result4);
+
+        const result5: {[key: string]: string | number} = {};
+        result5[indexKey] = "# charting tracks";
+        currentArtists.forEach((artist) => {
+            result5[artist.name] = artist.stats.overall.contribution_counts.total;
+        });
+        radarData.push(result5);
+
         return radarData;
     }
 }

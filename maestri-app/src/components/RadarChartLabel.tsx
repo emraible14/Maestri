@@ -1,15 +1,16 @@
 import { GridLabelProps } from '@nivo/radar'
-import { useState } from 'react';
+// import { useState } from 'react';
 
 function RadarChartLabel({ id, x, y, anchor }: GridLabelProps) {
     
-    const [fontSize, setFontSize] = useState(14)
+    // const [fontSize, setFontSize] = useState(14)
     
     return ( <g transform={`translate(${x}, ${y})`}>
         <g className="cursor-pointer" transform={`translate(${anchor === 'end' ? -110 : anchor === 'middle' ? -30 : -20}, 10)`} 
-            onMouseOver={hoverOnLabel} onMouseOut={unhoverOnLabel}>
+            // onMouseOver={hoverOnLabel} onMouseOut={unhoverOnLabel}
+            >
             <text style={{
-                    fontSize: fontSize,
+                    fontSize: 14,
                     fontWeight: 'bold',
                     fill: '#ffffff',
                 }}>{id}</text>
@@ -17,13 +18,13 @@ function RadarChartLabel({ id, x, y, anchor }: GridLabelProps) {
     </g>
     );
 
-    function hoverOnLabel() {
-        setFontSize(16);
-    }
+    // function hoverOnLabel() {
+    //     setFontSize(16);
+    // }
 
-    function unhoverOnLabel() {
-        setFontSize(14);
-    }
+    // function unhoverOnLabel() {
+    //     setFontSize(14);
+    // }
 
 }
 

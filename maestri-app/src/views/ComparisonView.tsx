@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Artist } from "../utils/interfaces";
 import RadarChart from "../components/RadarChart";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import BarChart from "../components/BarChart";
-import { getBarKeysFromType } from "../utils/dataUtilities";
 import { DataModel } from "../DataModel";
 import { nivoDarkColorPalette } from "../utils/colorUtilities";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 
 interface ComparisonProps {
     readonly model: DataModel;
@@ -17,6 +17,7 @@ interface ComparisonProps {
 function Comparison(props: ComparisonProps) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentArtists, setCurrentArtists] = useState<Array<Artist>>([]);
+    const [barType, setBarType] = useState("# charting tracks");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,12 +37,17 @@ function Comparison(props: ComparisonProps) {
             </div>
             <div className="flex justify-around">
                 <RadarChart data={props.model.getRadarData(currentArtists, "attribute")} 
-                    keys={currentArtists.map((artist) => { return artist.name })} indexKey={"attribute"}></RadarChart>
-                <BarChart data={props.model.getBarData(currentArtists, "artist", getBarKeysFromType("# weeks on charts"))} 
-                    keys={getBarKeysFromType("# weeks on charts")} indexKey={"artist"} type={"# weeks on charts"}></BarChart>
+                    keys={currentArtists.map((artist) => { return artist.name })} indexKey={"attribute"}
+                    handleAttributeClick={updateBarType}></RadarChart>
+                <BarChart data={props.model.getBarData(currentArtists, "artist", barType)} 
+                keys={getBarKeyLabelsFromType(barType)} indexKey={"artist"} type={barType}></BarChart>
             </div>
         </>
     );
+
+    function updateBarType(type: string) {
+        setBarType(type);
+    }
 
     function singleArtist(artist: Artist, index: number) {
         function removeArtist() {
@@ -88,7 +94,7 @@ function Comparison(props: ComparisonProps) {
             setSearchParams(newQueryParameters);
 
             // update current artists list
-            setCurrentArtists(props.model.getSpecificArtists(newArtistIds))
+            setCurrentArtists(props.model.getSpecificArtists(newArtistIds));
         }
 
         const header = (
@@ -103,7 +109,7 @@ function Comparison(props: ComparisonProps) {
 
             return (
             <Card className="margin-10 justify-items-center content-center" header={header}>
-                <Dropdown value={null}  onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter/>
+                <Dropdown value={null}  onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
             </Card>
             );
         }

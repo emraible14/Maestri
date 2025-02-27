@@ -109,6 +109,7 @@ function Artist(props: ArtistProps) {
                     checkmark={true}
                     highlightOnSelect={false}
                     filter
+                    virtualScrollerOptions={{ itemSize: 38 }}
                 />
                 <button onClick={handleTogglePause} style={{padding: '10px 20px'}}>{isPaused ? "Play" : "Pause"}</button>
                 <p>Current week {props.model.allWeeks[currentIndex]}</p>

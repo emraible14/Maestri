@@ -6,6 +6,7 @@ interface RadarChartProps {
     readonly data: Array<{[key: string]: string | number}>;
     readonly keys: Array<string>;
     readonly indexKey: string;
+    handleAttributeClick: ((attribute: string) => void);
 }
 
 function RadarChart(props: RadarChartProps) {
@@ -56,10 +57,10 @@ function RadarChart(props: RadarChartProps) {
         </div>
     );
 
-}
+    function clickedSomething(event: {[key: string]: string}) {
+        props.handleAttributeClick(event[props.indexKey])
+    }
 
-function clickedSomething(event) {
-    console.log(event);
 }
 
 export default RadarChart;

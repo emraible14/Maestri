@@ -11,13 +11,50 @@ export interface Contribution {
     "contribution_type": string
 }
 
-export interface Stats { // will be added to
-    "contributions": {
-        "avg": number,
-        "one": number,
-        "twoToFive": number,
-        "sixToTen": number,
-        "elevenOrMore": number
+export interface Stats {
+    "overall": {
+        "team_size": {
+            "avg": number, 
+            "one": number, 
+            "two_to_five": number, 
+            "six_to_ten": number, 
+            "eleven_or_more": number
+        }, 
+        "contribution_counts": {
+            "total": number, 
+            "primary": number, 
+            "writer": number, 
+            "producer": number, 
+            "feature": number
+        }, 
+        "song_references": {
+            "total": number, 
+            "nothing": number, 
+            "samples": number, 
+            "interpolations": number, 
+            "samples_and_interpolations": number
+        }, 
+        "top_songs": {
+            "total": number,
+            "num1": number, 
+            "top10": number, 
+            "top50": number, 
+            "top200": number
+        },
+        "weeks_on_chart": {
+            "totalWeeksOnChart": number, 
+            "oneWeek": number, 
+            "twoToFiveWeeks": number, 
+            "sixToTenWeeks": number, 
+            "overTenWeeks": number
+        }
+    }, 
+    "weeks_on_chart": {
+        "totalWeeksOnChart": number, 
+        "oneWeek": number, 
+        "twoToFiveWeeks": number, 
+        "sixToTenWeeks": number, 
+        "overTenWeeks": number
     }
 }
 
