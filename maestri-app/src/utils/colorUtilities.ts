@@ -1,4 +1,4 @@
-const colorPalette: { [key: string]: string } = {
+export const colorPalette: { [key: string]: string } = {
     black: "#111827",
     brown_sugar: "#c57b57",
     beaver: "#ae9487",
@@ -9,11 +9,22 @@ const colorPalette: { [key: string]: string } = {
     amber: "#fbbf23"
 };
 
+export const NIVO_DARK = "dark2";
+
+export const nivoDarkColorPalette: {[key:string]: Array<string>} = {
+    '#1b9e77': ['#1b9e77', '#40d195', '#8edab3', '#d4eddd'],
+    '#d95f02': ['#d95f02', '#eb7d2a', '#e39f6c', '#e3c0a6'],
+    '#7570b3': ['#7570b3', '#9994c4', '#bbb6d5', '#dbd8e8'],
+    '#e7298a': ['#e7278a', '#ed5ba6', '#f38fc3','#f9c3df'],
+    '#66a61e': ['#65a41e', '#89cb3e', '#abd180', '#cddeba'],
+    '#e6ab02': [],
+    '#a6761d': [],
+    '#666666': [],
+}
+
 function getColorPalette(){
     return colorPalette;
 }
-
-
 
 // You can pass this object to the `theme` property
 const theme = {
@@ -27,14 +38,14 @@ const theme = {
     "axis": {
         "domain": {
             "line": {
-                "stroke": "#fbbf23",
+                "stroke": "#ffffff",
                 "strokeWidth": 1
             }
         },
         "legend": {
             "text": {
                 "fontSize": 12,
-                "fill": "#fbbf23",
+                "fill": "#ffffff",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"
             }
@@ -46,7 +57,7 @@ const theme = {
             },
             "text": {
                 "fontSize": 11,
-                "fill": "#fbbf23",
+                "fill": "#ffffff",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"
             }
@@ -54,7 +65,7 @@ const theme = {
     },
     "grid": {
         "line": {
-            "stroke": "#fbbf23",
+            "stroke": "#999",
             "strokeWidth": 1
         }
     },
@@ -62,14 +73,14 @@ const theme = {
         "title": {
             "text": {
                 "fontSize": 11,
-                "fill": "#fbbf23",
+                "fill": "#ffffff",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"
             }
         },
         "text": {
             "fontSize": 11,
-            "fill": "#fbbf23",
+            "fill": "#ffffff",
             "outlineWidth": 0,
             "outlineColor": "transparent"
         },
@@ -88,7 +99,7 @@ const theme = {
             "fontSize": 13,
             "fill": "#333333",
             "outlineWidth": 2,
-            "outlineColor": "#fbbf23",
+            "outlineColor": "#ffffff",
             "outlineOpacity": 1
         },
         "link": {
@@ -129,6 +140,7 @@ const theme = {
 
 const getTheme = () => theme;
 
+<<<<<<< HEAD:maestri-app/src/utilities.ts
 const featuresArray = {
     "type": "FeatureCollection",
     "features": [
@@ -44841,4 +44853,7 @@ const mapDataSets = [
 const getMapData = () => mapDataSets;
 
 export {getColorPalette, getTheme, getFeaturesArray, getMapData}
+=======
+export {getColorPalette, getTheme}
+>>>>>>> main:maestri-app/src/utils/colorUtilities.ts
 

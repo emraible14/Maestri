@@ -13,12 +13,12 @@ function Navbar() {
     {
       label: 'Artist',
       icon: 'pi pi-star',
-      url: '/artist'
+      url: '/artist?id=123'
     },
     {
       label: 'Compare artists',
       icon: 'pi pi-user',
-      url: '/compare'
+      url: '/comparison'
     },
     {
       label: 'Explore influences',

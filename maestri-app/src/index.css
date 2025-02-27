@@ -1,7 +1,7 @@
 @layer tailwind-base, primereact, tailwind-utilities;
 
 /* IMPORTANT: In "styled" mode you must add the PrimeReact Theme here. Do NOT include in "unstyled" mode */
-@import 'primereact/resources/themes/lara-dark-amber/theme.css' layer(primereact);
+@import 'primereact/resources/themes/lara-dark-amber/theme.css';
 
 @layer tailwind-base {
   @tailwind base;
@@ -16,6 +16,29 @@
   background-color: #111827;
 }
 
+.chart-box {
+  height: 48vh;
+  width: 40vw;
+}
+
+.margin-10 {
+  margin: 10px;
+}
+
+.padding-125 {
+  padding: 1.25rem;
+}
+
+.cursor-pointer {
+  cursor:pointer;
+}
+
+.header-image {
+  height: 25vh; 
+  width: 100%; 
+  overflow-y: hidden;
+  border-radius: 10px 10px 0px 0px;
+}
 .clipped {
   position: absolute;
   right: 10px;
