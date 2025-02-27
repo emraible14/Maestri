@@ -1,5 +1,5 @@
 import { ResponsiveNetwork } from '@nivo/network'
-import NetworkData from '../../../data/network.json'  
+import NetworkData from '../../../data/network_v2.json'  
 import { useState } from "react";
 import {animated, to} from "@react-spring/web";
 import { DataModel } from '../DataModel';
@@ -18,7 +18,7 @@ function Network(props: NetworkProps) {
     const [searchParams, setSearchParams] = useSearchParams();
     const idParam = searchParams.get("id");
 
-    const [artistId, setArtistId] = useState(idParam || "-4676264453581091479");
+    const [artistId, setArtistId] = useState(idParam || "1405");
     const biggest_global_contributor = Object.values(NetworkData).reduce(function(prev, current) {
         return (prev && prev.total_contributions > current.total_contributions) ? prev : current
     })
@@ -54,12 +54,17 @@ function Network(props: NetworkProps) {
                 linkThickness={n=>props.model.getEdgeSize(n.target.data, max_local_collaborations)}
                 motionConfig="slow"
                 onClick={clickedNode}
-                nodeComponent={n=>nodeComponent(n)}
+                nodeComponent={n=>nodeComponent(n, props)}
                 nodeTooltip={(node)=>{
-                let name = node.node.data.name
-                if (name == ""){
-                    name = "Name not found!"
+                let artist = props.model.getArtist(node.node.data.id)
+                let name = node.node.data.id
+                if (typeof artist == 'undefined'){
+                    // name = "Name not found!"
                 }
+                else {
+                    name = artist.name
+                }
+
                 return <div style={{backgroundColor: "#374151", borderRadius: "5px", padding: "5px"}}>{name}</div>
                 }}
                 distanceMin={20}
