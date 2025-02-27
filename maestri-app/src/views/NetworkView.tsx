@@ -83,7 +83,7 @@ function Network(props: NetworkProps) {
 
 
 // TODO: this should be moved into it's own component and typed properly
-function nodeComponent(nodeIn){
+function nodeComponent(nodeIn,props: NetworkProps ){
     const  {
         node,
         animated: animatedProps,
@@ -93,13 +93,13 @@ function nodeComponent(nodeIn){
         onMouseLeave,
     } = nodeIn
 
-    const artistImageUrl = "https://images.genius.com/073372f6cd316f7c68b4c4b7d8c610c9.675x675x1.jpg"
+    var artistImageUrl = "https://images.genius.com/073372f6cd316f7c68b4c4b7d8c610c9.675x675x1.jpg"
     // TODO: Actually use the images when we have the genius ids for the artists
-    // if (typeof node.id == 'undefined'){
-    //   console.log(node)
-    // } else {
-    //   artistImageUrl = ArtistImages[node.id]["imageURL"]
-    // }
+    if (typeof node.id == 'undefined'){
+      console.log(node)
+    } else {
+      artistImageUrl = props.model.getArtist(node.id).image_url
+    }
 
   
     return <>
