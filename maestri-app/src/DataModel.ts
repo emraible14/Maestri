@@ -5,6 +5,13 @@ import networkJson from '../../data/network.json'
 import { countryCodeMapping } from "./utils/mapUtilities";
 import { nivoDarkColorPalette } from "./utils/colorUtilities";
 
+
+// hotfix (am i using this word correctly) to convert array to an object with track_id as keys which makes the map work again
+const tracksObject = tracksJson.reduce((acc, track) => {
+    acc[track.track_id] = track;  // Use track_id as the key
+    return acc;
+  }, {} as { [key: number]: Track }); // Type declaration for tracksObject
+  
 export class DataModel {
     artists: {[key: string]: Artist};
     tracks: {[key: string]: Track};
@@ -13,7 +20,7 @@ export class DataModel {
 
     constructor() {
         this.artists = artistsJson;
-        this.tracks = tracksJson;
+        this.tracks = tracksObject;
         this.networkData = networkJson;
 
         this.allWeeks = Array.from(
