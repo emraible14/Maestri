@@ -1,7 +1,7 @@
 import { Artist, Network, NetworkNode, Track } from "./utils/interfaces";
 import artistsJson from "../../data/artists_v3.json";
 import tracksJson from "../../data/tracks.json";
-import networkJson from '../../data/network_v2.json'  
+import networkJson from '../../data/network_v3.json'
 import { countryCodeMapping } from "./utils/mapUtilities";
 import { nivoDarkColorPalette } from "./utils/colorUtilities";
 import { getBarKeyLabelsFromType } from "./utils/dataUtilities";

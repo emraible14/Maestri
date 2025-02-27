@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import math
+from tqdm import tqdm
 
 def create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls):
     tracks_json = {}
@@ -153,42 +154,41 @@ def create_artists_json(df_tracks, df_contributions, df_charting, df_image_urls,
 def create_network_json(df_tracks, df_contributions, df_charting, df_image_urls, df_relationships):
     network_json = {}
 
-    for artist_id in df_contributions.drop_duplicates(subset=["artistId"])['artistId']:
+    # For each unique artist
+    for artist_id in tqdm(df_contributions.drop_duplicates(subset=["artistId"])['artistId'], desc="Creating artist networks"):
 
+        # Get each unique song they have contributed to
         genius_ids_for_artist = df_contributions[df_contributions['artistId'] == artist_id].drop_duplicates(subset=["geniusId"])['geniusId']
 
-
-        collaborator_ids = []
+        
+        collaborators = {}
         for song_id in genius_ids_for_artist:
             is_primary = not df_contributions[(df_contributions['geniusId'] == song_id) & (df_contributions['artistId'] == artist_id) & (df_contributions['type'] == 'primary')].empty
             # print(song_id, is_primary)
             if is_primary:
-                collaborators = df_contributions[(df_contributions['geniusId'] == song_id) & (df_contributions['artistId'] != artist_id)]['artistId']
+                # Count contributions to main artist
+                artists_contributed_to_main = df_contributions[(df_contributions['geniusId'] == song_id) & (df_contributions['artistId'] != artist_id)]['artistId']
                 # collaborator_ids.append(df_contributions[(df_contributions['geniusId'] == song_id) & (df_contributions['artistId'] != artist_id)]['artistId'])
+                for a in artists_contributed_to_main:
+                    collaborators[a] = collaborators.get(a, 0) + 1
             else:
-                collaborators = df_contributions[(df_contributions['geniusId'] == song_id) & (df_contributions['type'] == 'primary')]['artistId']
-
-            # print(collaborators)
-            collaborator_ids.extend([(int(song_id), int(x)) for x in collaborators])
-
-
-        # collaborator_ids = [int(x) for x in collaborator_ids]
-        # print("collabs", collaborator_ids)
-
-        df_collaborators = pd.DataFrame(collaborator_ids, columns = ['songId', 'artistId']).drop_duplicates(subset=['songId', 'artistId'])
-        df_collaborators = df_collaborators.groupby('artistId')['songId'].nunique()
+                # Count contributions by main artist
+                main_contributed_to_artist = df_contributions[(df_contributions['geniusId'] == song_id) & (df_contributions['type'] == 'primary')]['artistId']
+                for a in main_contributed_to_artist:
+                    # Incase there are several primary artists
+                    main_contributions_in_song = len(df_contributions[(df_contributions['geniusId'] == song_id) & (df_contributions['artistId'] == artist_id)])
+                    collaborators[a] = collaborators.get(a, 0) + main_contributions_in_song
 
         network_json[str(artist_id)] = {
             "nodes": [],
             "links": []
         }
-        total = 0
-        for connected_artist_id, song_count in df_collaborators.items():
-            total += song_count
+
+        for connected_artist_id, collaborations in collaborators.items():
 
             network_json[str(artist_id)]['nodes'].append({
                 "id": str(connected_artist_id),
-                "num_collaborations": song_count
+                "num_collaborations": collaborations
             })
 
             network_json[str(artist_id)]['links'].append({
@@ -196,17 +196,17 @@ def create_network_json(df_tracks, df_contributions, df_charting, df_image_urls,
                 "target": str(connected_artist_id),
                 "distance": 80
             })
-
-        network_json[str(artist_id)]["total_contributions"] =  total
+        # Total contributions for an artist is every credit they have on any song, except for primary
+        network_json[str(artist_id)]["total_contributions"] =  len(df_contributions[(df_contributions['artistId'] == artist_id) & (df_contributions['type'] != 'primary')])
 
         #? add self node
         network_json[str(artist_id)]['nodes'].append({
             "id": str(artist_id),
-            "num_collaborations": len(df_collaborators)
+            "num_collaborations": 0
         })
 
 
-    with open('network_v2.json', 'w') as fp:
+    with open('network_v3.json', 'w') as fp:
         json.dump(network_json, fp)
 
 if __name__ == "__main__":

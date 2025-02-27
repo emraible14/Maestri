@@ -1,5 +1,5 @@
 import { ResponsiveNetwork } from '@nivo/network'
-import NetworkData from '../../../data/network_v2.json'  
+import NetworkData from '../../../data/network_v3.json'  
 import { useState } from "react";
 import {animated, to} from "@react-spring/web";
 import { DataModel } from '../DataModel';
