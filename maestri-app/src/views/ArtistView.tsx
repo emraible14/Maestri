@@ -77,6 +77,7 @@ function Artist(props: ArtistProps) {
         <Image src={currentArtist.image_url} height='200px' width='200px'></Image>
         <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{currentArtist.name}</h1>
         <Button onClick={() => navigate('/comparison?ids=' + currentArtist.artist_id)} label={"Compare artists"} icon="pi pi-user" rounded outlined/>
+        <Button onClick={() => navigate('/network?id=' + currentArtist.artist_id)} label={"Explore"} icon="pi pi-users" rounded outlined aria-label="Cancel"/>
         
         <div style={{ position: "absolute", left: 50, top: 420, height: "50vh", width: "30hw" }}>
             <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>

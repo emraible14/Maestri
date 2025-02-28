@@ -3,7 +3,8 @@ import NetworkData from '../../../data/network_v3.json'
 import { useState } from "react";
 import {animated, to} from "@react-spring/web";
 import { DataModel } from '../DataModel';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from 'primereact/button';
 
 interface NetworkProps {
     model: DataModel
@@ -16,6 +17,7 @@ function Network(props: NetworkProps) {
     // website examples showcase many properties,
     // you'll often use just a few of them.
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
     const idParam = searchParams.get("id");
 
     const [artistId, setArtistId] = useState(idParam || "1405");
@@ -31,46 +33,55 @@ function Network(props: NetworkProps) {
     const max_local_collaborations = biggest_local_collaborator.num_collaborations;
 
     return (
-        <div style={{height: "400px", width: "400px", scale: "2", marginTop: "200px", marginLeft: "200px"}}>
-            <ResponsiveNetwork
-                data={networkData}
-                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-                linkDistance={l=>(props.model.getEdgeDistance(l.source, l.target, max_local_collaborations))}
-                centeringStrength={0.1}
-                repulsivity={20}
-                nodeSize={n=>props.model.getNodeSize(n, max_contributions)}
-                activeNodeSize={n=>1.5*props.model.getNodeSize(n, max_contributions)}
-                nodeColor={"rgb(97, 205, 187)"}
-                nodeBorderWidth={1}
-                nodeBorderColor={{
-                    from: 'color',
-                    modifiers: [
-                        [
-                            'darker',
-                            0.8
-                        ]
-                    ]
-                }}
-                linkThickness={n=>props.model.getEdgeSize(n.target.data, max_local_collaborations)}
-                motionConfig="slow"
-                onClick={clickedNode}
-                nodeComponent={n=>nodeComponent(n, props)}
-                nodeTooltip={(node)=>{
-                let artist = props.model.getArtist(node.node.data.id)
-                let name = node.node.data.id
-                if (typeof artist == 'undefined'){
-                    // name = "Name not found!"
-                }
-                else {
-                    name = artist.name
-                }
+        <div className='flex'>
+            <div>
+                <h1>{props.model.getArtist(artistId).name}</h1>
+                <Button onClick={() => navigate('/comparison?ids=' + artistId)} label={"Compare artists"} icon="pi pi-user" rounded outlined/>
+                <Button onClick={() => navigate('/artist?id=' + artistId)} label={"View"} icon="pi pi-star" rounded outlined/>
+            </div>
 
-                return <div style={{backgroundColor: "#374151", borderRadius: "5px", padding: "5px"}}>{name}</div>
-                }}
-                distanceMin={20}
-            />
+            <div style={{height: "540px", width: "540px", scale: "2", marginTop: "250px", marginLeft: "250px"}}>
+                <ResponsiveNetwork
+                    data={networkData}
+                    margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                    linkDistance={l=>(props.model.getEdgeDistance(l.source, l.target, max_local_collaborations))}
+                    centeringStrength={0.1}
+                    repulsivity={20}
+                    nodeSize={n=>props.model.getNodeSize(n, max_contributions)}
+                    activeNodeSize={n=>1.5*props.model.getNodeSize(n, max_contributions)}
+                    nodeColor={"rgb(97, 205, 187)"}
+                    nodeBorderWidth={1}
+                    nodeBorderColor={{
+                        from: 'color',
+                        modifiers: [
+                            [
+                                'darker',
+                                0.8
+                            ]
+                        ]
+                    }}
+                    linkThickness={n=>props.model.getEdgeSize(n.target.data, max_local_collaborations)}
+                    motionConfig="slow"
+                    onClick={clickedNode}
+                    nodeComponent={n=>nodeComponent(n, props)}
+                    nodeTooltip={(node)=>{
+                    let artist = props.model.getArtist(node.node.data.id)
+                    let name = node.node.data.id
+                    if (typeof artist == 'undefined'){
+                        // name = "Name not found!"
+                    }
+                    else {
+                        name = artist.name
+                    }
+
+                    return <div style={{backgroundColor: "#374151", borderRadius: "5px", padding: "5px"}}>{name}</div>
+                    }}
+                    distanceMin={20}
+                />
+            </div>
         </div>
-    )
+
+    );
 
     function clickedNode(node) {
         // update search params
