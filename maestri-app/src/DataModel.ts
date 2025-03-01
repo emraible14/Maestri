@@ -1,4 +1,4 @@
-import { Artist, Network, NetworkNode, Track } from "./utils/interfaces";
+import { Artist, Network, Track } from "./utils/interfaces";
 import artistsJson from "../../data/artists_v3.json";
 import tracksJson from "../../data/tracks.json";
 import networkJson from '../../data/network_v3.json'
@@ -40,7 +40,6 @@ export class DataModel {
         Object.keys(this.tracks).forEach((id) => {
             this.tracks[id].track_id = id;
         });
-
     }
 
     getArtists() {
@@ -116,37 +115,6 @@ export class DataModel {
             value: trackIds.size, // Number of charting songs in that country
         }));
     };
-
-    getNodeSize(node: NetworkNode, max_contributions: number) {
-        // Normalize
-        const contributions = this.networkData[node.id].total_contributions;
-        const normalized_contributions = (contributions) / max_contributions;
-        const max_size = 64;
-        const min_size = 12
-        return Math.floor(normalized_contributions*(max_size-min_size) + min_size);
-    }
-
-    getEdgeSize(node: NetworkNode, max_local_collaborations: number){
-        // Normalize
-        const collaborations = node.num_collaborations;
-        const normalized_collaborations = (collaborations) / max_local_collaborations;
-        const max_size = 8;
-        const min_size = 1;
-        return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
-    }
-
-    getEdgeDistance(mainAristId: string, collaboratorId: string, max_local_collaborations: number){
-        const nodes: Array<NetworkNode> = this.networkData[mainAristId]["nodes"]
-      
-        const collaborations = nodes.find(n=>(n.id == collaboratorId))?.num_collaborations
-        if (collaborations) {
-            const normalized_collaborations = 1 - ((collaborations) / max_local_collaborations); // Inverse relationship. More collaborations = closer to each other
-            const max_size = 100;
-            const min_size = 45;
-            return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
-        }
-        return 100; // return max distance, should never reach here
-    }
 
     getBarData(currentArtists: Array<Artist>, indexKey: string, barType: string) {
         const barData: Array<{[key: string]: string | number}> = [];
