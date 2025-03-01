@@ -127,8 +127,8 @@ export class DataModel {
         // Normalize
         const collaborations = node.num_collaborations;
         const normalized_collaborations = (collaborations) / max_local_collaborations;
-        const max_size = 12;
-        const min_size = 2;
+        const max_size = 8;
+        const min_size = 1;
         return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
     }
 

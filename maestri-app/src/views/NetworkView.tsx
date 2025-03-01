@@ -5,6 +5,7 @@ import {animated, to} from "@react-spring/web";
 import { DataModel } from '../DataModel';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
 
 interface NetworkProps {
     model: DataModel
@@ -31,16 +32,25 @@ function Network(props: NetworkProps) {
         return (prev && prev.num_collaborations > current.num_collaborations) ? prev : current
     })
     const max_local_collaborations = biggest_local_collaborator.num_collaborations;
+    const allArtists = props.model.getArtists();
 
     return (
         <div className='flex'>
             <div>
+                <br/>
+                <Dropdown value={null}  onChange={setArtist} options={allArtists.filter((art) => art.artist_id !== artistId)} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
                 <h1>{props.model.getArtist(artistId).name}</h1>
                 <Button onClick={() => navigate('/comparison?ids=' + artistId)} label={"Compare artists"} icon="pi pi-user" rounded outlined/>
                 <Button onClick={() => navigate('/artist?id=' + artistId)} label={"View"} icon="pi pi-star" rounded outlined/>
+                <br/>
+                <br/>
+                <div className='width-100'>*Node size is determined by overall number of credits</div>
+                <br/>
+                <br/>
+                <div className='width-100'>*Distance from center node and edge thickness are determined by contributions to {props.model.getArtist(artistId).name}</div>
             </div>
 
-            <div style={{height: "540px", width: "540px", scale: "2", marginTop: "250px", marginLeft: "250px"}}>
+            <div style={{height: "540px", width: "540px", scale: "2", marginTop: "270px", marginLeft: "270px"}}>
                 <ResponsiveNetwork
                     data={networkData}
                     margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
@@ -82,6 +92,15 @@ function Network(props: NetworkProps) {
         </div>
 
     );
+
+    function setArtist(e) {
+        console.log(e)
+        // update search params
+        const newQueryParameters : URLSearchParams = new URLSearchParams();
+        newQueryParameters.set("id",  e.value.artist_id)
+        setSearchParams(newQueryParameters);
+        setArtistId(e.value.artist_id)
+    }
 
     function clickedNode(node) {
         // update search params

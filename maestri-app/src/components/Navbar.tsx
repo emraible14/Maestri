@@ -21,15 +21,15 @@ function Navbar() {
       url: '/comparison'
     },
     {
-      label: 'Explore influences',
+      label: 'Explore connections',
       icon: 'pi pi-users',  
       url: '/network'
     },
-    {
-      label: 'Explore the world',
-      icon: 'pi pi-map',
-      url: '/mapview'
-    }
+    // {
+    //   label: 'Explore the world',
+    //   icon: 'pi pi-map',
+    //   url: '/mapview'
+    // }
   ]
 
 
