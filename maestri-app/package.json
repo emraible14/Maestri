@@ -15,6 +15,7 @@
     "@nivo/axes": "^0.88.0",
     "@nivo/bar": "^0.88.0",
     "@nivo/canvas": "^0.88.0",
+    "@nivo/chord": "^0.88.0",
     "@nivo/circle-packing": "^0.88.0",
     "@nivo/colors": "^0.88.0",
     "@nivo/core": "^0.88.0",
@@ -23,6 +24,7 @@
     "@nivo/legends": "^0.88.0",
     "@nivo/line": "^0.88.0",
     "@nivo/network": "^0.88.0",
+    "@nivo/parallel-coordinates": "^0.88.0",
     "@nivo/radar": "^0.88.0",
     "@nivo/scatterplot": "^0.88.0",
     "@nivo/text": "^0.88.0",
@@ -55,10 +57,10 @@
     "npm": "10.8.2"
   },
   "compilerOptions": {
-    "module": "ESNext",            
-    "resolveJsonModule": true,        
-    "esModuleInterop": true,          
-    "target": "ES6",               
-    "moduleResolution": "node"        
+    "module": "ESNext",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "ES6",
+    "moduleResolution": "node"
   }
 }

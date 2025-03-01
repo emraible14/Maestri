@@ -8,7 +8,7 @@ export interface Artist {
 
 export interface Contribution {
     "song_id": number,
-    "contribution_type": string
+    "type": string
 }
 
 export interface Stats {
