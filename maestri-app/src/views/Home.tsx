@@ -16,7 +16,7 @@ function Home() {
         <h1>Welcome to Maestri</h1>
         <p>Your one-stop shop for comparing artists, here you'll find who's contributing to who.</p>
         <h4>Get started!</h4>
-      </div>
+      </div>c
       
       <div className="flex flex-row justify-center" >
         <div className="flex flex-row w-1/2">

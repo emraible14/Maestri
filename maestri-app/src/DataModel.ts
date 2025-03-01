@@ -8,10 +8,11 @@ import { getBarKeyLabelsFromType } from "./utils/dataUtilities";
 
 
 // hotfix (am i using this word correctly) to convert array to an object with track_id as keys which makes the map work again
-const tracksObject = tracksJson.reduce((acc, track) => {
+// @ts-expect-error invalie JSON but it still works
+const tracksObject = tracksJson.reduce((acc: {[key: string]: Track }, track: Track) => {
     acc[track.track_id] = track;  // Use track_id as the key
     return acc;
-  }, {} as { [key: number]: Track }); // Type declaration for tracksObject
+  }, {} as { [key: string]: Track }); // Type declaration for tracksObject
   
 export class DataModel {
     artists: {[key: string]: Artist};
@@ -20,8 +21,10 @@ export class DataModel {
     networkData: {[key: string]: Network };
 
     constructor() {
+        // @ts-expect-error invalie JSON type but it still works
         this.artists = artistsJson;
         this.tracks = tracksObject;
+        // @ts-expect-error invalie JSON type but it still works
         this.networkData = networkJson;
 
         this.allWeeks = Array.from(
@@ -135,12 +138,14 @@ export class DataModel {
     getEdgeDistance(mainAristId: string, collaboratorId: string, max_local_collaborations: number){
         const nodes: Array<NetworkNode> = this.networkData[mainAristId]["nodes"]
       
-        const collaborations = nodes.find(n=>(n.id == collaboratorId)).num_collaborations
-      
-        const normalized_collaborations = 1 - ((collaborations) / max_local_collaborations); // Inverse relationship. More collaborations = closer to each other
-        const max_size = 100;
-        const min_size = 45;
-        return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
+        const collaborations = nodes.find(n=>(n.id == collaboratorId))?.num_collaborations
+        if (collaborations) {
+            const normalized_collaborations = 1 - ((collaborations) / max_local_collaborations); // Inverse relationship. More collaborations = closer to each other
+            const max_size = 100;
+            const min_size = 45;
+            return Math.floor(normalized_collaborations*(max_size-min_size) + min_size);
+        }
+        return 100; // return max distance, should never reach here
     }
 
     getBarData(currentArtists: Array<Artist>, indexKey: string, barType: string) {
@@ -173,6 +178,7 @@ export class DataModel {
                 result[indexKey] = artist.name;
                 const artistColor = Object.keys(nivoDarkColorPalette)[i1];
                 keys.forEach((key, i2) => {
+                    // @ts-expect-error upset because type index could not be in object but for now this is what we are doing
                     result[key] = artist.stats.overall[typeIndex][dataKeys[i2]];
                     result[key+"Color"] = nivoDarkColorPalette[artistColor][i2];
                 });
@@ -183,41 +189,41 @@ export class DataModel {
     }
 
     getRadarData(currentArtists: Array<Artist>, indexKey: string) {
-        const radarData: Array<{[key: string]: string | number}> = [];
+        const radarData: Array<{[key: string]: string}> = [];
 
         // I hate this, should be a loop but there isn't a consistent way to access the stats so forgive me
-        const result1: {[key: string]: string | number} = {};
+        const result1: {[key: string]: string} = {};
         result1[indexKey] = "avg. team size";
         currentArtists.forEach((artist) => {
-            result1[artist.name] = artist.stats.overall.team_size.avg;
+            result1[artist.name] = artist.stats.overall.team_size.avg.toString();
         });
         radarData.push(result1);
 
-        const result2: {[key: string]: string | number} = {};
+        const result2: {[key: string]: string} = {};
         result2[indexKey] = "# weeks on charts";
         currentArtists.forEach((artist) => {
-            result2[artist.name] = artist.stats.weeks_on_chart.totalWeeksOnChart;
+            result2[artist.name] = artist.stats.weeks_on_chart.totalWeeksOnChart.toString();
         });
         radarData.push(result2);
 
-        const result3: {[key: string]: string | number} = {};
+        const result3: {[key: string]: string} = {};
         result3[indexKey] = "#1 tracks";
         currentArtists.forEach((artist) => {
-            result3[artist.name] = artist.stats.overall.top_songs.num1;
+            result3[artist.name] = artist.stats.overall.top_songs.num1.toString();
         });
         radarData.push(result3);
 
-        const result4: {[key: string]: string | number} = {};
+        const result4: {[key: string]: string} = {};
         result4[indexKey] = "total samples/interpolations used";
         currentArtists.forEach((artist) => {
-            result4[artist.name] = artist.stats.overall.song_references.total;
+            result4[artist.name] = artist.stats.overall.song_references.total.toString();
         });
         radarData.push(result4);
 
-        const result5: {[key: string]: string | number} = {};
+        const result5: {[key: string]: string} = {};
         result5[indexKey] = "# charting tracks";
         currentArtists.forEach((artist) => {
-            result5[artist.name] = artist.stats.overall.contribution_counts.total;
+            result5[artist.name] = artist.stats.overall.contribution_counts.total.toString();
         });
         radarData.push(result5);
 

@@ -3,7 +3,7 @@ import { Artist } from "../utils/interfaces";
 import RadarChart from "../components/RadarChart";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import BarChart from "../components/BarChart";
 import { DataModel } from "../DataModel";
 import { nivoDarkColorPalette } from "../utils/colorUtilities";
@@ -83,7 +83,7 @@ function Comparison(props: ComparisonProps) {
     }
 
     function addArtistCard() {
-        function addArtist(event) {
+        function addArtist(event: DropdownChangeEvent) {
             const newArtistIds = searchParams.get("ids")?.split(',') || [];
             // add new artist
             newArtistIds.push(event.target?.value?.artist_id.toString());

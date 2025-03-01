@@ -1,7 +1,7 @@
 import { Image } from 'primereact/image';
 import { useState, useEffect, useMemo, } from 'react';
-import { Dropdown } from 'primereact/dropdown';
-import { Slider } from "primereact/slider";
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import { Slider, SliderChangeEvent } from "primereact/slider";
 import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
 import { Track } from '../utils/interfaces';
@@ -62,10 +62,12 @@ function Artist(props: ArtistProps) {
         setIsPaused((prev) => !prev);
     };
 
-    const handleSliderChange = (e: any) => {
-        setIsPaused(true); // Pause when slider is moved
-        setCurrentIndex(e.value); // Update index
-        setMapData(allMapData[e.value])
+    const handleSliderChange = (e: SliderChangeEvent) => {
+        if (typeof e.value === 'number') {
+            setIsPaused(true); // Pause when slider is moved
+            setCurrentIndex(e.value); // Update index
+            setMapData(allMapData[e.value])
+        }
     };
 
     // const handleSliderEnd = () => {
@@ -125,7 +127,7 @@ function Artist(props: ArtistProps) {
         </div>
     );
 
-    function selectArtist(e) {
+    function selectArtist(e: DropdownChangeEvent) {
         // update search params
         const newQueryParameters : URLSearchParams = new URLSearchParams();
         newQueryParameters.set("id",  e.value.artist_id)

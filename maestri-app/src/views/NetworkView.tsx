@@ -1,11 +1,12 @@
-import { ResponsiveNetwork } from '@nivo/network'
+import { ComputedNode, NodeProps, ResponsiveNetwork } from '@nivo/network'
 import NetworkData from '../../../data/network_v3.json'  
 import { useState } from "react";
 import {animated, to} from "@react-spring/web";
 import { DataModel } from '../DataModel';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import { NetworkNode } from '../utils/interfaces';
 
 interface NetworkProps {
     model: DataModel
@@ -74,17 +75,17 @@ function Network(props: NetworkProps) {
                     motionConfig="slow"
                     onClick={clickedNode}
                     nodeComponent={n=>nodeComponent(n, props)}
-                    nodeTooltip={(node)=>{
-                    let artist = props.model.getArtist(node.node.data.id)
-                    let name = node.node.data.id
-                    if (typeof artist == 'undefined'){
-                        // name = "Name not found!"
-                    }
-                    else {
-                        name = artist.name
-                    }
+                        nodeTooltip={(node)=>{
+                        const artist = props.model.getArtist(node.node.data.id)
+                        let name = node.node.data.id
+                        if (typeof artist == 'undefined'){
+                            // name = "Name not found!"
+                        }
+                        else {
+                            name = artist.name
+                        }
 
-                    return <div style={{backgroundColor: "#374151", borderRadius: "5px", padding: "5px"}}>{name}</div>
+                        return <div style={{backgroundColor: "#374151", borderRadius: "5px", padding: "5px"}}>{name}</div>
                     }}
                     distanceMin={20}
                 />
@@ -93,8 +94,7 @@ function Network(props: NetworkProps) {
 
     );
 
-    function setArtist(e) {
-        console.log(e)
+    function setArtist(e: DropdownChangeEvent) {
         // update search params
         const newQueryParameters : URLSearchParams = new URLSearchParams();
         newQueryParameters.set("id",  e.value.artist_id)
@@ -102,7 +102,7 @@ function Network(props: NetworkProps) {
         setArtistId(e.value.artist_id)
     }
 
-    function clickedNode(node) {
+    function clickedNode(node: ComputedNode<NetworkNode>) {
         // update search params
         const newQueryParameters : URLSearchParams = new URLSearchParams();
         newQueryParameters.set("id", node.id)
@@ -113,7 +113,7 @@ function Network(props: NetworkProps) {
 
 
 // TODO: this should be moved into it's own component and typed properly
-function nodeComponent(nodeIn,props: NetworkProps ){
+function nodeComponent(nodeIn: NodeProps<NetworkNode>, props: NetworkProps ){
     const  {
         node,
         animated: animatedProps,
@@ -123,7 +123,7 @@ function nodeComponent(nodeIn,props: NetworkProps ){
         onMouseLeave,
     } = nodeIn
 
-    var artistImageUrl = "https://images.genius.com/073372f6cd316f7c68b4c4b7d8c610c9.675x675x1.jpg"
+    let artistImageUrl = "https://images.genius.com/073372f6cd316f7c68b4c4b7d8c610c9.675x675x1.jpg"
     // TODO: Actually use the images when we have the genius ids for the artists
     if (typeof node.id == 'undefined'){
       console.log(node)

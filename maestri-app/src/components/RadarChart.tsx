@@ -3,10 +3,10 @@ import { getTheme, NIVO_DARK } from '../utils/colorUtilities';
 import RadarChartLabel from './RadarChartLabel';
 
 interface RadarChartProps {
-    readonly data: Array<{[key: string]: string | number}>;
+    readonly data: Array<{[key: string]: string}>;
     readonly keys: Array<string>;
     readonly indexKey: string;
-    handleAttributeClick: ((attribute: string) => void);
+    readonly handleAttributeClick: ((attribute: string) => void);
 }
 
 function RadarChart(props: RadarChartProps) {
