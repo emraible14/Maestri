@@ -26,7 +26,7 @@ function ParallelCoordinatesChart(props: {artists: Array<Artist>, model: DataMod
     })
 
     return (
-        <div style={{height: "300px"}}>
+        <div style={{height: "43vh"}}>
             <ResponsiveParallelCoordinates
                 data={data}
                 variables={[
@@ -70,7 +70,7 @@ function ParallelCoordinatesChart(props: {artists: Array<Artist>, model: DataMod
                     }
                 ]}
                 margin={{ top: 30, right: 230, bottom: 30, left: 250 }}
-                lineWidth={8}
+                lineWidth={10}
                 lineOpacity={1}
                 theme={getTheme()}
                 colors={{ scheme: NIVO_DARK }}

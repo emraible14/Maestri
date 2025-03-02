@@ -10,7 +10,7 @@ interface BarChartProps {
 
 function BarChart(props: BarChartProps) {
     return (
-    <div style={{ height: '40vh', width: '100%'}}>
+    <div style={{ height: '43vh', width: '100%'}}>
     <ResponsiveBar
         data={props.data}
         // layout="horizontal"
@@ -18,7 +18,7 @@ function BarChart(props: BarChartProps) {
         // enableGridX={true}
         keys={props.keys}
         indexBy={props.indexKey}
-        margin={{ top: 20, right: 30, bottom: 130, left: 50 }}
+        margin={{ top: 35, right: 30, bottom: 130, left: 50 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}

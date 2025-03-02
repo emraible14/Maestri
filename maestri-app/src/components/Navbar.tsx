@@ -12,17 +12,17 @@ function Navbar() {
   const items: MenuItem[] = [
     {
       label: 'Artist',
-      icon: 'pi pi-star',
+      icon: 'pi pi-user',
       url: '/artist?id=123'
     },
     {
       label: 'Compare artists',
-      icon: 'pi pi-user',
+      icon: 'pi pi-users',
       url: '/comparison'
     },
     {
       label: 'Explore connections',
-      icon: 'pi pi-users',  
+      icon: 'pi pi-arrow-right-arrow-left',  
       url: '/network'
     },
     // {

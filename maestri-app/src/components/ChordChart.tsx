@@ -49,11 +49,11 @@ function ChordChart(props: { readonly artists: Array<Artist> }) {
       ]
 
     return (
-        <div style={{height: '500px', width: '500px'}}>
+        <div style={{height: '400px', width: '500px'}}>
             <ResponsiveChord
                 data={data}
                 keys={props.artists.map((art) => { return art.name})}
-                margin={{ top: 110, right: 60, bottom: 100, left: 80 }}
+                margin={{ top: 80, right: 60, bottom: 80, left: 80 }}
                 valueFormat=".2f"
                 padAngle={0.02}
                 innerRadiusRatio={0.96}
@@ -75,20 +75,20 @@ function ChordChart(props: { readonly artists: Array<Artist> }) {
                     modifiers: [
                         [
                             'darker',
-                            0.6
+                            0.1
                         ]
                     ]
                 }}
                 labelRotation={-90}
-                // labelTextColor={{
-                //     from: 'color',
-                //     modifiers: [
-                //         [
-                //             'darker',
-                //             1
-                //         ]
-                //     ]
-                // }}
+                labelTextColor={{
+                    from: 'color',
+                    modifiers: [
+                        [
+                            'darker',
+                            0.1
+                        ]
+                    ]
+                }}
                 theme={getTheme()}
                 colors={{ scheme: NIVO_DARK }}
                 motionConfig="stiff"
