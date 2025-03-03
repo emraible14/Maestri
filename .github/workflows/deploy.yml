@@ -10,6 +10,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+          working-directory: ./maestri-app/
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -17,6 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
+          cache-dependency-path: meastri-app/package-lock.json
           node-version: 20
           cache: 'npm'
 
