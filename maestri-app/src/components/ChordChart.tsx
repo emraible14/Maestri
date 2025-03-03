@@ -53,7 +53,7 @@ function ChordChart(props: { readonly artists: Array<Artist> }) {
             <ResponsiveChord
                 data={data}
                 keys={props.artists.map((art) => { return art.name})}
-                margin={{ top: 80, right: 60, bottom: 80, left: 80 }}
+                margin={{ top: 90, right: 60, bottom: 80, left: 80 }}
                 valueFormat=".2f"
                 padAngle={0.02}
                 innerRadiusRatio={0.96}

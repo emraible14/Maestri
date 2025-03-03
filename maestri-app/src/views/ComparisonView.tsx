@@ -13,14 +13,9 @@ import CreditChip from "../components/CreditChip";
 import ChordChart from "../components/ChordChart";
 import { SelectButton } from "primereact/selectbutton";
 
-interface ComparisonProps {
-    readonly model: DataModel;
-}
-
-function Comparison(props: ComparisonProps) {
+function Comparison(props: { readonly model: DataModel }) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentArtists, setCurrentArtists] = useState<Array<Artist>>([]);
-    // const [barType, setBarType] = useState("# charting tracks");
     const options = ['Overview', 'Detailed View']
     const [detailedBreakdown, setdetailedBreakdown] = useState('Overview');
     const navigate = useNavigate();
@@ -46,19 +41,8 @@ function Comparison(props: ComparisonProps) {
             </div>
             <SelectButton invalid value={detailedBreakdown} onChange={(e) => setdetailedBreakdown(e.value)} options={options} />
             { dataDisplay() }
-            {/* <div className="flex justify-around">
-                <RadarChart data={props.model.getRadarData(currentArtists, "attribute")} 
-                    keys={currentArtists.map((artist) => { return artist.name })} indexKey={"attribute"}
-                    handleAttributeClick={updateBarType}></RadarChart>
-                <BarChart data={props.model.getBarData(currentArtists, "artist", barType)} 
-                    keys={getBarKeyLabelsFromType(barType)} indexKey={"artist"} type={barType}></BarChart>
-            </div> */}
         </>
     );
-
-    // function updateBarType(type: string) {
-    //     setBarType(type);
-    // }
 
     function dataDisplay() {
         if (detailedBreakdown === 'Detailed View') {
@@ -102,14 +86,6 @@ function Comparison(props: ComparisonProps) {
             <img src={artistImageLink} alt={"image of " + artist.name} ></img>
             </div>
         );
-        // const footer = (
-        //     <div className="flex">
-        //             <Button style={{ marginRight: '10px' }} onClick={() => navigate('/artist?id=' + artist.artist_id)} icon="pi pi-user" outlined tooltip="View Artist"/>
-        //             <Button style={{ marginRight: '10px' }} onClick={() => navigate('/network?id=' + artist.artist_id)} icon="pi pi-arrow-right-arrow-left" outlined aria-label="Cancel" tooltip="Explore Connections"/>
-        //             <Button style={{ marginRight: '10px' }} onClick={removeArtist} icon="pi pi-times" outlined severity="danger" aria-label="Cancel" 
-        //                 disabled={currentArtists.length === 1} tooltip="Remove Artist"/>
-        //     </div>
-        // );
 
         return (
             <Card key={artist.artist_id} title={artist.name} header={header} className="margin-10">

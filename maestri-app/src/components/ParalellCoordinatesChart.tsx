@@ -5,7 +5,7 @@ import { DataModel } from '../DataModel';
 import { Artist } from '../utils/interfaces';
 import { ParallelCoordinatesTooltip } from './ParallelCoordinatesTooltip';
 
-function ParallelCoordinatesChart(props: {artists: Array<Artist>, model: DataModel}) {
+function ParallelCoordinatesChart(props: { readonly artists: Array<Artist>, readonly model: DataModel}) {
 
     interface ChartData {
         "charting_tracks": number,
@@ -20,7 +20,7 @@ function ParallelCoordinatesChart(props: {artists: Array<Artist>, model: DataMod
             "charting_tracks": artist.stats.overall.contribution_counts.total,
             "avg_team_size": artist.stats.overall.team_size.avg,
             "originality": artist.stats.overall.song_references.total,
-            "num_one": artist.stats.overall.top_songs.top10,
+            "num_one": artist.stats.overall.top_songs.top10 + artist.stats.overall.top_songs.num1,
             "id": artist.name,
         })
     })
@@ -66,7 +66,7 @@ function ParallelCoordinatesChart(props: {artists: Array<Artist>, model: DataMod
                         min: 0,
                         max: 'auto',
                         legendPosition: 'start',
-                        legendOffset: 20
+                        legendOffset: 20,
                     }
                 ]}
                 margin={{ top: 30, right: 230, bottom: 30, left: 250 }}

@@ -53,7 +53,7 @@ function NetworkChart(props: NetworkChartProps) {
                         // name = "Name not found!"
                     }
                     else {
-                        name = props.artist.name
+                        name = props.model.getArtist(node.node.data.id).name
                     }
 
                     return <div style={{backgroundColor: "#374151", borderRadius: "5px", padding: "5px"}}>{name}</div>
