@@ -197,4 +197,18 @@ export class DataModel {
 
         return radarData;
     }
+
+    getBumpData(artist: Artist) {
+        const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString() }))];
+        const result = this.getSpecificTracks(contributionIds)
+            .map((track) => {
+                const filteredChartings = track.chartings;
+                return { ...track, chartings: filteredChartings };
+            });
+
+        
+
+        console.log("Result:")
+        console.log(result);
+    }
 }

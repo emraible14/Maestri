@@ -6,6 +6,7 @@ import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
 import { Track } from '../utils/interfaces';
 import ChoroplethChart from '../components/ChloroplethChart';
+import BumpChart from '../components/BumpChart';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 
@@ -82,7 +83,13 @@ function Artist(props: ArtistProps) {
         <Button onClick={() => navigate('/network?id=' + currentArtist.artist_id)} label={"Explore"} icon="pi pi-users" rounded outlined aria-label="Cancel"/>
         
         <div style={{ position: "absolute", left: 50, top: 420, height: "50vh", width: "30hw" }}>
-            <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
+            
+            <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]}
+                <br></br>
+                Total track(s): {chartingTracks.length}</h2>
+            
+            
+            
             <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
                 <ul>
                     {chartingTracks.length === 0 ? (
@@ -123,6 +130,9 @@ function Artist(props: ArtistProps) {
                     onChange={handleSliderChange}
                     //onSlideEnd={handleSliderEnd}
                 />
+            </div>
+            <div className="flex justify-around">
+                <BumpChart data={props.model.getBumpData(currentArtist)}/>
             </div>
         </div>
     );
