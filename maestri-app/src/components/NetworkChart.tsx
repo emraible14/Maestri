@@ -48,12 +48,17 @@ function NetworkChart(props: NetworkChartProps) {
                 onClick={props.clickedNode}
                 nodeComponent={n=>NetWorkNodeComponent(n, props.model)}
                     nodeTooltip={(node)=>{
-                    let name = node.node.data.id
+                    let id = node.node.data.id
+                    let name = id
                     if (typeof props.artist == 'undefined'){
                         // name = "Name not found!"
                     }
                     else {
+<<<<<<< HEAD
                         name = props.model.getArtist(node.node.data.id).name
+=======
+                        name = props.model.getArtist(id).name
+>>>>>>> main
                     }
 
                     return <div style={{backgroundColor: "#374151", borderRadius: "5px", padding: "5px"}}>{name}</div>

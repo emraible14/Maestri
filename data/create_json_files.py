@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import json
 import math
@@ -8,7 +9,7 @@ def create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls):
     spotify_id_to_genius_id = {}
 
     #? 1) Tracks
-    for i, t in df_tracks.iterrows():
+    for i, t in df_tracks[~df_tracks["spotifyId"].isna()].iterrows():
         image_url = df_image_urls[(df_image_urls['id'] == t['geniusId']) & (df_image_urls['type'] == 'song')]['imageURL']
 
         # print(t['geniusId'], image_url)
@@ -244,6 +245,7 @@ if __name__ == "__main__":
     # load tracks
     df_tracks = pd.read_csv(tracks_file, dtype={"geniusId": pd.Int64Dtype()})  # spotifyId,trackName,artistName,releaseDate,geniusId,geniusTrackName,geniusArtistName,geniusReleaseDate,trackLanguage
     df_tracks = df_tracks[df_tracks["geniusId"].notna()].drop_duplicates(subset=["geniusId"])
+    df_tracks['geniusReleaseDate'].replace({pd.NaT: None, np.nan: None}, inplace=True)
 
     # load contributions
     df_contributions = pd.read_csv(contributions_file, dtype={"geniusId": pd.Int64Dtype(), "artistId": pd.Int64Dtype()})
