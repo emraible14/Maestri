@@ -44,7 +44,7 @@ const theme = {
         },
         "legend": {
             "text": {
-                "fontSize": 14,
+                "fontSize": 18,
                 "fill": "#ffffff",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"

@@ -57,7 +57,8 @@ function ParallelCoordinatesChart(props: { readonly artists: Array<Artist>, read
                         min: 'auto',
                         max: 'auto',
                         legendPosition: 'start',
-                        legendOffset: 20
+                        legendOffset: 20,
+                        
                     },
                     {
                         id: 'num_one',

@@ -18,7 +18,7 @@ function BarChart(props: BarChartProps) {
         // enableGridX={true}
         keys={props.keys}
         indexBy={props.indexKey}
-        margin={{ top: 35, right: 30, bottom: 130, left: 50 }}
+        margin={{ top: 35, right: 30, bottom: 150, left: 50 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}
@@ -38,7 +38,7 @@ function BarChart(props: BarChartProps) {
         axisBottom={{
             tickSize: 5,
             tickPadding: 5,
-            tickRotation: 0,
+            tickRotation: 20,
             // legend: props.type,
             // legendPosition: 'middle',
             legendOffset: 40,
@@ -72,7 +72,7 @@ function BarChart(props: BarChartProps) {
                 direction: 'column',
                 justify: false,
                 translateX: 0,
-                translateY: 125,
+                translateY: 145,
                 itemsSpacing: 2,
                 itemWidth: 100,
                 itemHeight: 20,
