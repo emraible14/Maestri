@@ -5,7 +5,7 @@ import { Button } from "primereact/button";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import BarChart from "../components/BarChart";
 import { DataModel } from "../DataModel";
-import { nivoDarkColorPalette } from "../utils/colorUtilities";
+import { getColorPalette, nivoDarkColorPalette } from "../utils/colorUtilities";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 import ParallelCoordinatesChart from "../components/ParalellCoordinatesChart";
@@ -35,11 +35,11 @@ function Comparison(props: { readonly model: DataModel }) {
                 { currentArtists.map(singleArtist) }
                 { addArtistCard() }
                 <div className="col-span-2">
-                    <h2>Connections:</h2>
-                    <ChordChart artists={currentArtists}></ChordChart>
+                    <h2 style={{marginLeft: '10px'}}>Collaborations:</h2>
+                    <ChordChart artists={currentArtists} model={props.model}></ChordChart>
                 </div>
             </div>
-            <SelectButton invalid value={detailedBreakdown} onChange={(e) => setdetailedBreakdown(e.value)} options={options} />
+            <SelectButton style={{marginLeft: '10px'}} invalid value={detailedBreakdown} onChange={(e) => setdetailedBreakdown(e.value)} options={options} />
             { dataDisplay() }
         </>
     );
@@ -128,14 +128,20 @@ function Comparison(props: { readonly model: DataModel }) {
         );
 
         if (currentArtists.length < 5) {
+            const numCards = 5 - currentArtists.length;
             const currentArtistIds = currentArtists.map((art) => { return art.artist_id})
             const availableArtists = props.model.getArtists().filter((art) => !currentArtistIds.includes(art.artist_id) )
 
-            return (
-            <Card className="margin-10 justify-items-center content-center" header={header}>
-                <Dropdown value={null}  onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
-            </Card>
-            );
+            const cards = []
+            for (let i = 0; i < numCards; i++) {
+                cards.push(
+                    <Card className="margin-10 justify-items-center content-center" header={header}>
+                        <Dropdown value={null} onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
+                    </Card>
+                );
+            }
+
+            return cards;
         }
     }
 }

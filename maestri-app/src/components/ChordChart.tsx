@@ -3,62 +3,50 @@
 import { ResponsiveChord } from '@nivo/chord'
 import { getTheme, NIVO_DARK } from '../utils/colorUtilities'
 import { Artist } from '../utils/interfaces'
+import { DataModel } from '../DataModel';
+import ChordRibbonTooltip from './ChordRibbonTooltip';
+import ChordArcTooltip from './ChordArcTooltip';
 
 // make sure parent container have a defined height when using
 // responsive component, otherwise height will be 0 and
 // no chart will be rendered.
 // website examples showcase many properties,
 // you'll often use just a few of them.
-function ChordChart(props: { readonly artists: Array<Artist> }) {
-    const data = [
-        [
-          425,
-          317,
-          494,
-          318,
-          380
-        ],
-        [
-          638,
-          1305,
-          440,
-          74,
-          38
-        ],
-        [
-          1342,
-          71,
-          305,
-          426,
-          1289
-        ],
-        [
-          448,
-          183,
-          1443,
-          381,
-          833
-        ],
-        [
-          282,
-          213,
-          244,
-          1703,
-          2
-        ]
-      ]
+function ChordChart(props: { readonly artists: Array<Artist>, readonly model: DataModel }) {
+
+    // loop through artists and get their connections
+    const data: Array<Array<number>> = [];
+    props.artists.forEach((artist) => {
+        const result: Array<number> = []
+        const others = [...props.artists]
+        const network = props.model.getNetworkDataForArtist(artist.artist_id);
+        others.forEach((artist2) => {
+            if (artist.artist_id === artist2.artist_id) {
+                const uniqueConts = new Set(artist.contributions.map((cont) => { return cont.song_id }));
+                result.push(uniqueConts.size) 
+            } else {
+                const collabs = network.nodes.find((node) => node.id === artist2.artist_id);
+                if (collabs) {
+                    result.push(collabs.num_collaborations);
+                } else {
+                    result.push(0); // no collaborations
+                }
+            }
+        });
+        data.push(result);
+    })
 
     return (
         <div style={{height: '400px', width: '500px'}}>
             <ResponsiveChord
                 data={data}
                 keys={props.artists.map((art) => { return art.name})}
-                margin={{ top: 100, right: 60, bottom: 100, left: 80 }}
+                margin={{ top: 40, right: 60, bottom: 40, left: 80 }}
                 valueFormat=".2f"
-                padAngle={0.02}
-                innerRadiusRatio={0.96}
-                innerRadiusOffset={0.02}
                 inactiveArcOpacity={0.25}
+                padAngle={0.02}
+                innerRadiusRatio={0.92}
+                // labelOffset={-30}
                 arcBorderColor={{
                     from: 'color',
                     modifiers: [
@@ -79,7 +67,7 @@ function ChordChart(props: { readonly artists: Array<Artist> }) {
                         ]
                     ]
                 }}
-                labelRotation={-90}
+                // labelRotation={-90}
                 labelTextColor={{
                     from: 'color',
                     modifiers: [
@@ -92,30 +80,8 @@ function ChordChart(props: { readonly artists: Array<Artist> }) {
                 theme={getTheme()}
                 colors={{ scheme: NIVO_DARK }}
                 motionConfig="stiff"
-                // legends={[
-                //     {
-                //         anchor: 'bottom',
-                //         direction: 'column',
-                //         justify: false,
-                //         translateX: 0,
-                //         translateY: 90,
-                //         itemWidth: 80,
-                //         itemHeight: 14,
-                //         itemsSpacing: 0,
-                //         itemTextColor: '#999',
-                //         itemDirection: 'left-to-right',
-                //         symbolSize: 12,
-                //         symbolShape: 'circle',
-                //         effects: [
-                //             {
-                //                 on: 'hover',
-                //                 style: {
-                //                     itemTextColor: '#000'
-                //                 }
-                //             }
-                //         ]
-                //     }
-                // ]}
+                ribbonTooltip={ChordRibbonTooltip}
+                arcTooltip={ChordArcTooltip}
             />
         </div>
     )

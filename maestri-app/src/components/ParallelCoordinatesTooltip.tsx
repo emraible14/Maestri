@@ -1,5 +1,6 @@
 import { TooltipProps, DatumGroupKeys, BaseDatum } from '@nivo/parallel-coordinates'
 
+
 export const ParallelCoordinatesTooltip = <
     Datum extends BaseDatum,
     GroupBy extends DatumGroupKeys<Datum> | undefined
@@ -21,7 +22,7 @@ export const ParallelCoordinatesTooltip = <
         }}
     >
         <b>{datum.id}</b>
-        charting tracks: {datum.data["charting_tracks"]}
+        charting tracks: {(datum.data)["charting_tracks"]}
         <br></br>
         avg. team size: {datum.data["avg_team_size"]}
         <br></br>

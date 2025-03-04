@@ -1,5 +1,6 @@
 import { ResponsiveBar } from '@nivo/bar'
 import { getTheme } from '../utils/colorUtilities';
+import { Datum } from '@nivo/legends';
 
 interface BarChartProps {
     readonly data: Array<{[key: string]: string | number}>
@@ -9,6 +10,18 @@ interface BarChartProps {
 }
 
 function BarChart(props: BarChartProps) {
+
+    const legendData: Array<Datum> = []
+    const grayColors = ['#333333', '#777777', '#bbbbbb','#ffffff']
+    props.keys.forEach((key, idx) => {
+        legendData.push({
+            id: key,
+            label: key,
+            color: grayColors[idx]
+        })
+    })
+    legendData.reverse(); // reverse to follow stacking order 
+
     return (
     <div style={{ height: '43vh', width: '100%'}}>
     <ResponsiveBar
@@ -38,7 +51,7 @@ function BarChart(props: BarChartProps) {
         axisBottom={{
             tickSize: 5,
             tickPadding: 5,
-            tickRotation: 20,
+            tickRotation: -20,
             // legend: props.type,
             // legendPosition: 'middle',
             legendOffset: 40,
@@ -67,6 +80,8 @@ function BarChart(props: BarChartProps) {
         }}
         legends={[
             {
+                // dataFrom: 'keys',
+                data: legendData,
                 dataFrom: 'keys',
                 anchor: 'bottom',
                 direction: 'column',
