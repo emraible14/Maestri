@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
 import { Artist } from "../utils/interfaces";
 import { Card } from "primereact/card";
-import { Button } from "primereact/button";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import BarChart from "../components/BarChart";
 import { DataModel } from "../DataModel";
-import { nivoDarkColorPalette } from "../utils/colorUtilities";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 import ParallelCoordinatesChart from "../components/ParalellCoordinatesChart";
-import CreditChip from "../components/CreditChip";
 import ChordChart from "../components/ChordChart";
 import { SelectButton } from "primereact/selectbutton";
+import SingleArtistCard from "../components/SingleArtistCard";
 
 function Comparison(props: { readonly model: DataModel }) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentArtists, setCurrentArtists] = useState<Array<Artist>>([]);
     const options = ['Overview', 'Detailed View']
     const [detailedBreakdown, setdetailedBreakdown] = useState('Overview');
-    const navigate = useNavigate();
 
     useEffect(() => {
         // get artists on mount
@@ -34,7 +31,7 @@ function Comparison(props: { readonly model: DataModel }) {
             <div className="grid grid-cols-7 justify-around">
                 { currentArtists.map(singleArtist) }
                 { addArtistCard() }
-                <div className="col-span-2">
+                <div key={'comparison-chart'} className="col-span-2">
                     <h2 style={{marginLeft: '10px'}}>Collaborations:</h2>
                     <ChordChart artists={currentArtists} model={props.model}></ChordChart>
                 </div>
@@ -69,42 +66,25 @@ function Comparison(props: { readonly model: DataModel }) {
 
     function singleArtist(artist: Artist, index: number) {
         function removeArtist() {
+            let newArtistIds = searchParams.get("ids")?.split(',') || [];
+            // filter out artist
+            newArtistIds = newArtistIds.filter((art) => art !== artist.artist_id);
+
             // update search params
-            const newArtistIds = searchParams.get("ids")?.split(',').filter((art) => art !== artist.artist_id);
-            if (newArtistIds) {
-                const newQueryParameters : URLSearchParams = new URLSearchParams();
-                newQueryParameters.set("ids",  newArtistIds?.join(","))
-                setSearchParams(newQueryParameters);
-                // update current artists list
-                setCurrentArtists(currentArtists.filter((art) => art.artist_id !== artist.artist_id))
-            }
+            const newQueryParameters : URLSearchParams = new URLSearchParams();
+            newQueryParameters.set("ids",  newArtistIds?.join(","))
+            setSearchParams(newQueryParameters);
+
+            // update current artists list
+            setCurrentArtists(props.model.getSpecificArtists(newArtistIds));
         }
 
-        const artistImageLink = artist.image_url || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg";
-        const header = (
-            <div className="rounded-s header-image" style={{ border: "7px solid " +  Object.keys(nivoDarkColorPalette)[index]}}>
-            <img src={artistImageLink} alt={"image of " + artist.name} ></img>
-            </div>
-        );
-
         return (
-            <Card key={artist.artist_id} title={artist.name} header={header} className="margin-10">
-                <div className="flex">
-                    <Button style={{ marginRight: '10px' }} onClick={() => navigate('/artist?id=' + artist.artist_id)} icon="pi pi-user" outlined tooltip="View Artist"/>
-                    <Button style={{ marginRight: '10px' }} onClick={() => navigate('/network?id=' + artist.artist_id)} icon="pi pi-arrow-right-arrow-left" outlined aria-label="Cancel" tooltip="Explore Connections"/>
-                    <Button style={{ marginRight: '10px' }} onClick={removeArtist} icon="pi pi-times" outlined severity="danger" aria-label="Cancel" 
-                        disabled={currentArtists.length === 1} tooltip="Remove Artist"/>
-                </div>
-                <br></br>
-                <div className="flex-wrap">
-                    <CreditChip label="primary" artist={artist}></CreditChip>
-                    <CreditChip label="feature" artist={artist}></CreditChip>
-                    <CreditChip label="writer" artist={artist}></CreditChip>
-                    <CreditChip label="producer" artist={artist}></CreditChip>
-                </div>
-            </Card>
+            <SingleArtistCard key={artist.artist_id} artist={artist} index={index} removeArtist={removeArtist}
+                removable detailable networkable></SingleArtistCard>
         )
     }
+
 
     function addArtistCard() {
         function addArtist(event: DropdownChangeEvent) {
@@ -135,7 +115,7 @@ function Comparison(props: { readonly model: DataModel }) {
             const cards = []
             for (let i = 0; i < numCards; i++) {
                 cards.push(
-                    <Card className="margin-10 justify-items-center content-center" header={header}>
+                    <Card key={'add-card' + i} className="margin-10 justify-items-center content-center" header={header}>
                         <Dropdown value={null} onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
                     </Card>
                 );

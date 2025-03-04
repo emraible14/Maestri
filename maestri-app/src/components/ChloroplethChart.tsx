@@ -30,8 +30,8 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
         onMouseLeave={() => {}}
         onClick={() => {}}
         role=''
-        projectionScale={300} // change to zoom in zoom out, effectively cutting the map
-        projectionTranslation={[ 0.8, 1 ]}
+        projectionScale={400} // change to zoom in zoom out, effectively cutting the map
+        projectionTranslation={[ 0.75, 1.18 ]}
         projectionRotation={[ 0, 0, 0 ]}
         borderWidth={0.5}
         borderColor={getColorPalette().amber}

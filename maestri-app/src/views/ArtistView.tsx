@@ -1,4 +1,3 @@
-import { Image } from 'primereact/image';
 import { useState, useEffect, useMemo, } from 'react';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { Slider, SliderChangeEvent } from "primereact/slider";
@@ -6,7 +5,8 @@ import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
 import { Track } from '../utils/interfaces';
 import ChoroplethChart from '../components/ChloroplethChart';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import SingleArtistCard from '../components/SingleArtistCard';
 import { Button } from 'primereact/button';
 
 
@@ -17,7 +17,6 @@ interface ArtistProps {
 function Artist(props: ArtistProps) {
     const [searchParams, setSearchParams] = useSearchParams();
     const artistId = searchParams.get("id");
-    const navigate = useNavigate();
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(true);
@@ -70,59 +69,73 @@ function Artist(props: ArtistProps) {
         }
     };
 
+    function timelineButton() {
+        if (isPaused) {
+            return (<Button onClick={handleTogglePause} icon="pi pi-play" aria-label="Play" rounded />);
+        } else {
+            return (<Button onClick={handleTogglePause} icon="pi pi-pause" aria-label="Play" rounded/>);
+        }
+    }
+
     // const handleSliderEnd = () => {
     //   setIsPaused(false); // Resume when slider is released
     // };
   
     return (
         <div>
-        <Image src={currentArtist.image_url} height='200px' width='200px'></Image>
-        <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{currentArtist.name}</h1>
-        <Button onClick={() => navigate('/comparison?ids=' + currentArtist.artist_id)} label={"Compare artists"} icon="pi pi-user" rounded outlined/>
-        <Button onClick={() => navigate('/network?id=' + currentArtist.artist_id)} label={"Explore"} icon="pi pi-users" rounded outlined aria-label="Cancel"/>
-        
-        <div style={{ position: "absolute", left: 50, top: 420, height: "50vh", width: "30hw" }}>
-            <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
-            <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
-                <ul>
-                    {chartingTracks.length === 0 ? (
-                        <p>No charting tracks for this week.</p>
-                    ) : (
-                        chartingTracks.map((track) => (
-                        <li key={track.track_id}>
-                            <strong style={{ color: getColorPalette().amber }}>{track.name}</strong> - {track.primary_artist_name} <br />
-                            <br />
-                        </li>
-                        ))
-                    )}
-                </ul>
-            </div>
-        </div>
-        <div className='clipped'>
-            <ChoroplethChart mapData={mapData} />   
-        </div>
-            <div style={{ position: "absolute", bottom: 50, left: 10, height: "10%", width: "99%" }}>
-                <Dropdown
-                    value={currentArtist}
-                    onChange={selectArtist}
-                    options={props.model.getArtists()} //hardcoded just to test shifting artist
-                    optionLabel="name"
-                    placeholder={currentArtist.name}
-                    className="w-full md:w-14rem"
-                    checkmark={true}
-                    highlightOnSelect={false}
-                    filter
-                    virtualScrollerOptions={{ itemSize: 38 }}
-                />
-                <button onClick={handleTogglePause} style={{padding: '10px 20px'}}>{isPaused ? "Play" : "Pause"}</button>
-                <p>Current week {props.model.allWeeks[currentIndex]}</p>
-                <Slider
-                    value={currentIndex}
-                    min={0}
-                    max={props.model.allWeeks.length - 1}
-                    onChange={handleSliderChange}
-                    //onSlideEnd={handleSliderEnd}
-                />
+            <div className='grid grid-cols-3'>
+                <div>
+                    <Dropdown
+                        style={{ marginLeft: '10px', marginTop: '10px', width: '19vw'}}
+                        value={currentArtist}
+                        onChange={selectArtist}
+                        options={props.model.getArtists()} //hardcoded just to test shifting artist
+                        optionLabel="name"
+                        placeholder={currentArtist.name}
+                        checkmark={true}
+                        highlightOnSelect={false}
+                        filter
+                        virtualScrollerOptions={{ itemSize: 38 }}
+                    />
+                    <div style={{width: '20vw'}}>
+                        <SingleArtistCard  artist={currentArtist} comparable networkable ></SingleArtistCard>
+                    </div>
+                    <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
+                    <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
+                        <ul>
+                            {chartingTracks.length === 0 ? (
+                                <p>No charting tracks for this week.</p>
+                            ) : (
+                                chartingTracks.map((track) => (
+                                <li key={track.track_id}>
+                                    <img src={track.image_url} height={50}></img>
+                                    <strong style={{ color: getColorPalette().amber }}>{track.name}</strong> - {track.primary_artist_name} 
+                                    <br />
+                                    <br />
+                                </li>
+                                ))
+                            )}
+                        </ul>
+                    </div>
+                </div>
+                <div className='col-span-2'>
+                    <div className='clipped'>
+                        <ChoroplethChart mapData={mapData} />   
+                    </div>
+                    <p>Current week {props.model.allWeeks[currentIndex]}</p>
+                    <div className='flex items-center'>
+                        { timelineButton() }
+                        <div style={{ marginLeft: '20px', width: '100%'}}>
+                            <Slider
+                                value={currentIndex}
+                                min={0}
+                                max={props.model.allWeeks.length - 1}
+                                onChange={handleSliderChange}
+                                //onSlideEnd={handleSliderEnd}
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
