@@ -5,7 +5,7 @@ import { Button } from "primereact/button";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import BarChart from "../components/BarChart";
 import { DataModel } from "../DataModel";
-import { getColorPalette, nivoDarkColorPalette } from "../utils/colorUtilities";
+import { nivoDarkColorPalette } from "../utils/colorUtilities";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 import ParallelCoordinatesChart from "../components/ParalellCoordinatesChart";

@@ -1,5 +1,3 @@
-// install (please try to align the version of installed @nivo packages)
-// yarn add @nivo/chord
 import { ResponsiveChord } from '@nivo/chord'
 import { getTheme, NIVO_DARK } from '../utils/colorUtilities'
 import { Artist } from '../utils/interfaces'
@@ -7,11 +5,6 @@ import { DataModel } from '../DataModel';
 import ChordRibbonTooltip from './ChordRibbonTooltip';
 import ChordArcTooltip from './ChordArcTooltip';
 
-// make sure parent container have a defined height when using
-// responsive component, otherwise height will be 0 and
-// no chart will be rendered.
-// website examples showcase many properties,
-// you'll often use just a few of them.
 function ChordChart(props: { readonly artists: Array<Artist>, readonly model: DataModel }) {
 
     // loop through artists and get their connections
@@ -46,7 +39,6 @@ function ChordChart(props: { readonly artists: Array<Artist>, readonly model: Da
                 inactiveArcOpacity={0.25}
                 padAngle={0.02}
                 innerRadiusRatio={0.92}
-                // labelOffset={-30}
                 arcBorderColor={{
                     from: 'color',
                     modifiers: [
@@ -67,7 +59,6 @@ function ChordChart(props: { readonly artists: Array<Artist>, readonly model: Da
                         ]
                     ]
                 }}
-                // labelRotation={-90}
                 labelTextColor={{
                     from: 'color',
                     modifiers: [

@@ -76,29 +76,6 @@ function ParallelCoordinatesChart(props: { readonly artists: Array<Artist>, read
                 theme={getTheme()}
                 colors={{ scheme: NIVO_DARK }}
                 tooltip={ParallelCoordinatesTooltip}
-                // legends={[
-                //     {
-                //         anchor: 'top',
-                //         direction: 'row',
-                //         justify: false,
-                //         translateX: 100,
-                //         translateY: 0,
-                //         itemsSpacing: 2,
-                //         itemWidth: 60,
-                //         itemHeight: 20,
-                //         itemDirection: 'left-to-right',
-                //         itemOpacity: 0.85,
-                //         symbolSize: 20,
-                //         effects: [
-                //             {
-                //                 on: 'hover',
-                //                 style: {
-                //                     itemOpacity: 1
-                //                 }
-                //             }
-                //         ]
-                //     }
-                // ]}
             />
         </div>
     )
