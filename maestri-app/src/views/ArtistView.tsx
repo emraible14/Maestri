@@ -75,22 +75,29 @@ function Artist(props: ArtistProps) {
     //   setIsPaused(false); // Resume when slider is released
     // };
   
-    return (
-        <div>
-        <Image src={currentArtist.image_url} height='200px' width='200px'></Image>
-        <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{currentArtist.name}</h1>
-        <Button onClick={() => navigate('/comparison?ids=' + currentArtist.artist_id)} label={"Compare artists"} icon="pi pi-user" rounded outlined/>
-        <Button onClick={() => navigate('/network?id=' + currentArtist.artist_id)} label={"Explore"} icon="pi pi-users" rounded outlined aria-label="Cancel"/>
+    return ( <div className='h-full w-full'>
+        <div className='flex w-40%'>
+            <Image src={currentArtist.image_url} height='200px' width='200px'></Image>
+            <div className="w-1/100"/>
+            <div>
+                <h1 style={{ minHeight: '5vh', color: getColorPalette().amber}}>{currentArtist.name}</h1>
+                <Button onClick={() => navigate('/comparison?ids=' + currentArtist.artist_id)} label={"Compare artists"} icon="pi pi-user" rounded outlined/>
+                <Button onClick={() => navigate('/network?id=' + currentArtist.artist_id)} label={"Explore"} icon="pi pi-users" rounded outlined aria-label="Cancel"/>
+            </div>
+        </div>
         
-        <div style={{ position: "absolute", left: 50, top: 420, height: "50vh", width: "30hw" }}>
-            
-            <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]}
+        {/* <div style={{ position: "absolute", top: 420, height: "50vh", width: "30hw" }}> */}
+        <div style={{height: "40vh", width: "70vh"}}>
+
+            <BumpChart data={props.model.getBumpData(currentArtist, "GB")}/>
+
+            {/* <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]}/</h2>
                 <br></br>
                 Total track(s): {chartingTracks.length}</h2>
+             */}
             
             
-            
-            <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
+            {/* <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
                 <ul>
                     {chartingTracks.length === 0 ? (
                         <p>No charting tracks for this week.</p>
@@ -103,7 +110,7 @@ function Artist(props: ArtistProps) {
                         ))
                     )}
                 </ul>
-            </div>
+            </div> */}
         </div>
         <div className='clipped'>
             <ChoroplethChart mapData={mapData} />   
@@ -115,7 +122,7 @@ function Artist(props: ArtistProps) {
                     options={props.model.getArtists()} //hardcoded just to test shifting artist
                     optionLabel="name"
                     placeholder={currentArtist.name}
-                    className="w-full md:w-14rem"
+                    className="w-40% md:w-14rem"
                     checkmark={true}
                     highlightOnSelect={false}
                     filter
@@ -130,9 +137,6 @@ function Artist(props: ArtistProps) {
                     onChange={handleSliderChange}
                     //onSlideEnd={handleSliderEnd}
                 />
-            </div>
-            <div className="flex justify-around">
-                <BumpChart data={props.model.getBumpData(currentArtist)}/>
             </div>
         </div>
     );

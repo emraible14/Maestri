@@ -198,17 +198,26 @@ export class DataModel {
         return radarData;
     }
 
-    getBumpData(artist: Artist) {
-        const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString() }))];
-        const result = this.getSpecificTracks(contributionIds)
+    getBumpData(artist: Artist, country: String) {
+        const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString()}))];
+        const trackInfo = this.getSpecificTracks(contributionIds)
             .map((track) => {
-                const filteredChartings = track.chartings;
+                const filteredChartings = track.chartings.filter((charting) => charting.country === country);
                 return { ...track, chartings: filteredChartings };
-            });
+            }
+            );
+        
+        const result: {[key: string]: string} = {};
 
+
+        trackInfo.forEach((track) => {
+            result[track.name] = track.chartings.toString();
+        });
         
 
-        console.log("Result:")
+        console.log("trackInfo:")
+        console.log(trackInfo);
         console.log(result);
+        return trackInfo;
     }
 }
