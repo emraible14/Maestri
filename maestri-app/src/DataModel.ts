@@ -64,6 +64,10 @@ export class DataModel {
         return this.networkData[artistId] || {};
     }
 
+    getTrack(id: string) {
+        return this.tracks[id];
+    }
+
     getSpecificTracks(ids: Array<string>): Array<Track> {
         const result: Array<Track> = [];
         ids.forEach((id) => {
@@ -198,26 +202,49 @@ export class DataModel {
         return radarData;
     }
 
-    getBumpData(artist: Artist, country: String) {
-        const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString()}))];
-        const trackInfo = this.getSpecificTracks(contributionIds)
-            .map((track) => {
-                const filteredChartings = track.chartings.filter((charting) => charting.country === country);
-                return { ...track, chartings: filteredChartings };
-            }
-            );
-        
-        const result: {[key: string]: string} = {};
+    // This function is so ugly and can probably be made better and more efficient
+    getBumpData(artist: Artist, country: String, week: number) {
+        const startDate: Date = new Date("2023-01-05");
 
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + week * 7);
+
+        const fiveWeeksAgo = new Date(currentDate);
+        fiveWeeksAgo.setDate(currentDate.getDate() - 5 * 7);
+
+        const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString()}))];
+        const trackInfo = this.getSpecificTracks(contributionIds).map((track) => {
+            const filteredChartings = track.chartings.filter((charting) => {
+                const chartingDate = new Date(charting.week);
+                return (
+                    charting.country === country &&
+                    chartingDate >= fiveWeeksAgo &&
+                    chartingDate <= currentDate
+                );
+            });
+            return { ...track, chartings: filteredChartings };
+        });
+
+        const result: Array<{ id: string, data: Array<{ x: string; y: number }>}> = [];
 
         trackInfo.forEach((track) => {
-            result[track.name] = track.chartings.toString();
-        });
-        
+            if (!Array.isArray(track.chartings) || !track.chartings.length) {
+                return;
+              }
 
-        console.log("trackInfo:")
-        console.log(trackInfo);
-        console.log(result);
-        return trackInfo;
+            const serie: Array<{ x: string, y: number }> = [];
+
+            track.chartings.forEach((entry) => {
+                serie.push({ x: entry.week, y: entry.rank })
+            });
+            result.push({
+                id: track.name.toString(),
+                data: serie
+            })
+        });
+
+        console.log(result)
+
+        return result;
     }
 }

@@ -2,10 +2,11 @@ import { getTheme, NIVO_DARK } from '../utils/colorUtilities';
 import { ResponsiveBump } from '@nivo/bump'
 
 interface BumpChartProps {
-    readonly data: Array<{[key: string]: string}>;
-    readonly keys: Array<string>;
-}
-
+    readonly data: Array<{
+        id: string;
+        data: Array<{ x: string; y: number }>;
+    }>;
+};
 
 // make sure parent container have a defined height when using
 // responsive component, otherwise height will be 0 and
@@ -13,8 +14,10 @@ interface BumpChartProps {
 // website examples showcase many properties,
 // you'll often use just a few of them.
 function BumpChart(props: BumpChartProps) {
+    // @ts-expect-error
     return <ResponsiveBump
-            data={data}
+            data={props.data}
+            // keys={props.keys}
             theme={getTheme()}
             colors={{ scheme: NIVO_DARK }}
             lineWidth={3}

@@ -8,6 +8,7 @@ interface ChoroplethProps {
   }
   
 const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
+    // @ts-expect-error
     <ResponsiveChoropleth
         data={mapData}
         features={getFeaturesArray()}

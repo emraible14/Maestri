@@ -24,7 +24,7 @@ function Artist(props: ArtistProps) {
     const [isPaused, setIsPaused] = useState(true);
     const [currentArtist, setCurrentArtist] = useState(artistId ? props.model.getArtist(artistId) : props.model.getArtist('45'));
     const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.artist_id));
-    const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
+    const [_, setChartingTracks] = useState<Track[]>([]);
     
     // compute all map data for each week when artistName changes 
     const allMapData = useMemo(() => {
@@ -89,7 +89,8 @@ function Artist(props: ArtistProps) {
         {/* <div style={{ position: "absolute", top: 420, height: "50vh", width: "30hw" }}> */}
         <div style={{height: "40vh", width: "70vh"}}>
 
-            <BumpChart data={props.model.getBumpData(currentArtist, "GB")}/>
+            {/* // @ts-expect-error */}
+            <BumpChart data={props.model.getBumpData(currentArtist, "US", currentIndex)}/>
 
             {/* <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]}/</h2>
                 <br></br>
