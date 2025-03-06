@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: Build project
-        run: npm run build
+        run: npm run dev
 
       # - name: Setup gh pages
       #   uses: actions/configure-pages@v4
