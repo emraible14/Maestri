@@ -51,10 +51,10 @@ jobs:
         with:
           name: production-files
           run-id: ${{ github.event.workflow_run.id }}
-          path: ./dist/
+          path: .
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/
+          publish_dir: .
