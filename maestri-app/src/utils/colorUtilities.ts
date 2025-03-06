@@ -30,7 +30,7 @@ function getColorPalette(){
 const theme = {
     "background": "#111827",
     "text": {
-        "fontSize": 11,
+        "fontSize": 14,
         "fill": "#ffffff",
         "outlineWidth": 0,
         "outlineColor": "transparent"
@@ -44,7 +44,7 @@ const theme = {
         },
         "legend": {
             "text": {
-                "fontSize": 12,
+                "fontSize": 18,
                 "fill": "#ffffff",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"
@@ -56,7 +56,7 @@ const theme = {
                 "strokeWidth": 1
             },
             "text": {
-                "fontSize": 11,
+                "fontSize": 14,
                 "fill": "#ffffff",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"
@@ -72,14 +72,14 @@ const theme = {
     "legends": {
         "title": {
             "text": {
-                "fontSize": 11,
+                "fontSize": 14,
                 "fill": "#ffffff",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"
             }
         },
         "text": {
-            "fontSize": 11,
+            "fontSize": 14,
             "fill": "#ffffff",
             "outlineWidth": 0,
             "outlineColor": "transparent"
@@ -87,7 +87,7 @@ const theme = {
         "ticks": {
             "line": {},
             "text": {
-                "fontSize": 10,
+                "fontSize": 14,
                 "fill": "#333333",
                 "outlineWidth": 0,
                 "outlineColor": "transparent"
@@ -96,7 +96,7 @@ const theme = {
     },
     "annotations": {
         "text": {
-            "fontSize": 13,
+            "fontSize": 14,
             "fill": "#333333",
             "outlineWidth": 2,
             "outlineColor": "#ffffff",
@@ -128,7 +128,7 @@ const theme = {
         "container": {
             "background": "#ffffff",
             "color": "#333333",
-            "fontSize": 12
+            "fontSize": 14
         },
         "basic": {},
         "chip": {},

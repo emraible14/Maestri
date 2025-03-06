@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
 import { Artist } from "../utils/interfaces";
-import RadarChart from "../components/RadarChart";
 import { Card } from "primereact/card";
-import { Button } from "primereact/button";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import BarChart from "../components/BarChart";
 import { DataModel } from "../DataModel";
-import { nivoDarkColorPalette } from "../utils/colorUtilities";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
+import ParallelCoordinatesChart from "../components/ParalellCoordinatesChart";
+import ChordChart from "../components/ChordChart";
+import { SelectButton } from "primereact/selectbutton";
+import SingleArtistCard from "../components/SingleArtistCard";
 
-interface ComparisonProps {
-    readonly model: DataModel;
-}
-
-function Comparison(props: ComparisonProps) {
+function Comparison(props: { readonly model: DataModel }) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentArtists, setCurrentArtists] = useState<Array<Artist>>([]);
-    const [barType, setBarType] = useState("# charting tracks");
-    const navigate = useNavigate();
+    const options = ['Overview', 'Detailed View']
+    const [detailedBreakdown, setdetailedBreakdown] = useState('Overview');
 
     useEffect(() => {
         // get artists on mount
@@ -31,56 +28,63 @@ function Comparison(props: ComparisonProps) {
 
     return (
         <>
-            <div className="grid grid-cols-5 justify-around">
+            <div className="grid grid-cols-7 justify-around" style={{overflow: 'scroll', maxHeight: '45vh'}}>
                 { currentArtists.map(singleArtist) }
                 { addArtistCard() }
+                <div key={'comparison-chart'} className="col-span-2">
+                    <h2 style={{marginLeft: '10px'}}>Collaborations:</h2>
+                    <ChordChart artists={currentArtists} model={props.model}></ChordChart>
+                </div>
             </div>
-            <div className="flex justify-around">
-                <RadarChart data={props.model.getRadarData(currentArtists, "attribute")} 
-                    keys={currentArtists.map((artist) => { return artist.name })} indexKey={"attribute"}
-                    handleAttributeClick={updateBarType}></RadarChart>
-                <BarChart data={props.model.getBarData(currentArtists, "artist", barType)} 
-                keys={getBarKeyLabelsFromType(barType)} indexKey={"artist"} type={barType}></BarChart>
-            </div>
+            <SelectButton style={{marginLeft: '10px'}} invalid value={detailedBreakdown} onChange={(e) => setdetailedBreakdown(e.value)} options={options} />
+            { dataDisplay() }
         </>
     );
 
-    function updateBarType(type: string) {
-        setBarType(type);
+    function dataDisplay() {
+        if (detailedBreakdown === 'Detailed View') {
+            return(
+                <div className="flex justify-around">
+                    <BarChart data={props.model.getBarData(currentArtists, "artist", "# charting tracks")} 
+                        keys={getBarKeyLabelsFromType("# charting tracks")} indexKey={"artist"} type={"# charting tracks"}></BarChart>
+                    <BarChart data={props.model.getBarData(currentArtists, "artist", "avg. team size")} 
+                        keys={getBarKeyLabelsFromType("avg. team size")} indexKey={"artist"} type={"avg. team size"}></BarChart>
+                    <BarChart data={props.model.getBarData(currentArtists, "artist", "total samples/interpolations used")} 
+                        keys={getBarKeyLabelsFromType("total samples/interpolations used")} indexKey={"artist"} type={"total samples/interpolations used"}></BarChart>
+                    <BarChart data={props.model.getBarData(currentArtists, "artist", "#1 tracks")} 
+                        keys={getBarKeyLabelsFromType("#1 tracks")} indexKey={"artist"} type={"#1 tracks"}></BarChart>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <ParallelCoordinatesChart artists={currentArtists} model={props.model}></ParallelCoordinatesChart>
+                </div>
+            )
+        }
     }
 
     function singleArtist(artist: Artist, index: number) {
         function removeArtist() {
+            let newArtistIds = searchParams.get("ids")?.split(',') || [];
+            // filter out artist
+            newArtistIds = newArtistIds.filter((art) => art !== artist.artist_id);
+
             // update search params
-            const newArtistIds = searchParams.get("ids")?.split(',').filter((art) => art !== artist.artist_id);
-            if (newArtistIds) {
-                const newQueryParameters : URLSearchParams = new URLSearchParams();
-                newQueryParameters.set("ids",  newArtistIds?.join(","))
-                setSearchParams(newQueryParameters);
-                // update current artists list
-                setCurrentArtists(currentArtists.filter((art) => art.artist_id !== artist.artist_id))
-            }
+            const newQueryParameters : URLSearchParams = new URLSearchParams();
+            newQueryParameters.set("ids",  newArtistIds?.join(","))
+            setSearchParams(newQueryParameters);
+
+            // update current artists list
+            setCurrentArtists(props.model.getSpecificArtists(newArtistIds));
         }
 
-        const artistImageLink = artist.image_url || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg";
-        const header = (
-            <div className="rounded-s header-image" style={{ border: "7px solid " +  Object.keys(nivoDarkColorPalette)[index]}}>
-            <img src={artistImageLink} alt={"image of " + artist.name} ></img>
-            </div>
-        );
-        const footer = (
-            <div>
-                <Button onClick={removeArtist} label={"Remove"} icon="pi pi-times" rounded outlined severity="danger" aria-label="Cancel" disabled={currentArtists.length === 1}/>
-            </div>
-        );
-
         return (
-            <Card key={artist.artist_id} title={artist.name} header={header} footer={footer} className="margin-10">
-                <Button onClick={() => navigate('/artist?id=' + artist.artist_id)} label={"View"} icon="pi pi-star" rounded outlined/>
-                <Button onClick={() => navigate('/network?id=' + artist.artist_id)} label={"Explore"} icon="pi pi-users" rounded outlined aria-label="Cancel"/>
-            </Card>
+            <SingleArtistCard key={artist.artist_id} artist={artist} index={index} removeArtist={removeArtist}
+                removable detailable networkable></SingleArtistCard>
         )
     }
+
 
     function addArtistCard() {
         function addArtist(event: DropdownChangeEvent) {
@@ -104,14 +108,20 @@ function Comparison(props: ComparisonProps) {
         );
 
         if (currentArtists.length < 5) {
+            const numCards = 5 - currentArtists.length;
             const currentArtistIds = currentArtists.map((art) => { return art.artist_id})
             const availableArtists = props.model.getArtists().filter((art) => !currentArtistIds.includes(art.artist_id) )
 
-            return (
-            <Card className="margin-10 justify-items-center content-center" header={header}>
-                <Dropdown value={null}  onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
-            </Card>
-            );
+            const cards = []
+            for (let i = 0; i < numCards; i++) {
+                cards.push(
+                    <Card key={'add-card' + i} className="margin-10 justify-items-center content-center" header={header}>
+                        <Dropdown value={null} onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
+                    </Card>
+                );
+            }
+
+            return cards;
         }
     }
 }

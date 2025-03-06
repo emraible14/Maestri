@@ -2,6 +2,7 @@ import { ResponsiveChoropleth } from "@nivo/geo";
 import { MapDatum } from "../utils/interfaces";
 import { getColorPalette, getTheme } from "../utils/colorUtilities";
 import { getFeaturesArray } from "../utils/mapUtilities";
+import ChoroplethTooltip from "./ChloroplethTooltip";
 
 interface ChoroplethProps {
     mapData: MapDatum[];
@@ -18,7 +19,6 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
         unknownColor="#666666"
         label="properties.name"
         value={'value'}
-        valueFormat=".2s"
         projectionType='mercator'
         fillColor={'#00000'}
         enableGraticule={false}
@@ -30,11 +30,12 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
         onMouseLeave={() => {}}
         onClick={() => {}}
         role=''
-        projectionScale={300} // change to zoom in zoom out, effectively cutting the map
-        projectionTranslation={[ 0.8, 1 ]}
+        projectionScale={370} // change to zoom in zoom out, effectively cutting the map
+        projectionTranslation={[ 0.77, 1.15 ]}
         projectionRotation={[ 0, 0, 0 ]}
         borderWidth={0.5}
         borderColor={getColorPalette().amber}
+        tooltip={ChoroplethTooltip}
         legends={[
             {
                 anchor: 'bottom-left',
@@ -68,7 +69,7 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
                     { id: '6', label: '6', color: '#ef6548' },
                     { id: '7', label: '7', color: '#d7301f' },
                     { id: '8', label: '8', color: '#b30000' },
-                    { id: '9', label: '9', color: '#7f0000' }
+                    { id: '9', label: '9+', color: '#7f0000' }
               ]
                 
             }

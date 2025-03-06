@@ -1,5 +1,6 @@
 import { ResponsiveBar } from '@nivo/bar'
 import { getTheme } from '../utils/colorUtilities';
+import { Datum } from '@nivo/legends';
 
 interface BarChartProps {
     readonly data: Array<{[key: string]: string | number}>
@@ -9,32 +10,33 @@ interface BarChartProps {
 }
 
 function BarChart(props: BarChartProps) {
+
+    const legendData: Array<Datum> = []
+    const grayColors = ['#333333', '#777777', '#bbbbbb','#ffffff']
+    props.keys.forEach((key, idx) => {
+        legendData.push({
+            id: key,
+            label: key,
+            color: grayColors[idx]
+        })
+    })
+    legendData.reverse(); // reverse to follow stacking order 
+
     return (
-    <div className='chart-box'>
+    <div style={{ height: '43vh', width: '100%'}}>
     <ResponsiveBar
         data={props.data}
+        // layout="horizontal"
+        // enableGridY={false} 
+        // enableGridX={true}
         keys={props.keys}
         indexBy={props.indexKey}
-        margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+        margin={{ top: 35, right: 30, bottom: 150, left: 50 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}
         colors={({ id, data }) => String(data[`${id}Color`])}
         theme={getTheme()}
-        fill={[
-            {
-                match: {
-                    id: 'fries'
-                },
-                id: 'dots'
-            },
-            {
-                match: {
-                    id: 'sandwich'
-                },
-                id: 'lines'
-            }
-        ]}
         borderColor={{
             from: 'color',
             modifiers: [
@@ -49,10 +51,10 @@ function BarChart(props: BarChartProps) {
         axisBottom={{
             tickSize: 5,
             tickPadding: 5,
-            tickRotation: 0,
-            legend: props.indexKey,
-            legendPosition: 'middle',
-            legendOffset: 32,
+            tickRotation: -20,
+            // legend: props.type,
+            // legendPosition: 'middle',
+            legendOffset: 40,
             truncateTickAt: 0
         }}
         axisLeft={{
@@ -61,7 +63,7 @@ function BarChart(props: BarChartProps) {
             tickRotation: 0,
             legend: props.type,
             legendPosition: 'middle',
-            legendOffset: -40,
+            legendOffset: -45,
             truncateTickAt: 0
         }}
         enableTotals={true}
@@ -78,12 +80,14 @@ function BarChart(props: BarChartProps) {
         }}
         legends={[
             {
+                // dataFrom: 'keys',
+                data: legendData,
                 dataFrom: 'keys',
-                anchor: 'bottom-right',
+                anchor: 'bottom',
                 direction: 'column',
                 justify: false,
-                translateX: 120,
-                translateY: 0,
+                translateX: 0,
+                translateY: 145,
                 itemsSpacing: 2,
                 itemWidth: 100,
                 itemHeight: 20,
@@ -97,7 +101,7 @@ function BarChart(props: BarChartProps) {
                             itemOpacity: 1
                         }
                     }
-                ]
+                ],
             }
         ]}
         role="application"
