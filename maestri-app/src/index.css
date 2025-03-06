@@ -34,20 +34,27 @@
 }
 
 .header-image {
-  height: 25vh; 
+  max-height: 21vh; 
   width: 100%; 
   overflow-y: hidden;
   border-radius: 10px 10px 0px 0px;
 }
 .clipped {
-  position: absolute;
-  right: 10px;
-  top: 70px;
-  height: 75vh; 
-  width: 60vw;
+  height: 55vh; 
+  width: 100%;
 }
 
 .width-100 {
     width: 350px;
 }
+
+.p-card-body {
+    padding: 1rem;
+}
+
+.p-card-content {
+    padding: 0.5rem 0rem;
+}
+
+
 

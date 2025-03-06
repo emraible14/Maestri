@@ -1,6 +1,6 @@
 import { Artist, Network, Track } from "./utils/interfaces";
 import artistsJson from "../../data/artists_v3.json";
-import tracksJson from "../../data/tracks.json";
+import tracksJson from "../../data/tracks_v2.json";
 import networkJson from '../../data/network_v3.json'
 import { countryCodeMapping } from "./utils/mapUtilities";
 import { nivoDarkColorPalette } from "./utils/colorUtilities";
@@ -8,11 +8,7 @@ import { getBarKeyLabelsFromType } from "./utils/dataUtilities";
 
 
 // hotfix (am i using this word correctly) to convert array to an object with track_id as keys which makes the map work again
-// @ts-expect-error invalie JSON but it still works
-const tracksObject = tracksJson.reduce((acc: {[key: string]: Track }, track: Track) => {
-    acc[track.track_id] = track;  // Use track_id as the key
-    return acc;
-  }, {} as { [key: string]: Track }); // Type declaration for tracksObject
+const tracksObject = tracksJson as { [key: string]: Track }; // Type declaration for tracksObject
   
 export class DataModel {
     artists: {[key: string]: Artist};
