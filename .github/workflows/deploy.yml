@@ -1,20 +1,60 @@
-- name: Vite Github Pages Deployer
-  # You may pin to the exact commit or the version.
-  # uses: skywarth/vite-github-pages-deployer@894ef807567d82fa238bd3d47009bd360910e11a
-  uses: skywarth/vite-github-pages-deployer@v1.4.0
-  with:
-    # Public base path string for vite, this affects the routing, history and asset links. Make sure to provide appropriately since Github Pages stores your app in a directory under a subdomain.
-    public_base_path: # optional, default is 
-    # Which folder do you want your Github Page to use as root directory. Usually it is your build output directory such as ./dist 
-    build_path: # optional, default is ./dist
-    # Node env that will be used for the installation of dependencies. It is imperative you use an environment that has 'vite' as dependency. Commonly, that is 'dev'.
-    install_phase_node_env: # optional, default is dev
-    # Node env that will be used for build phase.
-    build_phase_node_env: # optional, default is production
-    # Your preference of package manager: 'npm' and 'yarn' are possible values.
-    package_manager: # optional, default is npm
-    # Desired name for the Deployment environment. It is also the exposed artifact name which contains the build output (dist).
-    artifact_name: # optional, default is github-pages
-    # Controls the debug mode, boolean, true is for on. When turned on, it'll output certain information on certain steps. Mainly used for development, but use it as you please to inspect your env and variables.
-    debug_mode: # optional, default is false
-          
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+          working-directory: ./maestri-app/
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache-dependency-path: ./maestri-app/package-lock.json
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: export NODE_OPTIONS="--max-old-space-size=8192" && npm run build
+
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-files
+          path: ./dist/
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+   
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-files
+          run-id: ${{ github.event.workflow_run.id }}
+          path: ./dist/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/
