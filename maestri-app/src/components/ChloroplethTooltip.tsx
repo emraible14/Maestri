@@ -1,7 +1,11 @@
 import { BasicTooltip } from "@nivo/tooltip"
 import { memo } from "react"
 
-const ChoroplethTooltip = memo(({ feature }) => {
+interface ChoroplethTooltipProps {
+    feature: any; // Replace 'any' with a more specific type if possible
+  }
+
+const ChoroplethTooltip = memo(({ feature }: ChoroplethTooltipProps) => {
     if (feature.data === undefined) return null
 
     return (

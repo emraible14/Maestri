@@ -5,6 +5,7 @@ import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
 import { Track } from '../utils/interfaces';
 import ChoroplethChart from '../components/ChloroplethChart';
+import BumpChart from '../components/BumpChart';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SingleArtistCard from '../components/SingleArtistCard';
 import { Button } from 'primereact/button';
@@ -126,8 +127,13 @@ function Artist(props: ArtistProps) {
                             </div>
                         </div>
                     </div>
-                    <div>
-                        Scatter plot here
+                    <div className='flex flex-row'>
+                        <div style={{height: "40vh", width: "70vh"}}>
+                            <BumpChart data={props.model.getBumpData(currentArtist, "US", currentIndex)}/>
+                        </div>
+                        <div>
+                            Scatter plot here
+                        </div>
                     </div>
                 </div>
                 <div className='col-span-3'>

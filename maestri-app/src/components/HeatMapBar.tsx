@@ -29,6 +29,7 @@ function HeatMapBar(props: {artist: Artist, model: DataModel}) {
     return (
     <div style={{height: '25px', marginBottom: '10px'}}>
     <ResponsiveHeatMap
+        // @ts-expect-error
         data={data}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         // valueFormat=">-.2s"

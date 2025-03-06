@@ -8,8 +8,9 @@ import { getBarKeyLabelsFromType } from "./utils/dataUtilities";
 
 
 // hotfix (am i using this word correctly) to convert array to an object with track_id as keys which makes the map work again
-const tracksObject = tracksJson as { [key: string]: Track }; // Type declaration for tracksObject
-  
+// @ts-expect-error invalie JSON but it still works
+const tracksObject: { [key: string]: Track } = tracksJson;
+
 export class DataModel {
     artists: {[key: string]: Artist};
     tracks: {[key: string]: Track};
@@ -58,6 +59,10 @@ export class DataModel {
 
     getNetworkDataForArtist(artistId: string) {
         return this.networkData[artistId] || {};
+    }
+
+    getTrack(id: string) {
+        return this.tracks[id];
     }
 
     getSpecificTracks(ids: Array<string>): Array<Track> {
@@ -192,5 +197,51 @@ export class DataModel {
         radarData.push(result5);
 
         return radarData;
+    }
+
+    // This function is so ugly and can probably be made better and more efficient
+    getBumpData(artist: Artist, country: String, week: number) {
+        const startDate: Date = new Date("2023-01-05");
+
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + week * 7);
+
+        const fiveWeeksAgo = new Date(currentDate);
+        fiveWeeksAgo.setDate(currentDate.getDate() - 5 * 7);
+
+        const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString()}))];
+        const trackInfo = this.getSpecificTracks(contributionIds).map((track) => {
+            const filteredChartings = track.chartings.filter((charting) => {
+                const chartingDate = new Date(charting.week);
+                return (
+                    charting.country === country &&
+                    chartingDate >= fiveWeeksAgo &&
+                    chartingDate <= currentDate
+                );
+            });
+            return { ...track, chartings: filteredChartings };
+        });
+
+        const result: Array<{ id: string, data: Array<{ x: string; y: number }>}> = [];
+
+        trackInfo.forEach((track) => {
+            if (!Array.isArray(track.chartings) || !track.chartings.length) {
+                return;
+              }
+
+            const serie: Array<{ x: string, y: number }> = [];
+
+            track.chartings.forEach((entry) => {
+                serie.push({ x: entry.week, y: entry.rank })
+            });
+            result.push({
+                id: track.name.toString(),
+                data: serie
+            })
+        });
+
+        console.log(result)
+
+        return result;
     }
 }

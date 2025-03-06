@@ -21,13 +21,17 @@ export const ParallelCoordinatesTooltip = <
         }}
     >
         <b>{datum.id}</b>
-        charting tracks: {(datum.data)["charting_tracks"]} 
-        <br></br>
-        avg. team size: {datum.data["avg_team_size"]}
-        <br></br>
-        total samples/interpolations: {datum.data["originality"]}
-        <br></br>
-        top 10 hits: {datum.data["num_one"]}
+        charting tracks: {// @ts-expect-error
+                        datum.data.charting_tracks}
+        <br />
+        avg. team size: {// @ts-expect-error
+                        datum.data.avg_team_size}
+        <br />
+        total samples/interpolations: {// @ts-expect-error
+                        datum.data.originality}
+        <br />
+        top 10 hits: {// @ts-expect-error
+                        datum.data.num_one}
 
     </div>
 )
