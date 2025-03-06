@@ -86,32 +86,8 @@ function Artist(props: ArtistProps) {
             </div>
         </div>
         
-        {/* <div style={{ position: "absolute", top: 420, height: "50vh", width: "30hw" }}> */}
         <div style={{height: "40vh", width: "70vh"}}>
-
-            {/* // @ts-expect-error */}
             <BumpChart data={props.model.getBumpData(currentArtist, "US", currentIndex)}/>
-
-            {/* <h2 style={{ color: getColorPalette().amber }}>Globally charting {props.model.allWeeks[currentIndex]}/</h2>
-                <br></br>
-                Total track(s): {chartingTracks.length}</h2>
-             */}
-            
-            
-            {/* <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px'}}>
-                <ul>
-                    {chartingTracks.length === 0 ? (
-                        <p>No charting tracks for this week.</p>
-                    ) : (
-                        chartingTracks.map((track) => (
-                        <li key={track.track_id}>
-                            <strong style={{ color: getColorPalette().amber }}>{track.name}</strong> - {track.primary_artist_name} <br />
-                            <br />
-                        </li>
-                        ))
-                    )}
-                </ul>
-            </div> */}
         </div>
         <div className='clipped'>
             <ChoroplethChart mapData={mapData} />   

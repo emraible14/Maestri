@@ -9,11 +9,11 @@ import { getBarKeyLabelsFromType } from "./utils/dataUtilities";
 
 // hotfix (am i using this word correctly) to convert array to an object with track_id as keys which makes the map work again
 // @ts-expect-error invalie JSON but it still works
-const tracksObject = tracksJson.reduce((acc: {[key: string]: Track }, track: Track) => {
-    acc[track.track_id] = track;  // Use track_id as the key
+const tracksObject: { [key: string]: Track } = tracksJson.reduce((acc: {[key: string]: Track }, track: Track) => {
+    acc[track.track_id.toString()] = track;  // Use track_id as the key
     return acc;
   }, {} as { [key: string]: Track }); // Type declaration for tracksObject
-  
+
 export class DataModel {
     artists: {[key: string]: Artist};
     tracks: {[key: string]: Track};
