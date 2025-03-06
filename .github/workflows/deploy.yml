@@ -28,11 +28,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Increase memory
-        run: export NODE_OPTIONS="--max-old-space-size=8192"
-
       - name: Build project
-        run: npm run build
+        run: export NODE_OPTIONS="--max-old-space-size=8192" && npm run build
 
       # - name: Setup gh pages
       #   uses: actions/configure-pages@v4
