@@ -128,7 +128,7 @@ function Artist(props: ArtistProps) {
                         </div>
                     </div>
                     <div className='flex flex-row'>
-                        <div style={{height: "40vh", width: "70vh"}}>
+                        <div style={{height: "40vh", width: "100vh"}}>
                             <BumpChart data={props.model.getBumpData(currentArtist, "US", currentIndex)}/>
                         </div>
                         <div>

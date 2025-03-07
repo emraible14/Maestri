@@ -4,7 +4,7 @@ import { ResponsiveBump } from '@nivo/bump'
 interface BumpChartProps {
     readonly data: Array<{
         id: string;
-        data: Array<{ x: string; y: number }>;
+        data: Array<{ x: string; y: number | null }>;
     }>;
 };
 
@@ -20,22 +20,17 @@ function BumpChart(props: BumpChartProps) {
             // keys={props.keys}
             theme={getTheme()}
             colors={{ scheme: NIVO_DARK }}
-            lineWidth={3}
-            activeLineWidth={6}
-            inactiveLineWidth={3}
-            inactiveOpacity={0.15}
-            pointSize={10}
-            activePointSize={16}
-            inactivePointSize={0}
             pointColor={{ theme: 'background' }}
             pointBorderWidth={3}
-            activePointBorderWidth={3}
+            activePointBorderWidth={1}
             pointBorderColor={{ from: 'serie.color' }}
+            enableGridX={false}
+            enableGridY={false}
             axisTop={null}
             axisBottom={{
                 tickSize: 5,
                 tickPadding: 5,
-                tickRotation: 0,
+                tickRotation: 30,
                 legend: '',
                 legendPosition: 'middle',
                 legendOffset: 32,
@@ -48,10 +43,10 @@ function BumpChart(props: BumpChartProps) {
                 legend: 'ranking',
                 legendPosition: 'middle',
                 legendOffset: -40,
-                truncateTickAt: 0
+                truncateTickAt: 10
             }}
             margin={{ top: 40, right: 100, bottom: 40, left: 60 }}
-            axisRight={null}
+            animate={false}
         />
 };
 

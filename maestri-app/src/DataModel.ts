@@ -201,38 +201,43 @@ export class DataModel {
 
     // This function is so ugly and can probably be made better and more efficient
     getBumpData(artist: Artist, country: String, week: number) {
-        const startDate: Date = new Date("2023-01-05");
+        const start: Date = new Date("2023-01-05");        
 
-        const currentDate = new Date(startDate);
-        currentDate.setDate(startDate.getDate() + week * 7);
+        const current = new Date(start);
+        current.setDate(start.getDate() + week * 7);
 
-        const fiveWeeksAgo = new Date(currentDate);
-        fiveWeeksAgo.setDate(currentDate.getDate() - 5 * 7);
+        const fiveWeeksAgo = new Date(current);
+        fiveWeeksAgo.setDate(current.getDate() - 5 * 7);
+
+        const dates: Array<string> = [];
+        for (let d = new Date(fiveWeeksAgo); d <= current; d.setDate(d.getDate() + 7)) {
+            dates.push(new Date(d).toLocaleDateString("en-CA"));
+        }
 
         const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString()}))];
         const trackInfo = this.getSpecificTracks(contributionIds).map((track) => {
             const filteredChartings = track.chartings.filter((charting) => {
-                const chartingDate = new Date(charting.week);
+                const chartDay = new Date(charting.week);
                 return (
                     charting.country === country &&
-                    chartingDate >= fiveWeeksAgo &&
-                    chartingDate <= currentDate
+                    chartDay >= fiveWeeksAgo &&
+                    chartDay <= current
                 );
             });
             return { ...track, chartings: filteredChartings };
         });
 
-        const result: Array<{ id: string, data: Array<{ x: string; y: number }>}> = [];
+        const result: Array<{ id: string, data: Array<{ x: string; y: number | null }>}> = [];
+
 
         trackInfo.forEach((track) => {
-            if (!Array.isArray(track.chartings) || !track.chartings.length) {
-                return;
-              }
+            if (!Array.isArray(track.chartings) || !track.chartings.length) { return; }
+            const serie: Array<{ x: string, y: number | null }> = [];
+            const chartingMap = new Map(track.chartings.map(entry => [entry.week, entry.rank]));
 
-            const serie: Array<{ x: string, y: number }> = [];
-
-            track.chartings.forEach((entry) => {
-                serie.push({ x: entry.week, y: entry.rank })
+            // Iterate through the list of dates and push rank or null
+            dates.forEach((week) => {
+                serie.push({ x: week, y: chartingMap.get(week) ?? null });
             });
             result.push({
                 id: track.name.toString(),
@@ -240,7 +245,8 @@ export class DataModel {
             })
         });
 
-        console.log(result)
+        // console.log(dates);
+        // console.log(result)
 
         return result;
     }
