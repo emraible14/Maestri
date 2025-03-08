@@ -12,6 +12,7 @@ import { Button } from 'primereact/button';
 import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings } from "../utils/mapUtilities.ts";
+import RankScatterPlot from "../components/RankScatterplot.tsx";
 
 
 interface ArtistProps {
@@ -200,8 +201,10 @@ function Artist(props: ArtistProps) {
                         <div style={{height: "40vh", width: "100vh"}}>
                             <BumpChart data={props.model.getBumpData(currentArtist, "US", currentIndex)}/>
                         </div>
-                        <div>
-                            Scatter plot here
+                        <div style={{width: "100vh"}}>  
+                            <RankScatterPlot artist={currentArtist} tracksForArtist={
+                                props.model.getTracksForArtist(currentArtist.artist_id)
+                            } currentWeek={props.model.allWeeks[currentIndex]}></RankScatterPlot>
                         </div>
                     </div>
                 </div>
