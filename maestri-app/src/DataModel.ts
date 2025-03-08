@@ -213,11 +213,17 @@ export class DataModel {
     }
 
     // This function is so ugly and can probably be made better and more efficient
-    getBumpData(artist: Artist, country: String, week: number) {
+    getBumpData(artist: Artist, country: String | null, week: number) {
+        const result: Array<{ id: string, data: Array<{ x: string; y: number | null }>}> = [];
+
+        if (country === null) {
+            return result;
+        }
+        
         const start: Date = new Date("2023-01-05");        
 
         const current = new Date(start);
-        current.setDate(start.getDate() + week * 7);
+        current.setDate(start.getDate() + ((week < 5) ? 5 : week) * 7);
 
         const fiveWeeksAgo = new Date(current);
         fiveWeeksAgo.setDate(current.getDate() - 5 * 7);
@@ -226,6 +232,7 @@ export class DataModel {
         for (let d = new Date(fiveWeeksAgo); d <= current; d.setDate(d.getDate() + 7)) {
             dates.push(new Date(d).toLocaleDateString("en-CA"));
         }
+        current.setDate(current.getDate()+1);
 
         const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString()}))];
         const trackInfo = this.getSpecificTracks(contributionIds).map((track) => {
@@ -240,7 +247,9 @@ export class DataModel {
             return { ...track, chartings: filteredChartings };
         });
 
-        const result: Array<{ id: string, data: Array<{ x: string; y: number | null }>}> = [];
+        console.log(current)
+        console.log(dates)
+        console.log(trackInfo[0])
 
 
         trackInfo.forEach((track) => {
@@ -257,9 +266,6 @@ export class DataModel {
                 data: serie
             })
         });
-
-        // console.log(dates);
-        // console.log(result)
 
         return result;
     }
