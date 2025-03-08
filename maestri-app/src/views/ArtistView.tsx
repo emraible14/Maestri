@@ -30,6 +30,52 @@ function Artist(props: ArtistProps) {
     const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
 
     const [selectedCountry, setSelectedCountry] = useState(countryMappings[0]);
+    console.log(selectedCountry)
+
+    // Define the function that filters tracks for a selected country
+
+    function getFilteredChartingForSelectedCountry(
+        country: string
+      ) {
+        return props.model.getTracksForArtist(currentArtist.artist_id)
+          .map(track => {
+            const chartingInCountries = track.chartings.filter(
+              chart => chart.country === country
+            );
+            return chartingInCountries.length > 0 ? { ...track, chartings: chartingInCountries } : null;
+          })
+          .filter(track => track !== null);
+      }
+
+      // charting data for selected country
+      const chartingsAllWeeks = useMemo(() => {
+          return getFilteredChartingForSelectedCountry(selectedCountry.spotifyCode);
+      }, [currentArtist, selectedCountry]);
+
+
+      function getFilteredChartingForSelectedCountryAndWeek(
+        country: string,
+        week: string
+    ) {
+        return props.model.getTracksForArtist(currentArtist.artist_id)
+            .map(track => {
+                const chartingInCountriesAndWeek = track.chartings.filter(
+                    chart => chart.country === country && chart.week === week
+                );
+                return chartingInCountriesAndWeek.length > 0 ? { ...track, chartings: chartingInCountriesAndWeek } : null;
+            })
+            .filter(track => track !== null);
+    }
+    const chartingsOneWeek = useMemo(() => {
+        return getFilteredChartingForSelectedCountryAndWeek(
+            selectedCountry.spotifyCode,
+            props.model.allWeeks[currentIndex]
+        );
+    }, [selectedCountry, currentIndex, currentArtist]);
+
+
+    
+    
 
     // update current artist when id changes
     useEffect(() => {
