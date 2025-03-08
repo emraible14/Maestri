@@ -74,7 +74,7 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                legend: countryMappings.find(country => country.spotifyCode === xAxis)?.name,
+                legend: `Song Rank ${countryMappings.find(country => country.spotifyCode === xAxis)?.label}`,
                 legendPosition: 'middle',
                 legendOffset: 46,
                 truncateTickAt: 0
@@ -83,11 +83,23 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                legend: countryMappings.find(country => country.spotifyCode === yAxis)?.name,
+                legend: `Song Rank ${countryMappings.find(country => country.spotifyCode === yAxis)?.label}`,
                 legendPosition: 'middle',
                 legendOffset: -60,
                 truncateTickAt: 0
               }}
+              tooltip={({ node }) => (
+                <div style={{
+                  color: '#000000',
+                  background: '#FFFFFF',
+                  padding: '5px 5px',
+                  fontSize: '14px',
+                }}>
+                  {node.id.split('.')[0]}: &nbsp;
+                  <strong>Rank {countryMappings.find(country => country.spotifyCode === xAxis)?.label}: {node.formattedX}, &nbsp;</strong>
+                  <strong>Rank {countryMappings.find(country => country.spotifyCode === yAxis)?.label}: {node.formattedY}</strong> 
+                </div>
+              )}
             />
           </div>
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "1rem"}} >
@@ -95,9 +107,9 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
               style={{width: '100%'}}
               value={yAxis}
               onChange={(e) => setYAxis(e.value.spotifyCode)}
-              options={countryMappings.filter(country => country.label !== "CUMULATIVE")}
-              optionLabel="name"
-              placeholder={countryMappings.find(country => country.spotifyCode === yAxis)?.name}
+              options={countryMappings.filter(country => country.label !== "Cumulative")} // cumulative not interesting here
+              optionLabel="label"
+              placeholder={countryMappings.find(country => country.spotifyCode === yAxis)?.label}
               checkmark={true}
               highlightOnSelect={false}
             />
@@ -110,9 +122,9 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
               style={{ width: '100%'}}
               value={xAxis}
               onChange={(e) => setXAxis(e.value.spotifyCode)}
-              options={countryMappings.filter(country => country.label !== "CUMULATIVE")}
-              optionLabel="name"
-              placeholder={countryMappings.find(country => country.spotifyCode === xAxis)?.name}
+              options={countryMappings.filter(country => country.label !== "Cumulative")} // cumulative not interseting here
+              optionLabel="label"
+              placeholder={countryMappings.find(country => country.spotifyCode === xAxis)?.label}
               checkmark={true}
               highlightOnSelect={false}
             />
