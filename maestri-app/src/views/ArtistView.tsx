@@ -198,7 +198,7 @@ function Artist(props: ArtistProps) {
                     </div>
                     <div className='flex flex-row'>
                         <div style={{height: "40vh", width: "100vh"}}>
-                            <BumpChart data={props.model.getBumpData(currentArtist, "US", currentIndex)}/>
+                            <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, currentIndex)}/>
                         </div>
                         <div>
                             Scatter plot here
