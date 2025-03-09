@@ -6,7 +6,6 @@ import {Artist, Track} from '../utils/interfaces';
 import {Dropdown} from 'primereact/dropdown';
 import {useEffect, useState} from 'react';
 import {CountryDetails} from "../utils/mapUtilities.ts";
-import {Button} from "primereact/button";
 import { countryMappings } from '../utils/mapUtilities.ts';
 
 function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, currentWeek: string, dataSelection: CountryDetails}) {
@@ -44,11 +43,10 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
         "id": track.name,
         "data": [
           {
-            "x": props.dataSelection.spotifyCode? 
-                (track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis).rank) : 1000*1000) 
+            "x": props.dataSelection.spotifyCode
+                ? (track.chartings?.find(chart => chart.country === xAxis)?.rank ?? 1000 * 1000) 
                 : Math.min(...track.chartings.map(chart => chart.rank), 1000*1000),
-            "y": track.chartings.find(chart => chart.country === yAxis) ? (track.chartings.find(chart => chart.country === yAxis).rank) : 1000*1000
-
+            "y": track.chartings?.find(chart => chart.country === yAxis)?.rank ?? 1000 * 1000
           }
         ]
       }))      

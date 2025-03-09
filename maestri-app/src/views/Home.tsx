@@ -3,10 +3,10 @@ import { Card } from "primereact/card";
 function Home() {
 
   const mapHeader = (
-    <img alt="Card" className="" src="https://images.genius.com/073372f6cd316f7c68b4c4b7d8c610c9.675x675x1.jpg"/>
+    <img alt="Card" className="" src="https://images.genius.com/3cabe9f21c01e9758d908e30fc1cd772.1000x1000x1.jpg"/>
   );
   const artistHeader = (
-    <img alt="Card" src="https://images.genius.com/df3ebb0ffe60340ec5ca9b5139c24649.675x675x1.jpg"/>
+    <img alt="Card" src="https://images.genius.com/4ed0ec8b6c4f5b4f5b74d72f83877d72.1000x1000x1.jpg"/>
   );
 
 
@@ -20,12 +20,12 @@ function Home() {
       
       <div className="flex flex-row justify-center" >
         <div className="flex flex-row w-1/2">
-          <a href="/network" className="no-underline">
-            <Card title="Explore Connections" subTitle="See how different artists have collaborated" header={mapHeader}/>
+          <a href="/artist?id=1405" className="no-underline">
+            <Card title="Artist" subTitle="Checkout a random artist and their contributors" header={artistHeader}/>
           </a>
           <div className="w-1/10"/>
-          <a href="/artist" className="no-underline">
-            <Card title="Artist" subTitle="Checkout a random artist and their contributors" header={artistHeader}/>
+          <a href="/network?id=447" className="no-underline">
+            <Card title="Explore Connections" subTitle="See how different artists have collaborated" header={mapHeader}/>
           </a>
         </div>
 
