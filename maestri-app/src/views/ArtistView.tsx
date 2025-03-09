@@ -15,6 +15,8 @@ import { countryMappings } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
 // import BarChart from "../components/BarChart";
 // import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
+// import BarChart from "../components/BarChart";
+// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 
 
 interface ArtistProps {
