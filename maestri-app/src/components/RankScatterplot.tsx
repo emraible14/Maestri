@@ -45,9 +45,9 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
         "data": [
           {
             "x": props.dataSelection.spotifyCode? 
-                (track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis).rank) : 200) 
-                : Math.min(...track.chartings.map(chart => chart.rank), 200),
-            "y": track.chartings.find(chart => chart.country === yAxis) ? (track.chartings.find(chart => chart.country === yAxis).rank) : 200
+                (track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis).rank) : 1000*1000) 
+                : Math.min(...track.chartings.map(chart => chart.rank), 1000*1000),
+            "y": track.chartings.find(chart => chart.country === yAxis) ? (track.chartings.find(chart => chart.country === yAxis).rank) : 1000*1000
           }
         ]
       }))      
