@@ -15,7 +15,7 @@ function Navbar() {
     {
       label: 'Artist',
       icon: 'pi pi-user',
-      command: () =>  navigate('/artist?id=1405')
+      command: () =>  navigate('/artist?id=2358')
     },
     {
       label: 'Compare artists',
@@ -25,7 +25,7 @@ function Navbar() {
     {
       label: 'Explore connections',
       icon: 'pi pi-arrow-right-arrow-left',  
-      command: () =>  navigate('/network?id=1405')
+      command: () =>  navigate('/network?id=2358')
     }
   ]
 

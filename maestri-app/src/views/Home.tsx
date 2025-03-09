@@ -1,6 +1,8 @@
 import { Card } from "primereact/card";
+import {useNavigate} from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
 
   const mapHeader = (
     <img alt="Card" className="" src="https://images.genius.com/3cabe9f21c01e9758d908e30fc1cd772.1000x1000x1.jpg"/>
