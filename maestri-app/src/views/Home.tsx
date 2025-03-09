@@ -2,7 +2,6 @@ import { Card } from "primereact/card";
 import {useNavigate} from "react-router-dom";
 
 function Home() {
-  // @ts-expect-error
   const navigate = useNavigate();
 
   const mapHeader = (
@@ -23,13 +22,13 @@ function Home() {
       
       <div className="flex flex-row justify-center" >
         <div className="flex flex-row w-1/2">
-          <a href="/artist?id=1405" className="no-underline">
-            <Card title="Artist" subTitle="Checkout a random artist and their contributors" header={artistHeader}/>
-          </a>
+          <div onClick={() =>  navigate('/artist?id=1405')}>
+            <Card title="Artist" subTitle="Check out an artist and their contributors" header={artistHeader}/>
+          </div>
           <div className="w-1/10"/>
-          <a href="/network?id=447" className="no-underline">
-            <Card title="Explore Connections" subTitle="See how different artists have collaborated" header={mapHeader}/>
-          </a>
+            <div onClick={() =>  navigate('/network?id=447')}>
+              <Card title="Explore Connections" subTitle="See how different artists have collaborated" header={mapHeader}/>
+          </div>
         </div>
 
       </div>
