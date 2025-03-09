@@ -1,30 +1,31 @@
 import { ResponsiveHeatMap } from '@nivo/heatmap'
 import { getTheme } from '../utils/colorUtilities';
-import { Artist } from '../utils/interfaces';
+import {Artist, Track} from '../utils/interfaces';
 import { DataModel } from '../DataModel';
 import HeatMapTooltip from './HeatMapTooltip';
+import {useEffect, useState} from "react";
 
-function HeatMapBar(props: {artist: Artist, model: DataModel, setSliderPosition: (newDate: string) => void}) {
+function HeatMapBar(props: { model: DataModel, currentTracks: Track[], setSliderPosition: (newDate: string) => void}) {
+    const [data, setData] = useState<{ id: string; data: { x: string; y: number | null; }[]; }[]>([]);
 
-    const data = [];
-    const result: {[key: string] : string | Array<{[key: string] : string | number | null}>} = { "id": props.artist.name };
-    const resultData: Array<{[key: string] : string | number | null}> = [];
-    props.model.allWeeks.forEach((week) => {
-        const tracks = props.model.filterTracksByWeekAndArtist(week, props.artist.artist_id)
-        if (tracks.length === 0) {
-            resultData.push({
-                'x': week,
-                'y': null,
-            })
-        } else {
-            resultData.push({
-                'x': week,
-                'y': tracks.length,
-            })
-        }
-    })
-    result['data'] = resultData;
-    data.push(result);
+    useEffect(() => {
+        const newData = [
+            {
+                id: "X",
+                data: props.model.allWeeks.map(week => {
+                    const numTracks = props.currentTracks
+                      .filter(track => track.chartings.some(chart => chart.week === week)).length
+
+                    return {
+                        "x": week,
+                        "y": numTracks === 0 ? null : numTracks,
+                    }
+                })
+            }
+        ]
+
+        setData(newData)
+    }, [props.currentTracks]);
 
     return (
     <div style={{height: '25px', marginBottom: '10px'}}>
@@ -41,7 +42,7 @@ function HeatMapBar(props: {artist: Artist, model: DataModel, setSliderPosition:
             maxValue: 9
         }}
         emptyColor="#000000"
-        enableLabel={false}
+        enableLabels={false}
         label={''}
         borderColor={{ from: 'color'}}
         tooltip={HeatMapTooltip}

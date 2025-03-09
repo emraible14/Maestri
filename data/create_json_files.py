@@ -4,7 +4,7 @@ import json
 import math
 from tqdm import tqdm
 
-def create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls):
+def create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls, df_relationships):
     tracks_json = {}
     spotify_id_to_genius_id = {}
 
@@ -19,7 +19,11 @@ def create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls):
             "release_date": t.get('geniusReleaseDate', None),
             "image_url": image_url.iloc[0] if not image_url.empty else None,
             "credits": [],
-            "chartings": []
+            "chartings": [],
+            "stats": {
+                'samples': 0,
+                'interpolations': 0,
+            }
         }
 
         if not pd.isnull(t['spotifyId']):
@@ -51,6 +55,11 @@ def create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls):
             "artist_id": str(contribution['artistId']),
             "contribution_type": contribution['type']
         })
+
+    #? 4) statistics
+    for i, x in df_tracks.merge(df_relationships, left_on="geniusId", right_on="from_genius_id", how="inner").groupby(['spotifyId']).agg(list).iterrows():
+        tracks_json[x['geniusId'][0]]['stats']['samples'] = x['type'].count('samples')
+        tracks_json[x['geniusId'][0]]['stats']['interpolations'] = x['type'].count('interpolates')
 
     #? 99) write to json file
     with open('tracks_v2.json', 'w') as fp:
@@ -263,7 +272,7 @@ if __name__ == "__main__":
     tracks_without_charting = []
 
     #? TRACKS
-    create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls)
+    create_tracks_json(df_tracks, df_contributions, df_charting, df_image_urls, df_relationships)
 
     #? ARTISTS
     create_artists_json(df_tracks, df_contributions, df_charting, df_image_urls, df_relationships)

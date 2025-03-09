@@ -44747,189 +44747,190 @@ const countryCodeMapping: Record<string, string> = {
 
 const getMapData = () => mapDataSets;
 
-const countryMappings : CountryDetails[]= [
+const countryMappings: CountryDetails[] = [
   {
-    label: "CUMULATIVE",
     spotifyCode: null,
     mapCode: null,
+    label: "Cumulative",
   },
   {
-    label: "GLOBAL",
     spotifyCode: "GLOBAL",
     mapCode: null,
+    label: "Global",
   },
   {
-    label: "ITA",
     spotifyCode: "IT",
     mapCode: "ITA",
+    label: "Italy",
   },
   {
-    label: "GBR",
     spotifyCode: "GB",
     mapCode: "GBR",
+    label: "United Kingdom",
   },
   {
-    label: "DEU",
     spotifyCode: "DE",
     mapCode: "DEU",
+    label: "Germany",
   },
   {
-    label: "SWE",
     spotifyCode: "SE",
     mapCode: "SWE",
+    label: "Sweden",
   },
   {
-    label: "ESP",
     spotifyCode: "ES",
     mapCode: "ESP",
+    label: "Spain",
   },
   {
-    label: "ARG",
     spotifyCode: "AR",
     mapCode: "ARG",
+    label: "Argentina",
   },
   {
-    label: "AUT",
     spotifyCode: "AT",
     mapCode: "AUT",
+    label: "Austria",
   },
   {
-    label: "BEL",
     spotifyCode: "BE",
     mapCode: "BEL",
+    label: "Belgium",
   },
   {
-    label: "BGR",
     spotifyCode: "BG",
     mapCode: "BGR",
+    label: "Bulgaria",
   },
   {
-    label: "CAN",
     spotifyCode: "CA",
     mapCode: "CAN",
+    label: "Canada",
   },
   {
-    label: "CYP",
     spotifyCode: "CY",
     mapCode: "CYP",
+    label: "Cyprus",
   },
   {
-    label: "CZE",
     spotifyCode: "CZ",
     mapCode: "CZE",
+    label: "Czech Republic",
   },
   {
-    label: "DNK",
     spotifyCode: "DK",
     mapCode: "DNK",
+    label: "Denmark",
   },
   {
-    label: "EST",
     spotifyCode: "EE",
     mapCode: "EST",
+    label: "Estonia",
   },
   {
-    label: "FIN",
     spotifyCode: "FI",
     mapCode: "FIN",
+    label: "Finland",
   },
   {
-    label: "FRA",
     spotifyCode: "FR",
     mapCode: "FRA",
+    label: "France",
   },
   {
-    label: "GRC",
     spotifyCode: "GR",
     mapCode: "GRC",
+    label: "Greece",
   },
   {
-    label: "HUN",
     spotifyCode: "HU",
     mapCode: "HUN",
+    label: "Hungary",
   },
   {
-    label: "ISL",
     spotifyCode: "IS",
     mapCode: "ISL",
+    label: "Iceland",
   },
   {
-    label: "IRL",
     spotifyCode: "IE",
     mapCode: "IRL",
+    label: "Ireland",
   },
   {
-    label: "LVA",
     spotifyCode: "LV",
     mapCode: "LVA",
+    label: "Latvia",
   },
   {
-    label: "LTU",
     spotifyCode: "LT",
     mapCode: "LTU",
+    label: "Lithuania",
   },
   {
-    label: "LUX",
     spotifyCode: "LU",
     mapCode: "LUX",
+    label: "Luxembourg",
   },
   {
-    label: "MEX",
     spotifyCode: "MX",
     mapCode: "MEX",
+    label: "Mexico",
   },
   {
-    label: "NLD",
     spotifyCode: "NL",
     mapCode: "NLD",
+    label: "Netherlands",
   },
   {
-    label: "NOR",
     spotifyCode: "NO",
     mapCode: "NOR",
+    label: "Norway",
   },
   {
-    label: "POL",
     spotifyCode: "PL",
     mapCode: "POL",
+    label: "Poland",
   },
   {
-    label: "PRT",
     spotifyCode: "PT",
     mapCode: "PRT",
+    label: "Portugal",
   },
   {
-    label: "ROU",
     spotifyCode: "RO",
     mapCode: "ROU",
+    label: "Romania",
   },
   {
-    label: "SVK",
     spotifyCode: "SK",
     mapCode: "SVK",
+    label: "Slovakia",
   },
   {
-    label: "CHE",
     spotifyCode: "CH",
     mapCode: "CHE",
+    label: "Switzerland",
   },
   {
-    label: "UKR",
     spotifyCode: "UA",
     mapCode: "UKR",
+    label: "Ukraine",
   },
   {
-    label: "USA",
     spotifyCode: "US",
     mapCode: "USA",
+    label: "United States",
   }
-]
+];
+
 
 type CountryDetails = {
-  label: string,
-  spotifyCode: string | null,
-  mapCode: string | null,
-}
+  label: string;
+  spotifyCode: string | null;
+  mapCode: string | null; 
+};
 
 
 export {getFeaturesArray, getMapData, countryCodeMapping, countryMappings};

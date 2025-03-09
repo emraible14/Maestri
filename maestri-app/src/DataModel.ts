@@ -19,10 +19,9 @@ export class DataModel {
             ]);
 
             this.artists = await artistsResponse.json();
-            const tracksObject = await tracksResponse.json();
+            this.tracks = await tracksResponse.json();
             this.networkData = await networkResponse.json();
 
-            this.tracks = tracksObject;
 
             this.allWeeks = Array.from(
               new Set(Object.values(this.tracks).flatMap((track) => track.chartings.map((charting) => charting.week)))

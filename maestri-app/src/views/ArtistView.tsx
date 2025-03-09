@@ -3,7 +3,7 @@ import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { Slider, SliderChangeEvent } from "primereact/slider";
 import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
-import { Track } from '../utils/interfaces';
+import {Chart, Track} from '../utils/interfaces';
 import ChoroplethChart from '../components/ChloroplethChart';
 import BumpChart from '../components/BumpChart';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { Button } from 'primereact/button';
 import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings } from "../utils/mapUtilities.ts";
+import RankScatterPlot from "../components/RankScatterplot.tsx";
 
 
 interface ArtistProps {
@@ -27,8 +28,36 @@ function Artist(props: ArtistProps) {
     const [currentArtist, setCurrentArtist] = useState(props.model.getArtist(searchParams.get("id") || '45'));
     const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.artist_id));
     const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
-
     const [selectedCountry, setSelectedCountry] = useState(countryMappings[0]);
+
+    function getFilteredChartingForSelectedCountryAndWeek(country: string | null, week: string | null) {
+        return props.model.getTracksForArtist(currentArtist.artist_id)
+            .map(track => {
+                const chartingInCountriesAndWeek = track.chartings.filter(
+                    chart =>
+                        (
+                          (country !== null && chart.country === country)
+                          || (country === null && chart.country !== "GLOBAL")
+                        )
+                        && (week === null || chart.week === week)
+                    );
+                return chartingInCountriesAndWeek.length > 0 ? { ...track, chartings: chartingInCountriesAndWeek } : null;
+            })
+            .filter(track => track !== null);
+    }
+    // charting data for selected country
+    const chartingsAllWeeks = useMemo(() => {
+      return getFilteredChartingForSelectedCountryAndWeek(selectedCountry.spotifyCode, null);
+    }, [currentArtist, selectedCountry]);
+
+    // charting data for selected country and week
+    const chartingsOneWeek = useMemo(() => {
+        return getFilteredChartingForSelectedCountryAndWeek(
+            selectedCountry.spotifyCode,
+            props.model.allWeeks[currentIndex]
+        );
+    }, [selectedCountry, currentIndex, currentArtist]);
+
 
     // update current artist when id changes
     useEffect(() => {
@@ -48,7 +77,6 @@ function Artist(props: ArtistProps) {
     useEffect(() => {
         setChartingTracks(filterTracksForCurrentWeek); // Update charting tracks
         // used of debugging
-        //console.log(chartingTracks) 
     }, [filterTracksForCurrentWeek]);
 
     useEffect(() => {
@@ -81,11 +109,7 @@ function Artist(props: ArtistProps) {
     };
 
     function timelineButton() {
-        if (isPaused) {
-            return (<Button onClick={handleTogglePause} icon="pi pi-play" aria-label="Play" rounded />);
-        } else {
-            return (<Button onClick={handleTogglePause} icon="pi pi-pause" aria-label="Play" rounded/>);
-        }
+
     }
   
     return (
@@ -133,65 +157,70 @@ function Artist(props: ArtistProps) {
                             />
                         </div>
                         <div style={{height: '50vh'}}>
-                            <ScatterPlot artist={currentArtist} currentTracks={
-                                props.model.getTracksForArtist(currentArtist.artist_id)
-                                  .filter(track => selectedCountry.spotifyCode === null ? true : track.chartings.some(chart => chart.country === selectedCountry.spotifyCode) )
-                            } country={selectedCountry} currentWeek={props.model.allWeeks[currentIndex]}  ></ScatterPlot>
+                            <ScatterPlot artist={ currentArtist } currentTracks={ chartingsAllWeeks } ></ScatterPlot>
                         </div>
                     </div>
                     <div className='col-span-2'>
                         <div style={{height: '50vh'}}>
-                            <h2 style={{ color: getColorPalette().amber, margin: "0 0 1rem 0" }}>All songs</h2>
+                            <h2 style={{ color: getColorPalette().amber, margin: "0 0 1rem 0" }}>Tracks</h2>
                             <div className="flex flex-col" style={{ gap: "1rem", overflowY: 'scroll', height: "100%"}}>
-                                { props.model.getTracksForArtist(currentArtist.artist_id)
-                                  .filter(track => selectedCountry.spotifyCode === null ? true : track.chartings.some(chart => chart.country === selectedCountry.spotifyCode) )
-                                  .map(trackDisplay) }
+                                { chartingsAllWeeks.length === 0 ? (
+                                  <p>No tracks found for this selection</p>
+                                ) : (
+                                  chartingsAllWeeks.map(trackDisplay)
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div>
-                <h1>Charting</h1>
-                <div className="flex flex-col" style={{gap: "3rem"}}>
+                <h1>Charts</h1>
+                <div className="flex flex-col" style={{gap: "2rem"}}>
+                    <div className='flex flex-col'>
+                      <h3 style={{ color: getColorPalette().amber, margin: "0 0 1rem 0" }}>{ selectedCountry.label } Charts { props.model.allWeeks[currentIndex] }</h3>
+                      <div className="flex flex-row" style={{gap: "1.5rem"}}>
+                        { isPaused
+                            ? <Button style={{minWidth: "3rem", marginTop: "-3px"}} onClick={handleTogglePause} icon="pi pi-play" aria-label="Play" rounded />
+                            : <Button style={{minWidth: "3rem", marginTop: "-3px"}} onClick={handleTogglePause} icon="pi pi-pause" aria-label="Play" rounded />
+                        }
+                        <div style={{ width: '100%'}}>
+                          <HeatMapBar model={props.model}
+                                      currentTracks={ chartingsAllWeeks }
+                                      setSliderPosition={ newDate => {
+                                        const weekIdx = props.model.allWeeks.indexOf(newDate)
+                                        setCurrentIndex(weekIdx);
+                                        setMapData(allMapData[weekIdx])
+                                      }}
+                          ></HeatMapBar>
+                          <Slider
+                            value={currentIndex}
+                            min={0}
+                            max={props.model.allWeeks.length - 1}
+                            onChange={handleSliderChange}
+                            pt={{root: {style: {cursor: 'pointer'}}}}
+                            //onSlideEnd={handleSliderEnd}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+
                     <div className='grid grid-cols-5' style={{gap: "2rem"}}>
+                        <div className='col-span-3'>
+                          <div className='clipped'>
+                            <ChoroplethChart mapData={mapData} />
+                          </div>
+                        </div>
                         <div className='col-span-2'>
                             <div style={{height: '55vh'}}>
-                                <h2 style={{ color: getColorPalette().amber, margin: "0 0 1rem 0" }}>Globally charting {props.model.allWeeks[currentIndex]} <br></br>Total track(s): {chartingTracks.length}</h2>
+                                <h2 style={{ color: getColorPalette().amber, margin: "0 0 1rem 0" }}> Charting Tracks ({ chartingsOneWeek.length })</h2>
                                 <div className="flex flex-col" style={{ gap: "1rem", overflowY: 'scroll', height: "100%"}}>
-                                    {chartingTracks.length === 0 ? (
-                                      <p>No charting tracks for this week.</p>
+                                    { chartingsOneWeek.length === 0 ? (
+                                      <p>No charting tracks during this week</p>
                                     ) : (
-                                      chartingTracks.map(trackDisplay)
+                                      chartingsOneWeek.map(trackDisplay)
                                     )}
-                                </div>
-                            </div>
-                        </div>
-                        <div className='col-span-3'>
-                            <div className='clipped'>
-                                <ChoroplethChart mapData={mapData} />
-                            </div>
-                            <h3 style={{ color: getColorPalette().amber, margin: '10px' }}>{props.model.allWeeks[currentIndex]}</h3>
-                            <div className='flex items-center'>
-                                { timelineButton() }
-                                <div style={{ marginLeft: '20px', width: '100%'}}>
-                                    <HeatMapBar artist={currentArtist}
-                                                model={props.model}
-                                                setSliderPosition={newDate => {
-                                                    const weekIdx = props.model.allWeeks.indexOf(newDate)
-                                                    setCurrentIndex(weekIdx);
-                                                    setMapData(allMapData[weekIdx])
-                                                }}
-                                    ></HeatMapBar>
-                                    <div style={{margin: '0px 5px'}}>
-                                        <Slider
-                                          value={currentIndex}
-                                          min={0}
-                                          max={props.model.allWeeks.length - 1}
-                                          onChange={handleSliderChange}
-                                          //onSlideEnd={handleSliderEnd}
-                                        />
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -200,8 +229,10 @@ function Artist(props: ArtistProps) {
                         <div style={{height: "40vh", width: "100vh"}}>
                             <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, currentIndex)}/>
                         </div>
-                        <div>
-                            Scatter plot here
+                        <div style={{width: "100vh"}}>
+                            <RankScatterPlot artist={currentArtist} tracksForArtist={
+                                props.model.getTracksForArtist(currentArtist.artist_id)
+                            } currentWeek={props.model.allWeeks[currentIndex]}></RankScatterPlot>
                         </div>
                     </div>
                 </div>

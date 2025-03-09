@@ -68,6 +68,10 @@ export interface Track {
     "primary_artist_id": number, 
     "chartings": Array<Chart>,
     "credits": Array<Credit>,
+    "stats": {
+        "samples": number,
+        "interpolations": number,
+    }
 }
 
 export interface Chart {

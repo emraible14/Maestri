@@ -1,49 +1,52 @@
 // install (please try to align the version of installed @nivo packages)
 // yarn add @nivo/scatterplot
 import {ResponsiveScatterPlot} from '@nivo/scatterplot'
-import {getTheme} from '../utils/colorUtilities';
-import {Artist, Track} from '../utils/interfaces';
+import {getColorPalette, getTheme} from '../utils/colorUtilities';
+import {Track} from '../utils/interfaces';
 import {Dropdown} from 'primereact/dropdown';
 import {useEffect, useState} from 'react';
-import {CountryDetails} from "../utils/mapUtilities.ts";
 import {Button} from "primereact/button";
+import NoDataFoundMessage from "./NoDataFoundMessage.tsx";
 
-function ScatterPlot(props: {artist: Artist, currentTracks: Array<Track>, currentWeek: string, country: CountryDetails}) {
-
-    if (props.currentTracks.length === 0) {
-        return null;
-    }
-
-    // console.log(props)
+function ScatterPlot(props: { currentTracks: Array<Track> }) {
     const axisOptions = [
-        {
-            label: "Team Size",
-            computation: (track: Track) => track.credits.length
-        },
-        {
-            label: "Charting Countries",
-            computation: (track: Track) => (new Set(track.chartings.map((chart) => chart.country))).size
-        },
-        {
-            label: "Peak Rank",
-            computation: (track: Track, country: CountryDetails) => {
-              return Math.min(...track.chartings
-                .filter(chart => props.country.spotifyCode !== null ? chart.country === country.spotifyCode : true)
-                .map(chart => chart.rank))
-            }
-        },
-        {
-            label: "Weeks on Chart",
-            computation: (track: Track, country: CountryDetails) => {
-              return Math.max(...track.chartings
-                .filter(chart => props.country.spotifyCode !== null ? chart.country === country.spotifyCode : true)
-                .map(chart => chart.weeks_on_chart))
-            }
-        }
-    ]
+    {
+      label: "Team Size",
+      computation: (track: Track) => track.credits.length
+    },
+    {
+      label: "Peak Charting Countries",
+      computation: (track: Track) => (new Set(track.chartings.map((chart) => chart.country))).size
+    },
+    {
+      label: "Peak Rank",
+      computation: (track: Track) => Math.min(...track.chartings.map(chart => chart.rank))
+    },
+    {
+      label: "Weeks on Chart",
+      computation: (track: Track) => Math.max(...track.chartings.map(chart => chart.weeks_on_chart))
+    },
+    {
+      label: "Peak Weekly Streams",
+      computation: (track: Track) => {
+        const streamsPerWeek = new Map<string, number>();
+        track.chartings
+          .forEach(chart => streamsPerWeek.set(chart.week, (streamsPerWeek.get(chart.week) ?? 0) + chart.num_streams))
+
+        return Math.max(...Array.from(streamsPerWeek.values()))
+      }
+    },
+    {
+      label: "Samples/Interpolations",
+      computation: (track: Track) => track.stats.samples + track.stats.interpolations
+    }
+  ]
+
     const [xAxis, setXAxis] = useState(axisOptions[0]);
     const [yAxis, setYAxis] = useState(axisOptions[1]);
     const [data, setData] = useState<{ id: string; data: { x: number; y: number; }[]; }[]>([]);
+
+
 
     function buildData() {
       return props.currentTracks.map(track => (
@@ -51,8 +54,8 @@ function ScatterPlot(props: {artist: Artist, currentTracks: Array<Track>, curren
           id: track.name,
           data: [
             {
-              "x": xAxis.computation(track, props.country),
-              "y": yAxis.computation(track, props.country),
+              "x": xAxis.computation(track),
+              "y": yAxis.computation(track),
             }
           ]
         }
@@ -60,17 +63,13 @@ function ScatterPlot(props: {artist: Artist, currentTracks: Array<Track>, curren
     }
 
     useEffect(() => {
-        const data = buildData()
-        // console.log("running effect", props, "data", data)
-        setData(data)
-        // console.log(buildData())
-        // console.log(data)
-    }, [xAxis, yAxis, props.country]);
-
+      setData(buildData())
+    }, [xAxis, yAxis, props.currentTracks]);
 
     return (
         <div style={{height: '100%'}}>
-          <div style={{height: "90%"}}>
+          <div style={{height: "90%", position: "relative"}}>
+            { data.length === 0 && <NoDataFoundMessage message="Try changing data selection"></NoDataFoundMessage> }
             <ResponsiveScatterPlot
               data={data}
               margin={{ top: 25, right: 25, bottom: 70, left: 70 }}
@@ -81,7 +80,7 @@ function ScatterPlot(props: {artist: Artist, currentTracks: Array<Track>, curren
               axisTop={null}
               axisRight={null}
               theme={getTheme()}
-              colors={"#fbbf23"}
+              colors={getColorPalette().amber}
               useMesh={false}
               axisBottom={{
                 tickSize: 5,
@@ -141,8 +140,6 @@ function ScatterPlot(props: {artist: Artist, currentTracks: Array<Track>, curren
               const tXAxis = xAxis;
               setXAxis(yAxis)
               setYAxis(tXAxis)
-
-              console.log("HELLO")
             }} icon="pi pi-arrow-right-arrow-left" outlined tooltip="Switch Axis"/>
             <Dropdown
               style={{ width: '100%'}}
