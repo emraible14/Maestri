@@ -178,8 +178,23 @@ function Artist(props: ArtistProps) {
             <div>
                 <h1>Charts</h1>
                 <div className="flex flex-col" style={{gap: "2rem"}}>
-                    <div className='flex flex-col'>
-                      <h3 style={{ color: getColorPalette().amber, margin: "0 0 1rem 0" }}>{ selectedCountry.label } Charts { props.model.allWeeks[currentIndex] }</h3>
+                    <div className='flex flex-col' style={{gap: "1.25rem"}}>
+                      <div className="flex flex-row" style={{gap: "1rem", alignItems: "center"}}>
+                        <div>
+                          Data Selection:
+                        </div>
+                        <Dropdown
+                          style={{ width: '30%'}}
+                          value={selectedCountry.label}
+                          onChange={(e) => setSelectedCountry(e.value)}
+                          options={countryMappings}
+                          optionLabel="label"
+                          placeholder={selectedCountry.label}
+                          checkmark={true}
+                          highlightOnSelect={false}
+                        />
+                      </div>
+                      <h3 style={{ color: getColorPalette().amber, margin: "0" }}>{ selectedCountry.label } Charts { props.model.allWeeks[currentIndex] }</h3>
                       <div className="flex flex-row" style={{gap: "1.5rem"}}>
                         { isPaused
                             ? <Button style={{minWidth: "3rem", marginTop: "-3px"}} onClick={handleTogglePause} icon="pi pi-play" aria-label="Play" rounded />

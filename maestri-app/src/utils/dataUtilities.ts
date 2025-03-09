@@ -9,3 +9,10 @@ const typeToBarKeyLabels: {[key: string]: Array<string>} = {
 export function getBarKeyLabelsFromType(barType: string) {
     return typeToBarKeyLabels[barType] || null;
 }
+
+export const contributionLabels = {
+    "primary": "PR",
+    "feature": "FT",
+    "producer": "PD",
+    "writer": "WR",
+}

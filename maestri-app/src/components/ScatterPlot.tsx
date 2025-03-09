@@ -10,36 +10,36 @@ import NoDataFoundMessage from "./NoDataFoundMessage.tsx";
 
 function ScatterPlot(props: { currentTracks: Array<Track> }) {
     const axisOptions = [
-    {
-      label: "Team Size",
-      computation: (track: Track) => track.credits.length
-    },
-    {
-      label: "Peak Charting Countries",
-      computation: (track: Track) => (new Set(track.chartings.map((chart) => chart.country))).size
-    },
-    {
-      label: "Peak Rank",
-      computation: (track: Track) => Math.min(...track.chartings.map(chart => chart.rank))
-    },
-    {
-      label: "Weeks on Chart",
-      computation: (track: Track) => Math.max(...track.chartings.map(chart => chart.weeks_on_chart))
-    },
-    {
-      label: "Peak Weekly Streams",
-      computation: (track: Track) => {
-        const streamsPerWeek = new Map<string, number>();
-        track.chartings
-          .forEach(chart => streamsPerWeek.set(chart.week, (streamsPerWeek.get(chart.week) ?? 0) + chart.num_streams))
+      {
+        label: "Peak Rank",
+        computation: (track: Track) => Math.min(...track.chartings.map(chart => chart.rank))
+      },
+      {
+        label: "Weeks on Chart",
+        computation: (track: Track) => Math.max(...track.chartings.map(chart => chart.weeks_on_chart))
+      },
+      {
+        label: "Team Size",
+        computation: (track: Track) => track.credits.length
+      },
+      {
+        label: "Peak Charting Countries",
+        computation: (track: Track) => (new Set(track.chartings.map((chart) => chart.country))).size
+      },  
+      {
+        label: "Peak Weekly Streams",
+        computation: (track: Track) => {
+          const streamsPerWeek = new Map<string, number>();
+          track.chartings
+            .forEach(chart => streamsPerWeek.set(chart.week, (streamsPerWeek.get(chart.week) ?? 0) + chart.num_streams))
 
-        return Math.max(...Array.from(streamsPerWeek.values()))
+          return Math.max(...Array.from(streamsPerWeek.values()))
+        }
+      },
+      {
+        label: "Samples/Interpolations",
+        computation: (track: Track) => track.stats.samples + track.stats.interpolations
       }
-    },
-    {
-      label: "Samples/Interpolations",
-      computation: (track: Track) => track.stats.samples + track.stats.interpolations
-    }
   ]
 
     const [xAxis, setXAxis] = useState(axisOptions[0]);

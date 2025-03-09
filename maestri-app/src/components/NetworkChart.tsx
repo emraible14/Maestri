@@ -1,14 +1,14 @@
-import { ComputedNode, InputNode, ResponsiveNetwork } from "@nivo/network"
+import {InputNode, ResponsiveNetwork } from "@nivo/network"
 import NetWorkNodeComponent from "./NetworkNodeComponent";
 import { Artist, NetworkNode } from "../utils/interfaces";
 import { DataModel } from "../DataModel";
-import {colorPalette} from "../utils/colorUtilities.ts";
+import {getColorPalette} from "../utils/colorUtilities.ts";
 import {useEffect, useRef} from "react";
 
 interface NetworkChartProps {
     readonly model: DataModel;
     readonly artist: Artist;
-    readonly clickedNode: (node: ComputedNode<NetworkNode>) => void;
+    readonly clickedNode: (artistId: string) => void;
 }
 
 function NetworkChart(props: NetworkChartProps) {
@@ -18,16 +18,11 @@ function NetworkChart(props: NetworkChartProps) {
         return (prev && prev.total_contributions > current.total_contributions) ? prev : current
     })
     const maxContributions = biggestGlobalContributor.total_contributions
-    // console.log("maxContributions", maxContributions)
 
     const biggestLocalCollaborator = artistNetwork["nodes"].reduce((prev, current) => {
         return (prev && prev.num_collaborations > current.num_collaborations) ? prev : current
     })
     const maxLocalCollaborations = biggestLocalCollaborator.num_collaborations;
-    // console.log("maxLocalCollaborations", maxLocalCollaborations)
-
-    const numNodes = artistNetwork["nodes"].length;
-    console.log("numNodes", numNodes)
 
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,7 +48,7 @@ function NetworkChart(props: NetworkChartProps) {
                 repulsivity={20}
                 nodeSize={n=> getNodeSize(n, maxContributions)}
                 activeNodeSize={40}
-                nodeColor={colorPalette.amber}
+                nodeColor={n => n.id == props.artist.artist_id ? getColorPalette().amber : getColorPalette().beaver}
                 nodeBorderWidth={1}
                 nodeBorderColor={{
                     from: 'color',
@@ -67,8 +62,8 @@ function NetworkChart(props: NetworkChartProps) {
                 linkThickness={2}
                 linkColor={"#374151"}
                 motionConfig="slow"
-                onClick={props.clickedNode}
-                nodeComponent={n=>NetWorkNodeComponent(n, props.model)}
+                onClick={n => props.clickedNode(n.id)}
+                nodeComponent={n=> NetWorkNodeComponent(n, props.model)}
                     nodeTooltip={(node)=>{
                     const id = node.node.data.id
                     let name = id
