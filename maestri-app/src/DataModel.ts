@@ -247,10 +247,16 @@ export class DataModel {
             return { ...track, chartings: filteredChartings };
         });
 
-        console.log(current)
-        console.log(dates)
-        console.log(trackInfo[0])
-
+        if (trackInfo.length == 0) {
+            const serie: Array<{ x: string, y: number | null }> = [];
+            dates.forEach((week) => {
+                serie.push({ x: week, y: null });
+            });
+            result.push({
+                id: "null",
+                data: serie
+            })
+        }
 
         trackInfo.forEach((track) => {
             if (!Array.isArray(track.chartings) || !track.chartings.length) { return; }

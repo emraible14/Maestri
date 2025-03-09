@@ -1,5 +1,6 @@
 import { getTheme, NIVO_DARK } from '../utils/colorUtilities';
 import { ResponsiveBump } from '@nivo/bump'
+import { BasicTooltip } from '@nivo/tooltip'
 
 interface BumpChartProps {
     readonly data: Array<{
@@ -22,7 +23,8 @@ function BumpChart(props: BumpChartProps) {
             colors={{ scheme: NIVO_DARK }}
             pointColor={{ theme: 'background' }}
             pointBorderWidth={3}
-            activePointBorderWidth={1}
+            activePointBorderWidth={3}
+            inactivePointBorderWidth={1}
             pointBorderColor={{ from: 'serie.color' }}
             enableGridX={false}
             enableGridY={false}
@@ -47,7 +49,19 @@ function BumpChart(props: BumpChartProps) {
             }}
             margin={{ top: 40, right: 100, bottom: 40, left: 60 }}
             animate={false}
+            useMesh={true}
+            pointTooltip={bumpToolTip}
         />
 };
+
+
+
+function bumpToolTip(point: any) {
+    return <BasicTooltip
+            id={point.point.data.x}
+            enableChip={true}
+            value={"Ranked: " + point.point.data.y}
+    />;
+}
 
 export default BumpChart;
