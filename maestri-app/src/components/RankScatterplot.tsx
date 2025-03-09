@@ -9,39 +9,44 @@ import {CountryDetails} from "../utils/mapUtilities.ts";
 import {Button} from "primereact/button";
 import { countryMappings } from '../utils/mapUtilities.ts';
 
-function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, currentWeek: string}) {
+function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, currentWeek: string, dataSelection: CountryDetails}) {
 
     if (props.tracksForArtist.length === 0) {
         return null;
     }
-
+    //console.log(props.dataSelection.spotifyCode)
+    //console.log('cumulative week', props.cumulativeAllWeeks)
     
-    
-    const [xAxis, setXAxis] = useState('GLOBAL');
+    const [xAxis, setXAxis] = useState(props.dataSelection.spotifyCode);
     const [yAxis, setYAxis] = useState('SE');
     const [data, setData] = useState<{ id: string; data: { x: number; y: number; }[]; }[]>([]);
 
+   
+  
     function filterByTwoCountries() {
       //check if song in charting in 1 or both of the countries
       return props.tracksForArtist.map(track => {
         const chartingInCountries = track.chartings
-          .filter(chart => chart.week === props.currentWeek && (chart.country === xAxis || chart.country === yAxis));
-          
-      const chartingInBoth = chartingInCountries.some(chart => chart.country === xAxis) && 
-                             chartingInCountries.some(chart => chart.country === yAxis);
-        
+          .filter(chart => chart.week === props.currentWeek);
+      
+      const chartingInBoth = chartingInCountries.some(chart => chart.country === yAxis);
+
       //if it is not charting in the countries we want, we set it to null and filter it away
         return chartingInBoth ? {... track, chartings: chartingInCountries} : null;
       }).filter(track => track !== null);
     }
-    //console.log('hej', filterByTwoCountries()[0].chartings[0].rank)
+    //console.log('filtered', filterByTwoCountries())
 
     function buildRanksData() {
-      return filterByTwoCountries().map(track => ({
+      
+      return filterByTwoCountries().map(track => (
+        {
         "id": track.name,
         "data": [
           {
-            "x": track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis).rank) : 200, 
+            "x": props.dataSelection.spotifyCode? 
+                (track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis).rank) : 200) 
+                : Math.min(...track.chartings.map(chart => chart.rank), 200),
             "y": track.chartings.find(chart => chart.country === yAxis) ? (track.chartings.find(chart => chart.country === yAxis).rank) : 200
           }
         ]
@@ -49,12 +54,16 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
     }
 
     useEffect(() => {
+      setXAxis(props.dataSelection.spotifyCode);
+    }, [props.dataSelection.spotifyCode]);
+
+    useEffect(() => {
         const data = buildRanksData()
 
         //console.log("hadsgj", data)
 
         setData(data)
-    }, [xAxis, yAxis, props.artist, props.currentWeek]);
+    }, [xAxis, yAxis, props.dataSelection, props.artist, props.currentWeek]);
 
 
     return (
@@ -76,7 +85,9 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                legend: `Song Rank ${countryMappings.find(country => country.spotifyCode === xAxis)?.label}`,
+                legend: countryMappings.find(country => country.spotifyCode === xAxis)?.spotifyCode ? 
+                `Song Rank ${countryMappings.find(country => country.spotifyCode === xAxis)?.label}` : 
+                'Highest Song Rank on Any Chart',
                 legendPosition: 'middle',
                 legendOffset: 46,
                 truncateTickAt: 0
@@ -105,31 +116,18 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
             />
           </div>
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "1rem"}} >
+            Set Y-axix here:
             <Dropdown
               style={{width: '100%'}}
               value={yAxis}
               onChange={(e) => setYAxis(e.value.spotifyCode)}
-              options={countryMappings.filter(country => country.label !== "Cumulative")} // cumulative not interesting here
+              options={countryMappings.filter(country => country.label !== "Cumulative")}
               optionLabel="label"
               placeholder={countryMappings.find(country => country.spotifyCode === yAxis)?.label}
               checkmark={true}
               highlightOnSelect={false}
             />
-            <Button style={{padding: "1.75rem"}} onClick={() => {
-              const tempXAxis = xAxis;
-              setXAxis(yAxis)
-              setYAxis(tempXAxis)
-            }} icon="pi pi-arrow-right-arrow-left" outlined tooltip="Switch Axis"/>
-            <Dropdown
-              style={{ width: '100%'}}
-              value={xAxis}
-              onChange={(e) => setXAxis(e.value.spotifyCode)}
-              options={countryMappings.filter(country => country.label !== "Cumulative")} // cumulative not interseting here
-              optionLabel="label"
-              placeholder={countryMappings.find(country => country.spotifyCode === xAxis)?.label}
-              checkmark={true}
-              highlightOnSelect={false}
-            />
+            
           </div>
         </div>
 

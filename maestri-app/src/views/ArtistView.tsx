@@ -49,7 +49,7 @@ function Artist(props: ArtistProps) {
     const chartingsAllWeeks = useMemo(() => {
       return getFilteredChartingForSelectedCountryAndWeek(selectedCountry.spotifyCode, null);
     }, [currentArtist, selectedCountry]);
-
+    //console.log('cumulative all weeks', chartingsAllWeeks)
     // charting data for selected country and week
     const chartingsOneWeek = useMemo(() => {
         return getFilteredChartingForSelectedCountryAndWeek(
@@ -57,6 +57,7 @@ function Artist(props: ArtistProps) {
             props.model.allWeeks[currentIndex]
         );
     }, [selectedCountry, currentIndex, currentArtist]);
+    //console.log('week', chartingsOneWeek)
 
 
     // update current artist when id changes
@@ -232,7 +233,7 @@ function Artist(props: ArtistProps) {
                         <div style={{width: "100vh"}}>
                             <RankScatterPlot artist={currentArtist} tracksForArtist={
                                 props.model.getTracksForArtist(currentArtist.artist_id)
-                            } currentWeek={props.model.allWeeks[currentIndex]}></RankScatterPlot>
+                            } currentWeek={props.model.allWeeks[currentIndex]} dataSelection={selectedCountry}></RankScatterPlot>
                         </div>
                     </div>
                 </div>
