@@ -13,8 +13,6 @@ import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
-// import BarChart from "../components/BarChart";
-// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 
 
 interface ArtistProps {
@@ -60,7 +58,7 @@ function Artist(props: ArtistProps) {
             props.model.allWeeks[currentIndex]
         );
     }, [selectedCountry, currentIndex, currentArtist]);
-    //console.log('week', chartingsOneWeek)
+
 
     // update current artist when id changes
     useEffect(() => {
@@ -240,8 +238,14 @@ function Artist(props: ArtistProps) {
                                     )}
                                 </div>
                             </div>
-                            <div style={{width: "100vh"}}>
-                              <RankScatterPlot artist={currentArtist} tracksForArtist={
+                        </div>
+                    </div>
+                    <div className='flex flex-row'>
+                        <div style={{width: "100vh"}}>
+                            {BumpChartRender()}
+                        </div>
+                        <div style={{width: "100vh"}}>
+                            <RankScatterPlot artist={currentArtist} tracksForArtist={
                                 props.model.getTracksForArtist(currentArtist.artist_id)
                               } currentWeek={props.model.allWeeks[currentIndex]} dataSelection={selectedCountry}></RankScatterPlot>
                             </div>
@@ -249,7 +253,6 @@ function Artist(props: ArtistProps) {
                     </div>
                 </div>
             </div>
-        </div>
     );
 
     function BumpChartRender() {

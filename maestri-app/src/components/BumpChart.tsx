@@ -1,11 +1,8 @@
 import { getTheme, NIVO_DARK } from '../utils/colorUtilities';
 import { ResponsiveBump } from '@nivo/bump'
 import { BasicTooltip } from '@nivo/tooltip'
-<<<<<<< HEAD
 import NoDataFoundMessage from "./NoDataFoundMessage.tsx";
 import { countryMappings } from "../utils/mapUtilities";
-=======
->>>>>>> Fixing bumpchart
 
 interface BumpChartProps {
     readonly data: Array<{
