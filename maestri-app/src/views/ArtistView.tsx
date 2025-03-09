@@ -226,9 +226,6 @@ function Artist(props: ArtistProps) {
                           <div className='clipped'>
                             <ChoroplethChart mapData={mapData} />
                           </div>
-                          <div style={{height: "25rem", width: "100%"}}>
-                            {BumpChartRender()}
-                          </div>
                         </div>
                         <div className='col-span-2 flex flex-col' style={{gap: "1.25rem"}}>
                             <div className='clipped flex flex-col'>

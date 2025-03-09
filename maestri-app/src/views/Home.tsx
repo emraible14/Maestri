@@ -2,6 +2,7 @@ import { Card } from "primereact/card";
 import {useNavigate} from "react-router-dom";
 
 function Home() {
+  // @ts-expect-error
   const navigate = useNavigate();
 
   const mapHeader = (
