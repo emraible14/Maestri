@@ -3,7 +3,7 @@ import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { Slider, SliderChangeEvent } from "primereact/slider";
 import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
-import {Chart, Track} from '../utils/interfaces';
+import {Track} from '../utils/interfaces';
 import ChoroplethChart from '../components/ChloroplethChart';
 import BumpChart from '../components/BumpChart';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -13,6 +13,8 @@ import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
+// import BarChart from "../components/BarChart";
+// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 
 
 interface ArtistProps {
@@ -27,6 +29,7 @@ function Artist(props: ArtistProps) {
     const [isPaused, setIsPaused] = useState(true);
     const [currentArtist, setCurrentArtist] = useState(props.model.getArtist(searchParams.get("id") || '45'));
     const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.artist_id));
+    // @ts-expect-error
     const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
     const [selectedCountry, setSelectedCountry] = useState(countryMappings[0]);
 
@@ -58,7 +61,6 @@ function Artist(props: ArtistProps) {
         );
     }, [selectedCountry, currentIndex, currentArtist]);
     //console.log('week', chartingsOneWeek)
-
 
     // update current artist when id changes
     useEffect(() => {
@@ -154,7 +156,7 @@ function Artist(props: ArtistProps) {
                             />
                         </div>
                         <div style={{height: '50vh'}}>
-                            <ScatterPlot artist={ currentArtist } currentTracks={ chartingsAllWeeks } ></ScatterPlot>
+                            <ScatterPlot currentTracks={ chartingsAllWeeks } ></ScatterPlot>
                         </div>
                     </div>
                     <div className='col-span-2'>
@@ -224,7 +226,7 @@ function Artist(props: ArtistProps) {
                             <ChoroplethChart mapData={mapData} />
                           </div>
                           <div style={{height: "25rem", width: "100%"}}>
-                            <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, currentIndex)}/>
+                            {BumpChartRender()}
                           </div>
                         </div>
                         <div className='col-span-2 flex flex-col' style={{gap: "1.25rem"}}>
@@ -245,14 +247,29 @@ function Artist(props: ArtistProps) {
                             </div>
                         </div>
                     </div>
-                    <div className='flex flex-row'>
-
-
-                    </div>
                 </div>
             </div>
         </div>
     );
+
+    function BumpChartRender() {
+        const start: Date = new Date("2023-01-05");        
+
+        const current = new Date(start);
+        current.setDate(start.getDate() + ((currentIndex < 5) ? 5 : currentIndex) * 7);
+
+        const fiveWeeksAgo = new Date(current);
+        fiveWeeksAgo.setDate(current.getDate() - 5 * 7);
+
+        const dates: Array<string> = [];
+        for (let d = new Date(fiveWeeksAgo); d <= current; d.setDate(d.getDate() + 7)) {
+            dates.push(new Date(d).toLocaleDateString("en-CA"));
+        }
+
+        
+        // @ts-expect-error
+        return <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)}/>
+    }
 
     function selectArtist(e: DropdownChangeEvent) {
         // update search params

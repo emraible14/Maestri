@@ -212,66 +212,59 @@ export class DataModel {
     }
 
     // This function is so ugly and can probably be made better and more efficient
-    getBumpData(artist: Artist, country: String | null, week: number) {
+    getBumpData(artist: Artist, country: String | null, dates: Array<string>) {
         const result: Array<{ id: string, data: Array<{ x: string; y: number | null }>}> = [];
-
-        if (country === null) {
-            return result;
-        }
         
-        const start: Date = new Date("2023-01-05");        
-
-        const current = new Date(start);
-        current.setDate(start.getDate() + ((week < 5) ? 5 : week) * 7);
-
-        const fiveWeeksAgo = new Date(current);
-        fiveWeeksAgo.setDate(current.getDate() - 5 * 7);
-
-        const dates: Array<string> = [];
-        for (let d = new Date(fiveWeeksAgo); d <= current; d.setDate(d.getDate() + 7)) {
-            dates.push(new Date(d).toLocaleDateString("en-CA"));
-        }
+        const current = new Date(dates[dates.length-1]);
+        const fiveWeeksAgo = new Date(dates[0]);
         current.setDate(current.getDate()+1);
 
         const contributionIds = [...new Set(this.artists[artist.artist_id].contributions.map((cont) => { return cont.song_id.toString()}))];
         const trackInfo = this.getSpecificTracks(contributionIds).map((track) => {
-            const filteredChartings = track.chartings.filter((charting) => {
+            const validChartings = track.chartings.filter((charting) => {
                 const chartDay = new Date(charting.week);
-                return (
-                    charting.country === country &&
-                    chartDay >= fiveWeeksAgo &&
-                    chartDay <= current
-                );
+                return chartDay >= fiveWeeksAgo && chartDay <= current;
             });
-            return { ...track, chartings: filteredChartings };
-        });
 
-        if (trackInfo.length == 0) {
-            const serie: Array<{ x: string, y: number | null }> = [];
-            dates.forEach((week) => {
-                serie.push({ x: week, y: null });
-            });
-            result.push({
-                id: "null",
-                data: serie
-            })
-        }
+            let filteredChartings;
+            
+            if (country) {
+                filteredChartings = validChartings.filter((charting) => {
+                    return (
+                        charting.country === country
+                    );
+                });
+            }
+            else {
+                filteredChartings = Object.values(
+                    validChartings.reduce((acc, charting) => {
+                        if (!acc[charting.week] || charting.rank < acc[charting.week].rank) {
+                            acc[charting.week] = charting;
+                        }
+                        return acc;
+                    }, {} as Record<string, typeof track.chartings[number]>)
+                );
+            }
+            return { name: track.name, chartings: filteredChartings };
+        });
 
         trackInfo.forEach((track) => {
-            if (!Array.isArray(track.chartings) || !track.chartings.length) { return; }
-            const serie: Array<{ x: string, y: number | null }> = [];
-            const chartingMap = new Map(track.chartings.map(entry => [entry.week, entry.rank]));
+            if (!track.chartings?.length) return;
 
-            // Iterate through the list of dates and push rank or null
-            dates.forEach((week) => {
-                serie.push({ x: week, y: chartingMap.get(week) ?? null });
-            });
+            const chartingMap = new Map(track.chartings.map(entry => [entry.week, entry]));
+
             result.push({
                 id: track.name.toString(),
-                data: serie
-            })
+                data: dates.map(week => {
+                    const charting = chartingMap.get(week);
+                    return {
+                        x: week,
+                        y: charting?.rank ?? null,
+                        country: country === null ? (charting?.country ?? null) : null
+                    };
+                }),
+            });
         });
-
         return result;
     }
 

@@ -47,6 +47,7 @@ function Network(props: { readonly model: DataModel }) {
                   {
                     contributionTypesCounts.map(([type, count]: [string, number]) => {
                       return <>
+                        {/* @ts-ignore */}
                         <span className={`chip-${type}-${collaborator.artist_id}`} style={{ color: "black", backgroundColor: "#887369", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{`${contributionLabels[type]}: ${count}`}</span>
                         <Tooltip target={`.chip-${type}-${collaborator.artist_id}`} content={`${collaborator.name} has ${count} ${type} credits on tracks that ${artist.name} also contributed to`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                       </>
@@ -57,6 +58,7 @@ function Network(props: { readonly model: DataModel }) {
                   {
                     contributionTypesCountsMainArtist.map(([type, count]: [string, number]) => {
                       return <>
+                        {/* @ts-ignore */}
                         <span className={`chip-${type}-${collaborator.artist_id}-main`} style={{ color: "black", backgroundColor: "#C4951B", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{`${contributionLabels[type]}: ${count}`}</span>
                         <Tooltip target={`.chip-${type}-${collaborator.artist_id}-main`} content={`${artist.name} has ${count} ${type} credits on tracks that ${collaborator.name} also contributed to`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                       </>
@@ -223,13 +225,15 @@ function Network(props: { readonly model: DataModel }) {
                     <span style={{ fontSize: "80%" }}>{primaryArtists}</span>
                     <span className='flex' style={{ gap: "0.375rem" }}>
                         {collaboratorContributions.map((cont) => {
-                            return <>
+                            return <>                    
+                                {/* @ts-ignore */}
                                 <span className={`chip-${cont.type}-${collaborator.artist_id}-${focusedArtist.artist_id}`} style={{ color: "black", backgroundColor: "#887369", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{contributionLabels[cont.type]}</span>
                                 <Tooltip target={`.chip-${cont.type}-${collaborator.artist_id}-${focusedArtist.artist_id}`} content={`${collaborator.name} is a ${cont.type} on this track`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                             </>
                         })}
                         {focusedArtistContributions.map((cont) => {
                           return <>
+                            {/* @ts-ignore */}
                             <span className={`chip-${cont.type}-${focusedArtist.artist_id}-${collaborator.artist_id}`} style={{ color: "black", backgroundColor: "#C4951B", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{contributionLabels[cont.type]}</span>
                             <Tooltip target={`.chip-${cont.type}-${focusedArtist.artist_id}-${collaborator.artist_id}`} content={`${focusedArtist.name} is a ${cont.type} on this track`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                           </>

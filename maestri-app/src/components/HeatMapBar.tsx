@@ -1,6 +1,6 @@
 import { ResponsiveHeatMap } from '@nivo/heatmap'
 import { getTheme } from '../utils/colorUtilities';
-import {Artist, Track} from '../utils/interfaces';
+import {Track} from '../utils/interfaces';
 import { DataModel } from '../DataModel';
 import HeatMapTooltip from './HeatMapTooltip';
 import {useEffect, useState} from "react";
@@ -30,7 +30,6 @@ function HeatMapBar(props: { model: DataModel, currentTracks: Track[], setSlider
     return (
     <div style={{height: '25px', marginBottom: '10px'}}>
     <ResponsiveHeatMap
-        // @ts-expect-error
         data={data}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         // valueFormat=">-.2s"
