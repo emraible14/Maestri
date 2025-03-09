@@ -13,6 +13,10 @@ import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
+// import BarChart from "../components/BarChart";
+// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
+// import BarChart from "../components/BarChart";
+// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 
 
 interface ArtistProps {
@@ -58,7 +62,6 @@ function Artist(props: ArtistProps) {
             props.model.allWeeks[currentIndex]
         );
     }, [selectedCountry, currentIndex, currentArtist]);
-
 
     // update current artist when id changes
     useEffect(() => {
