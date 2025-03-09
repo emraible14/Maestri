@@ -13,6 +13,8 @@ import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
+// import BarChart from "../components/BarChart";
+// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 
 
 interface ArtistProps {
@@ -57,7 +59,6 @@ function Artist(props: ArtistProps) {
             props.model.allWeeks[currentIndex]
         );
     }, [selectedCountry, currentIndex, currentArtist]);
-
 
     // update current artist when id changes
     useEffect(() => {
@@ -226,8 +227,8 @@ function Artist(props: ArtistProps) {
                         </div>
                     </div>
                     <div className='flex flex-row'>
-                        <div style={{height: "40vh", width: "100vh"}}>
-                            <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, currentIndex)}/>
+                        <div style={{width: "100vh"}}>
+                            {BumpChartRender()}
                         </div>
                         <div style={{width: "100vh"}}>
                             <RankScatterPlot artist={currentArtist} tracksForArtist={
@@ -239,6 +240,53 @@ function Artist(props: ArtistProps) {
             </div>
         </div>
     );
+
+    function BumpChartRender() {
+        const start: Date = new Date("2023-01-05");        
+
+        const current = new Date(start);
+        current.setDate(start.getDate() + ((currentIndex < 5) ? 5 : currentIndex) * 7);
+
+        const fiveWeeksAgo = new Date(current);
+        fiveWeeksAgo.setDate(current.getDate() - 5 * 7);
+
+        const dates: Array<string> = [];
+        for (let d = new Date(fiveWeeksAgo); d <= current; d.setDate(d.getDate() + 7)) {
+            dates.push(new Date(d).toLocaleDateString("en-CA"));
+        }
+
+        
+        // if (selectedCountry.label === "Cumulative") {
+        //     const result: Array<{ id: string, data: Array<{ x: string; y: number | null }>}> = [];
+            
+        //     dates.forEach((date) => {
+        //         const tracks = getFilteredChartingForSelectedCountryAndWeek(selectedCountry.spotifyCode, date)
+
+        //         const updatedTracks = tracks.map(track => {
+        //             if (!track.chartings || track.chartings.length === 0) {
+        //               return { name: track.name, best_rank: null, best_country: null };
+        //             }
+                  
+        //             // Find the entry with the lowest rank value (best ranking)
+        //             const bestCharting = track.chartings.reduce((best, current) =>
+        //               current.rank < best.rank ? current : best
+        //             );
+                    
+        //             return {
+        //                 name: track.name,
+        //                 week: date,
+        //                 best_rank: bestCharting.rank,
+        //                 best_country: bestCharting.country
+        //             };
+        //         });
+                
+        //         // console.log(result)
+        //     })
+
+        //     return <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)}/>
+        // }
+        return <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)}/>
+    }
 
     function selectArtist(e: DropdownChangeEvent) {
         // update search params
