@@ -1,30 +1,36 @@
 import {InputNode, ResponsiveNetwork } from "@nivo/network"
 import NetWorkNodeComponent from "./NetworkNodeComponent";
-import { Artist, NetworkNode } from "../utils/interfaces";
+import {Artist, NetworkNode} from "../utils/interfaces";
 import { DataModel } from "../DataModel";
 import {getColorPalette} from "../utils/colorUtilities.ts";
-import {useEffect, useRef} from "react";
+import {useEffect, useMemo, useRef} from "react";
 
 interface NetworkChartProps {
     readonly model: DataModel;
     readonly artist: Artist;
     readonly clickedNode: (artistId: string) => void;
+    readonly filteredArtistIds: string[] | null;
 }
 
 function NetworkChart(props: NetworkChartProps) {
-    const artistNetwork = props.model.networkData[props.artist.artist_id];
-
-    const biggestGlobalContributor = Object.values(props.model.networkData).reduce(function(prev, current) {
-        return (prev && prev.total_contributions > current.total_contributions) ? prev : current
-    })
-    const maxContributions = biggestGlobalContributor.total_contributions
-
-    const biggestLocalCollaborator = artistNetwork["nodes"].reduce((prev, current) => {
-        return (prev && prev.num_collaborations > current.num_collaborations) ? prev : current
-    })
-    const maxLocalCollaborations = biggestLocalCollaborator.num_collaborations;
-
     const scrollRef = useRef<HTMLDivElement | null>(null);
+
+    const artistNetwork = useMemo(() => {
+        const fullNetwork = props.model.networkData[props.artist.artist_id];
+        return {
+            total_contributions: fullNetwork.total_contributions,
+            nodes: fullNetwork.nodes.filter((n) => props.filteredArtistIds === null || props.filteredArtistIds.includes(n.id)),
+            links: fullNetwork.links.filter((l) => props.filteredArtistIds === null || props.filteredArtistIds.includes(l.source) && props.filteredArtistIds.includes(l.target))
+        }
+    }, [props.artist, props.filteredArtistIds]);
+
+    const maxLocalCollaborations = useMemo(() => {
+        return artistNetwork.nodes
+          .reduce((prev, current) =>
+            (prev && prev.num_collaborations > current.num_collaborations) ? prev : current)
+          .num_collaborations;
+    }, [artistNetwork]);
+
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -46,7 +52,7 @@ function NetworkChart(props: NetworkChartProps) {
                 linkDistance={l=> getEdgeDistance(l.source, l.target)}
                 centeringStrength={0.1}
                 repulsivity={20}
-                nodeSize={n=> getNodeSize(n, maxContributions)}
+                nodeSize={n=> getNodeSize(n, props.model.maxGlobalContributions)}
                 activeNodeSize={40}
                 nodeColor={n => n.id == props.artist.artist_id ? getColorPalette().amber : getColorPalette().beaver}
                 nodeBorderWidth={1}
@@ -82,7 +88,6 @@ function NetworkChart(props: NetworkChartProps) {
     )
 
     function getNodeSize(node: InputNode, max_contributions: number) {
-        // Normalize
         const contributions = props.model.networkData[node.id].total_contributions;
         const normalized_contributions = (contributions) / max_contributions;
         const max_size = 64;
