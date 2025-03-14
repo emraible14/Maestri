@@ -3,7 +3,7 @@ import { DataModel } from '../DataModel';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
-import { Artist, NetworkNode, Track } from '../utils/interfaces';
+import {Artist, NetworkNode, Track} from '../utils/interfaces';
 import NetworkChart from '../components/NetworkChart';
 import { DataScroller } from 'primereact/datascroller';
 import { Panel } from 'primereact/panel';
@@ -11,6 +11,7 @@ import { Chip } from 'primereact/chip';
 import { Tooltip } from 'primereact/tooltip';
 import { getColorPalette } from '../utils/colorUtilities';
 import {contributionLabels} from "../utils/dataUtilities.ts";
+import {SelectButton} from "primereact/selectbutton";
 
 
 
@@ -22,8 +23,40 @@ function Network(props: { readonly model: DataModel }) {
     const allArtists = props.model.getArtists();
     const [artist, setArtist] = useState(props.model.getArtist(searchParams.get("id") || "1405"));
     const [history, setHistory] = useState<string[]>([]);
+    const [contributionsFilter, setContributionsFilter] = useState<ContributionType | null>(null);
 
-    const collaborators = props.model.networkData[artist.artist_id]["nodes"].filter((n) => n.id != artist.artist_id).sort((a, b) => -(a.num_collaborations - b.num_collaborations))
+
+    const filteredArtistIds = useMemo(() => {
+      if (contributionsFilter == null) return null;
+
+      const filteredIds = [artist.artist_id]
+      for (const { id: collaboratorId } of props.model.networkData[artist.artist_id]["nodes"]) {
+        if (collaboratorId == artist.artist_id) continue
+
+        const collaborator: Artist = props.model.getArtist(collaboratorId)
+        const collaborationsIdSet = new Set(props.model.getCollaborations(artist, collaborator))
+
+        collaborator.contributions
+          .some(c => collaborationsIdSet.has(String(c.song_id)) && c.type == contributionsFilter)
+        && filteredIds.push(collaboratorId)
+      }
+
+      return filteredIds
+    }, [artist, contributionsFilter])
+
+    const collaboratorNodes = useMemo(() => {
+      return props.model.networkData[artist.artist_id]["nodes"]
+        .filter(n => n.id != artist.artist_id && (filteredArtistIds == null || filteredArtistIds.includes(n.id)))
+    }, [artist, filteredArtistIds])
+
+    const filteringOptions = [
+      {label: 'All', value: null},
+      {label: "Performers", value: "primary"},
+      {label: 'Writers', value: 'writer'},
+      {label: 'Producers', value: 'producer'}
+    ]
+
+
 
     const artistItemTemplate = (node: NetworkNode) => {
         const collaborator = props.model.getArtist(node.id)
@@ -48,8 +81,8 @@ function Network(props: { readonly model: DataModel }) {
                     contributionTypesCounts.map(([type, count]: [string, number]) => {
                       return <>
                         {/* @ts-ignore */}
-                        <span className={`chip-${type}-${collaborator.artist_id}`} style={{ color: "black", backgroundColor: "#887369", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{`${contributionLabels[type]}: ${count}`}</span>
-                        <Tooltip target={`.chip-${type}-${collaborator.artist_id}`} content={`${collaborator.name} has ${count} ${type} credits on tracks that ${artist.name} also contributed to`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
+                        <span className={`chip-${type}-${collaborator.artist_id}`} style={{ color: "black", backgroundColor: "#887369", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{`${contributionLabels[type].acronym}: ${count}`}</span>
+                        <Tooltip target={`.chip-${type}-${collaborator.artist_id}`} content={`${collaborator.name} has ${count} ${contributionLabels[type].text} credits on tracks that ${artist.name} also contributed to`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                       </>
                     })
                   }
@@ -59,8 +92,8 @@ function Network(props: { readonly model: DataModel }) {
                     contributionTypesCountsMainArtist.map(([type, count]: [string, number]) => {
                       return <>
                         {/* @ts-ignore */}
-                        <span className={`chip-${type}-${collaborator.artist_id}-main`} style={{ color: "black", backgroundColor: "#C4951B", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{`${contributionLabels[type]}: ${count}`}</span>
-                        <Tooltip target={`.chip-${type}-${collaborator.artist_id}-main`} content={`${artist.name} has ${count} ${type} credits on tracks that ${collaborator.name} also contributed to`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
+                        <span className={`chip-${type}-${collaborator.artist_id}-main`} style={{ color: "black", backgroundColor: "#C4951B", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{`${contributionLabels[type].acronym}: ${count}`}</span>
+                        <Tooltip target={`.chip-${type}-${collaborator.artist_id}-main`} content={`${artist.name} has ${count} ${contributionLabels[type].text} credits on tracks that ${collaborator.name} also contributed to`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                       </>
                     })
                   }
@@ -227,15 +260,15 @@ function Network(props: { readonly model: DataModel }) {
                         {collaboratorContributions.map((cont) => {
                             return <>                    
                                 {/* @ts-ignore */}
-                                <span className={`chip-${cont.type}-${collaborator.artist_id}-${focusedArtist.artist_id}`} style={{ color: "black", backgroundColor: "#887369", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{contributionLabels[cont.type]}</span>
-                                <Tooltip target={`.chip-${cont.type}-${collaborator.artist_id}-${focusedArtist.artist_id}`} content={`${collaborator.name} is a ${cont.type} on this track`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
+                                <span className={`chip-${cont.type}-${collaborator.artist_id}-${focusedArtist.artist_id}`} style={{ color: "black", backgroundColor: "#887369", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{contributionLabels[cont.type].acronym}</span>
+                                <Tooltip target={`.chip-${cont.type}-${collaborator.artist_id}-${focusedArtist.artist_id}`} content={`${collaborator.name} is a ${contributionLabels[cont.type].text} on this track`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                             </>
                         })}
                         {focusedArtistContributions.map((cont) => {
                           return <>
                             {/* @ts-ignore */}
-                            <span className={`chip-${cont.type}-${focusedArtist.artist_id}-${collaborator.artist_id}`} style={{ color: "black", backgroundColor: "#C4951B", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{contributionLabels[cont.type]}</span>
-                            <Tooltip target={`.chip-${cont.type}-${focusedArtist.artist_id}-${collaborator.artist_id}`} content={`${focusedArtist.name} is a ${cont.type} on this track`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
+                            <span className={`chip-${cont.type}-${focusedArtist.artist_id}-${collaborator.artist_id}`} style={{ color: "black", backgroundColor: "#C4951B", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{contributionLabels[cont.type].acronym}</span>
+                            <Tooltip target={`.chip-${cont.type}-${focusedArtist.artist_id}-${collaborator.artist_id}`} content={`${focusedArtist.name} is a ${contributionLabels[cont.type].text} on this track`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
                           </>
                         })}
                     </span>
@@ -251,7 +284,7 @@ function Network(props: { readonly model: DataModel }) {
           <div className="flex flex-row" style={{overflowX: 'scroll', gap: '0.75rem', padding: "0.25rem 0.5rem", borderRadius: '5px', borderLeft: "1px solid #424b57", borderRight: "1px solid #424b57"}}>
             { historyCards }
           </div>
-          <NetworkChart model={props.model} artist={artist} clickedNode={selectArtist}></NetworkChart>
+          <NetworkChart model={props.model} artist={artist} clickedNode={selectArtist} filteredArtistIds={filteredArtistIds}></NetworkChart>
         </div>
 
         <div className='flex flex-col col-span-3' style={{gap: '1rem',padding: '1rem'}}>
@@ -269,7 +302,26 @@ function Network(props: { readonly model: DataModel }) {
               <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/comparison?ids=' + artist.artist_id)} outlined icon="pi pi-users" tooltipOptions={{position: "bottom"}} tooltip="Compare Artists"/>
             </div>
           </div>
-          <DataScroller value={collaborators} itemTemplate={artistItemTemplate} rows={5} lazy={true} inline scrollHeight="667px" pt={{
+
+          <div className="flex flex-row" style={{gap: '1rem', alignItems: 'center', justifyContent: "start"}}>
+            <span className="rounded-lg pi pi-filter" style={{ width: '2rem', minWidth: '2rem', height: '2rem', justifyContent: "flex-end", alignItems: "center", display: "flex" }}/>
+            <SelectButton value={contributionsFilter} onChange={(e) => setContributionsFilter(e.value)} optionLabel="label" options={filteringOptions} pt={{
+              label: {
+                style: {
+                  "font-weight": "500"
+                }
+              },
+              button: ({ context }) => ({
+                style: {
+                  "background": context.selected && "#887369",
+                  "border-color": context.selected && "#887369",
+                  "padding": "0.5rem 1rem"
+                }
+              }),
+            }}/>
+          </div>
+
+          <DataScroller value={collaboratorNodes.sort((a, b) => -(a.num_collaborations - b.num_collaborations))} itemTemplate={artistItemTemplate} rows={5} lazy={true} inline scrollHeight="667px" pt={{
             content: {
               style: {
                 'padding': 0

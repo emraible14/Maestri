@@ -9,6 +9,7 @@ export class DataModel {
     allWeeks: Array<string> = [];
     networkData: {[key: string]: Network } = {};
     isLoaded: boolean = false;
+    maxGlobalContributions: number = 0;
 
     async loadData() {
         try {
@@ -37,6 +38,10 @@ export class DataModel {
             Object.keys(this.tracks).forEach((id) => {
                 this.tracks[id].track_id = id;
             });
+
+            this.maxGlobalContributions = Object.values(this.networkData)
+              .reduce((prev, current) => (prev && prev.total_contributions > current.total_contributions) ? prev : current)
+              .total_contributions
 
             this.isLoaded = true;
             return true;
@@ -274,12 +279,9 @@ export class DataModel {
          */
         const tracksA: Set<number> = new Set(artistA.contributions.map((c) => { return c.song_id }))
         const tracksB: Set<number> = new Set(artistB.contributions.map((c) => { return c.song_id }))
+
         const collaborations: Array<number> = []
-        tracksA.forEach((s) => {
-            if (tracksB.has(s)) {
-                collaborations.push(s)
-            }
-        })
+        tracksA.forEach(s => tracksB.has(s) && collaborations.push(s))
         return collaborations.map(String)
     }
 }

@@ -11,8 +11,20 @@ export function getBarKeyLabelsFromType(barType: string) {
 }
 
 export const contributionLabels = {
-    "primary": "PR",
-    "feature": "FT",
-    "producer": "PD",
-    "writer": "WR",
+    primary: {
+        acronym:  "PF",
+        text: "performer"
+    },
+    producer: {
+        acronym: "PD",
+        text: "producer"
+    },
+    writer: {
+        acronym: "WR",
+        text: "writer"
+    },
+    feature: {
+        acronym: "FT",
+        text: "feature"
+    },
 }
