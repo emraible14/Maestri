@@ -16,14 +16,13 @@ import {SelectButton} from "primereact/selectbutton";
 
 
 function Network(props: { readonly model: DataModel }) {
-    console.log("rendering Network")
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const allArtists = props.model.getArtists();
     const [artist, setArtist] = useState(props.model.getArtist(searchParams.get("id") || "1405"));
     const [history, setHistory] = useState<string[]>([]);
-    const [contributionsFilter, setContributionsFilter] = useState<ContributionType | null>(null);
+    const [contributionsFilter, setContributionsFilter] = useState<string | null>(null);
 
 
     const filteredArtistIds = useMemo(() => {
@@ -327,7 +326,7 @@ function Network(props: { readonly model: DataModel }) {
                 'padding': 0
               }
             }
-          }}/>
+          }} emptyMessage={() => (<div style={{padding: "1rem", backgroundColor: "#374151"}}>No collaborators found!</div>)}/>
         </div>
       </div>
     );
