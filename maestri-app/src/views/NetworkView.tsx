@@ -310,6 +310,7 @@ function Network(props: { readonly model: DataModel }) {
                   "font-weight": "500"
                 }
               },
+              // @ts-ignore
               button: ({ context }) => ({
                 style: {
                   "background": context.selected && "#887369",

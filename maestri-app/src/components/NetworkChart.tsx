@@ -9,7 +9,7 @@ interface NetworkChartProps {
     readonly model: DataModel;
     readonly artist: Artist;
     readonly clickedNode: (artistId: string) => void;
-    readonly filteredArtistIds: string[];
+    readonly filteredArtistIds: string[] | null;
 }
 
 function NetworkChart(props: NetworkChartProps) {
