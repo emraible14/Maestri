@@ -16,8 +16,9 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
     //console.log(props.dataSelection.spotifyCode)
     //console.log('cumulative week', props.cumulativeAllWeeks)
     
-    const [xAxis, setXAxis] = useState(props.dataSelection.spotifyCode);
-    const [yAxis, setYAxis] = useState('SE');
+    const [xAxis, setXAxis] = useState('SE');
+    const [yAxis, setYAxis] = useState(props.dataSelection.spotifyCode);
+
     const [data, setData] = useState<{ id: string; data: { x: number; y: number; }[]; }[]>([]);
 
    
@@ -43,17 +44,17 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
         "id": track.name,
         "data": [
           {
-            "x": props.dataSelection.spotifyCode
-                ? (track.chartings?.find(chart => chart.country === xAxis)?.rank ?? 1000 * 1000) 
-                : Math.min(...track.chartings.map(chart => chart.rank), 1000*1000),
-            "y": track.chartings?.find(chart => chart.country === yAxis)?.rank ?? 1000 * 1000
+            "x": track.chartings?.find(chart => chart.country === xAxis)?.rank ?? 1000 * 1000,
+            "y": props.dataSelection.spotifyCode
+              ? (track.chartings?.find(chart => chart.country === yAxis)?.rank ?? 1000 * 1000)
+              : Math.min(...track.chartings.map(chart => chart.rank), 1000*1000),
           }
         ]
       }))      
     }
 
     useEffect(() => {
-      setXAxis(props.dataSelection.spotifyCode);
+      setYAxis(props.dataSelection.spotifyCode);
     }, [props.dataSelection.spotifyCode]);
 
     useEffect(() => {
@@ -66,7 +67,7 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
 
 
     return (
-        <div style={{display: 'flex', height: '100%'}}>
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
           <div style={{ position:'relative', height: '25rem', width: "25rem"}}>
             <ResponsiveScatterPlot
               data={data}
@@ -84,9 +85,7 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                legend: countryMappings.find(country => country.spotifyCode === xAxis)?.spotifyCode ? 
-                `Song Rank ${countryMappings.find(country => country.spotifyCode === xAxis)?.label}` : 
-                'Highest Song Rank on Any Chart',
+                legend: `Song Rank ${countryMappings.find(country => country.spotifyCode === xAxis)?.label}`,
                 legendPosition: 'middle',
                 legendOffset: 46,
                 truncateTickAt: 0
@@ -95,7 +94,9 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                legend: `Song Rank ${countryMappings.find(country => country.spotifyCode === yAxis)?.label}`,
+                legend: countryMappings.find(country => country.spotifyCode === yAxis)?.spotifyCode ?
+                  `Song Rank ${countryMappings.find(country => country.spotifyCode === yAxis)?.label}` :
+                  'Highest Song Rank on Any Chart',
                 legendPosition: 'middle',
                 legendOffset: -60,
                 truncateTickAt: 0
@@ -108,7 +109,7 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
                   fontSize: '14px',
                 }}>
                   <div className="flex flex-col" style={{gap: "0.125rem"}}>
-                    <span>{node.id.substring(0, node.id.lastIndexOf('.'))}</span>
+                    <span>{node.serieId}</span>
                     <strong>Rank {countryMappings.find(country => country.spotifyCode === xAxis)?.label}: {node.formattedX}</strong>
                     <strong>Rank {countryMappings.find(country => country.spotifyCode === yAxis)?.label}: {node.formattedY}</strong>
                   </div>
@@ -116,19 +117,20 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
               )}
             />
           </div>
-          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "1rem"}} >
-            Set Y-axis here:
+          <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: "0.5rem", width: '100%'}} >
+            <div style={{width: "10%"}}>
+              X-axis:
+            </div>
             <Dropdown
-              style={{width: '100%'}}
-              value={yAxis}
-              onChange={(e) => setYAxis(e.value.spotifyCode)}
+              style={{width: '50%'}}
+              value={xAxis}
+              onChange={(e) => setXAxis(e.value.spotifyCode)}
               options={countryMappings.filter(country => country.label !== "Cumulative")}
               optionLabel="label"
-              placeholder={countryMappings.find(country => country.spotifyCode === yAxis)?.label}
+              placeholder={countryMappings.find(country => country.spotifyCode === xAxis)?.label}
               checkmark={true}
               highlightOnSelect={false}
             />
-            
           </div>
         </div>
 
