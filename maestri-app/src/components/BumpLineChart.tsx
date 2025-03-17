@@ -42,11 +42,10 @@ function LineChart(props: BumpChartProps) {
                 // tickValues: 'every 1 week',
                 tickValues: xAxis,
                 tickSize: 5,
-                tickPadding: 3,
+                tickPadding: 5,
                 legend: 'Week',
                 legendPosition: 'middle',
-                legendOffset: 32,
-                truncateTickAt: 0
+                legendOffset: 40,
               }}
               axisLeft={{
                 tickSize: 5,
@@ -54,7 +53,7 @@ function LineChart(props: BumpChartProps) {
                 tickRotation: 0,
                 legend: 'Chart rank',
                 legendPosition: 'middle',
-                legendOffset: -40,
+                legendOffset: -50,
                 truncateTickAt: 10,
               }}
 
