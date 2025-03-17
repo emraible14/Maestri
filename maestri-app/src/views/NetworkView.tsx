@@ -330,7 +330,6 @@ function Network(props: { readonly model: DataModel }) {
                 onClick={() => addArtistToPickList(artist)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "left", showOnDisabled: true}} 
                 tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add To Compare List"} 
                 disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === artist.artist_id)}/>
-              {/* <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/comparison?ids=' + artist.artist_id)} outlined icon="pi pi-users" tooltipOptions={{position: "bottom"}} tooltip="Compare Artists"/> */}
             </div>
           </div>
 
