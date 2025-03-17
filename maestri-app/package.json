@@ -24,6 +24,7 @@
     "@nivo/line": "^0.88.0",
     "@nivo/network": "^0.88.0",
     "@nivo/parallel-coordinates": "^0.88.0",
+    "@nivo/pie": "^0.88.0",
     "@nivo/scatterplot": "^0.88.0",
     "@nivo/text": "^0.88.0",
     "@nivo/tooltip": "^0.88.0",
