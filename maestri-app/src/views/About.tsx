@@ -5,35 +5,35 @@ function About() {//
     {
       firstName: "Meya",
       lastName: "Vikner",
-      imageUrl: "/public/crop-meya.jpg",
+      imageUrl: "/pics/crop-meya.jpg",
       linkedin: "https://www.google.it",
       email: "meya@kth.se"
     },
     {
       firstName: "Ludwig",
       lastName: "Estling",
-      imageUrl: "/public/ludwig.png",
+      imageUrl: "/pics/ludwig.png",
       linkedin: "https://www.google.it",
       email: "balanica@kth.se"
     },
     {
       firstName: "Isak",
       lastName: "Larsson",
-      imageUrl: "/public/crop-isak.jpg",
+      imageUrl: "/pics/crop-isak.jpg",
       linkedin: "https://www.google.it",
       email: "balanica@kth.se"
     },
     {
       firstName: "Emma",
       lastName: "Raible",
-      imageUrl: "/public/crop-emma.jpg",
+      imageUrl: "/pics/crop-emma.jpg",
       linkedin: "https://www.google.it",
       email: "balanica@kth.se"
     },
     {
       firstName: "A. Daniel",
       lastName: "Balanica",
-      imageUrl: "/public/crop-daniel.jpg",
+      imageUrl: "/pics/crop-daniel.jpg",
       linkedin: "https://www.linkedin.com/in/andreidanielbalanica/",
       email: "balanica@kth.se"
     },
