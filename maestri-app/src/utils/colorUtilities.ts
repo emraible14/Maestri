@@ -135,6 +135,13 @@ const theme = {
         "table": {},
         "tableCell": {},
         "tableCellValue": {}
+    },
+    crosshair: {
+      line: {
+          stroke: '#FFFFFF',
+          strokeWidth: 1,
+          strokeOpacity: 0.35,
+      },
     }
 }
 
