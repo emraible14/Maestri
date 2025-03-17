@@ -235,9 +235,10 @@ function Artist(props: ArtistProps) {
                     <div className='grid grid-cols-5' style={{gap: "2rem"}}>
                         <div className='col-span-3 flex flex-col' style={{gap: "1.25rem"}}>
                           <div className='clipped'>
-
                             <ChoroplethChart mapData={selectedCountry.label === 'Global'? globalMapData:mapData}
-                                             isGlobal={selectedCountry.label === 'Global'}/>
+                                             isGlobal={selectedCountry.label === 'Global'}
+                                             isCumulative={selectedCountry.label === 'Cumulative'}
+                                             country={selectedCountry.mapCode}/>
                           </div>
                           <div style={{height: "35rem", width: "100%"}}>
                             {BumpChartRender()}
