@@ -63,6 +63,8 @@ function Artist(props: ArtistProps) {
         );
     }, [selectedCountry, currentIndex, currentArtist]);
 
+    const [globalMapData, setGlobalMapData] = useState(getMapData().map(obj => ({...obj, value: chartingsOneWeek.length})));
+
     // update current artist when id changes
     useEffect(() => {
         setCurrentArtist(props.model.getArtist(searchParams.get("id") || '45'))
@@ -72,6 +74,7 @@ function Artist(props: ArtistProps) {
     const allMapData = useMemo(() => {
         return props.model.allWeeks.map((week) => props.model.generateMapDataForWeek(week, currentArtist.artist_id));
     }, [currentArtist]);
+
 
     // filter week when week or artistName changes
     const filterTracksForCurrentWeek = useMemo(() => {
@@ -83,10 +86,13 @@ function Artist(props: ArtistProps) {
         // used of debugging
     }, [filterTracksForCurrentWeek]);
 
+    
+
     useEffect(() => {
         // update map data when artistName changes, allows map to change when we change artist from menu
         setMapData(allMapData[currentIndex]); // Start with map data for the current week
-    }, [currentArtist, currentIndex, allMapData]);
+        setGlobalMapData(getMapData().map(obj => ({...obj, value: chartingsOneWeek.length})));
+    }, [currentArtist, currentIndex, allMapData,selectedCountry]);
 
     useEffect(() => {
         //update if playing, else do nothing, basically do this manually in handleSliderChange
@@ -94,11 +100,12 @@ function Artist(props: ArtistProps) {
         const interval = setInterval(() => {
             setMapData(allMapData[currentIndex]);
             setCurrentIndex((prevIndex) => (prevIndex + 1) % props.model.allWeeks.length);
+            setGlobalMapData(getMapData().map(obj => ({...obj, value: chartingsOneWeek.length})));
         }, 500); // Update every second (can adjust this)
 
         return () => clearInterval(interval);
         }
-    }, [currentArtist, currentIndex, isPaused, allMapData]);
+    }, [currentArtist, currentIndex, isPaused, allMapData,selectedCountry]);
 
     const handleTogglePause = () => {
         setIsPaused((prev) => !prev);
@@ -224,9 +231,8 @@ function Artist(props: ArtistProps) {
                     <div className='grid grid-cols-5' style={{gap: "2rem"}}>
                         <div className='col-span-3 flex flex-col' style={{gap: "1.25rem"}}>
                           <div className='clipped'>
-                            <ChoroplethChart mapData={selectedCountry.label !== 'Global'? mapData:getMapData()}
-                                             scale={selectedCountry.label !== 'Global'? 320:120} 
-                                             translation={selectedCountry.label !== 'Global'? [ 0.77, 1.15 ]:[0.5, 0.6]} />
+                            <ChoroplethChart mapData={selectedCountry.label === 'Global'? globalMapData:mapData}
+                                             isGlobal={selectedCountry.label === 'Global'}/>
                           </div>
                         </div>
                         <div className='col-span-2 flex flex-col' style={{gap: "1.25rem"}}>

@@ -5,17 +5,18 @@ interface ChoroplethTooltipProps {
     feature: any; // Replace 'any' with a more specific type if possible
   }
 
-const ChoroplethTooltip = memo(({ feature }: ChoroplethTooltipProps) => {
+const ChoroplethGlobalTooltip = memo(({ feature }: ChoroplethTooltipProps) => {
     if (feature.data === undefined) return null
+
 
     return (
         <BasicTooltip
             id={feature.label}
             color={feature.color}
             enableChip={true}
-            value={feature.formattedValue + ' track' + (feature.formattedValue === 1 ? '' : 's') + ' charting'}
+            value={'is included in global data'}
         />
     )
 })
 
-export default ChoroplethTooltip
+export default ChoroplethGlobalTooltip
