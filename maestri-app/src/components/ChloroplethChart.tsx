@@ -3,24 +3,23 @@ import { MapDatum } from "../utils/interfaces";
 import { getColorPalette, getTheme } from "../utils/colorUtilities";
 import { getFeaturesArray } from "../utils/mapUtilities";
 import ChoroplethTooltip from "./ChloroplethTooltip";
+import ChoroplethGlobalTooltip from "./ChloroplethGlobalTooltip";
 
 interface ChoroplethProps {
     mapData: MapDatum[];
-    translation: [number, number];
-    scale: number;
+    isGlobal: boolean;
     
   }
 
 
-const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData, scale, translation }) => (
+const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData, isGlobal }) => (
     <ResponsiveChoropleth
         data={mapData}
         features={getFeaturesArray()}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         theme={getTheme()}
-        colors={(scale > 150? 
-            ['#00000','#fff7ec','#fee8c8','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#b30000','#7f0000']:
-            ['#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954'])}
+        colors={ 
+            ['#00000','#fff7ec','#fee8c8','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#b30000','#7f0000']}
         domain={[ 0, 10 ]}
         unknownColor="#666666"
         label="properties.name"
@@ -36,13 +35,13 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData, scale, translatio
         onMouseLeave={() => {}}
         onClick={() => {}}
         role=''
-        projectionScale={scale} // change to zoom in zoom out, effectively cutting the map
-        projectionTranslation={translation}
+        projectionScale={(isGlobal? 120:320)} // change to zoom in zoom out, effectively cutting the map
+        projectionTranslation={isGlobal? [0.5, 0.6]:[ 0.77, 1.15 ]}
         projectionRotation={[ 0, 0, 0 ]}
         borderWidth={0.5}
-        borderColor={(scale > 150?getColorPalette().amber: '#000000')}
-        tooltip={ChoroplethTooltip}
-        legends={(scale > 150? [
+        borderColor={getColorPalette().amber}
+        tooltip={(isGlobal? ChoroplethGlobalTooltip: ChoroplethTooltip)} 
+        legends={[
             {
                 anchor: 'bottom-left',
                 direction: 'row',
@@ -70,26 +69,8 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData, scale, translatio
               ]
                 
             }
-        ]: [
-            {
-                anchor: 'bottom-left',
-                direction: 'row',
-                justify: false,
-                translateX: 0,
-                translateY: 0,
-                itemsSpacing: 0,
-                itemWidth: 18,
-                itemHeight: 18,
-                itemDirection: 'left-to-right',
-                itemTextColor: getColorPalette().amber,
-                itemOpacity: 0.85,
-                symbolSize: 18,
-                data: [
-                    { id: '0', label: 'Included in global data', color: '#1DB954' },
-              ]
-                
-            }
-        ])}
+        ]
+        }
     />
 );
 
