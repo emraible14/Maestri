@@ -30,32 +30,31 @@ function SingleArtistCard(props: SingleAristProps) {
     const buttons = [];
     if (props.detailable) {
         buttons.push(
-            <Button style={{ marginRight: '10px' }} onClick={() => navigate('/artist?id=' + props.artist.artist_id)} icon="pi pi-user" outlined tooltip="View Artist"/>
+            <Button className="rounded-lg" style={{ marginRight: '10px', width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/artist?id=' + props.artist.artist_id)} icon="pi pi-user" outlined tooltip="View Artist"/>
         )
     }
     if (props.comparable) {
         buttons.push(
-            <Button style={{ marginRight: '10px' }} onClick={() => navigate('/comparison?ids=' + props.artist.artist_id)} icon="pi pi-users" outlined aria-label="Cancel" tooltip="Compare Artists"/>
+            <Button className="rounded-lg" style={{ marginRight: '10px', width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/comparison?ids=' + props.artist.artist_id)} icon="pi pi-users" outlined aria-label="Cancel" tooltip="Compare Artists"/>
         )
     }
     if (props.networkable) {
         buttons.push(
-            <Button style={{ marginRight: '10px' }} onClick={() => navigate('/network?id=' + props.artist.artist_id)} icon="pi pi-arrow-right-arrow-left" outlined aria-label="Cancel" tooltip="Explore Connections"/>
+            <Button className="rounded-lg" style={{ marginRight: '10px', width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/network?id=' + props.artist.artist_id)} icon="pi pi-arrow-right-arrow-left" outlined aria-label="Cancel" tooltip="Explore Connections"/>
         )
     }
     if (props.removable) {
         buttons.push(
-            <Button style={{ marginRight: '10px' }} onClick={props.removeArtist} icon="pi pi-times" outlined severity="danger" aria-label="Cancel" 
+            <Button className="rounded-lg" style={{ marginRight: '10px', width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={props.removeArtist} icon="pi pi-times" outlined severity="danger" aria-label="Cancel" 
                 tooltip="Remove Artist"/>
         )
     }
 
     return (
         <Card key={props.artist.artist_id} title={props.artist.name} header={header} className="margin-10">
-            <div className="flex">
+            <div className="flex" style={{marginBottom: '1rem'}}>
                 { buttons }
             </div>
-            <br></br>
             <div className="flex-wrap">
                 <CreditChip label="primary" artist={props.artist}></CreditChip>
                 <CreditChip label="feature" artist={props.artist}></CreditChip>
