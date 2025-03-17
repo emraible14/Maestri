@@ -5,7 +5,10 @@ import { getColorPalette } from '../utils/colorUtilities';
 import { DataModel } from '../DataModel';
 import {Track} from '../utils/interfaces';
 import ChoroplethChart from '../components/ChloroplethChart';
+import LineChart from '../components/BumpLineChart';
+// @ts-expect-error
 import BumpChart from '../components/BumpChart';
+
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SingleArtistCard from '../components/SingleArtistCard';
 import { Button } from 'primereact/button';
@@ -30,11 +33,13 @@ function Artist(props: ArtistProps) {
     const [currentArtist, setCurrentArtist] = useState(props.model.getArtist(searchParams.get("id") || '45'));
     const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.artist_id));
 
+    // @ts-expect-error
     const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
     const [selectedCountry, setSelectedCountry] = useState(countryMappings[0]);
 
 
     const songsStatsSongRef = useRef(new Map<string, HTMLDivElement>());
+    // @ts-expect-error
     const handleNodeClick = node => {
       songsStatsSongRef.current.get(node.serieId)?.scrollIntoView({ behavior: "smooth", block: "nearest"});
     }
@@ -275,7 +280,7 @@ function Artist(props: ArtistProps) {
 
         
         // @ts-expect-error
-        return <BumpChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)}/>
+        return <LineChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)}/>
     }
 
     function selectArtist(e: DropdownChangeEvent) {

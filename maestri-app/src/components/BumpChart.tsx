@@ -65,7 +65,6 @@ function bumpToolTip(point: any) {
     const value = point.point.serie.id + ", ranked: " + point.point.data.y + (point.point.data.country ? country : "");
     return <BasicTooltip
             id={point.point.data.x}
-            enableChip={true}
             value={value}
     />;
 }
