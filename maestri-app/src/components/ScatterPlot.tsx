@@ -8,7 +8,7 @@ import {useEffect, useState} from 'react';
 import {Button} from "primereact/button";
 import NoDataFoundMessage from "./NoDataFoundMessage.tsx";
 
-function ScatterPlot(props: { currentTracks: Array<Track> }) {
+function ScatterPlot(props: { currentTracks: Array<Track>, onClickHandler: (node: any) => void }) {
     const axisOptions = [
       {
         label: "Peak Rank",
@@ -33,8 +33,9 @@ function ScatterPlot(props: { currentTracks: Array<Track> }) {
           track.chartings
             .forEach(chart => streamsPerWeek.set(chart.week, (streamsPerWeek.get(chart.week) ?? 0) + chart.num_streams))
 
-          return Math.max(...Array.from(streamsPerWeek.values()))
-        }
+          return Math.max(...Array.from(streamsPerWeek.values()))/ 1000;
+        },
+        format: value => value + "K"
       },
       {
         label: "Samples/Interpolations",
@@ -72,7 +73,7 @@ function ScatterPlot(props: { currentTracks: Array<Track> }) {
             { data.length === 0 && <NoDataFoundMessage message="Try changing data selection"></NoDataFoundMessage> }
             <ResponsiveScatterPlot
               data={data}
-              margin={{ top: 25, right: 25, bottom: 70, left: 70 }}
+              margin={{ top: 25, right: 25, bottom: 70, left: 90 }}
               xScale={{ type: 'linear', min: 0, max: 'auto' }}
               xFormat=">-d"
               yScale={{ type: 'linear', min: 0, max: 'auto' }}
@@ -82,10 +83,12 @@ function ScatterPlot(props: { currentTracks: Array<Track> }) {
               theme={getTheme()}
               colors={getColorPalette().amber}
               useMesh={false}
+              onClick={props.onClickHandler}
               axisBottom={{
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
+                format: xAxis?.format,
                 legend: xAxis.label,
                 legendPosition: 'middle',
                 legendOffset: 46,
@@ -95,9 +98,10 @@ function ScatterPlot(props: { currentTracks: Array<Track> }) {
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
+                format: yAxis?.format,
                 legend: yAxis.label,
                 legendPosition: 'middle',
-                legendOffset: -60,
+                legendOffset: -75,
                 truncateTickAt: 0
               }}
               tooltip={({ node }) => (
@@ -108,35 +112,12 @@ function ScatterPlot(props: { currentTracks: Array<Track> }) {
                   fontSize: '14px',
                 }}>
                   <div className="flex flex-col" style={{gap: "0.125rem"}}>
-                    <span>{node.id.substring(0, node.id.lastIndexOf('.'))}</span>
-                    <strong>{xAxis.label}: {node.formattedX}</strong>
-                    <strong>{yAxis.label}: {node.formattedY}</strong>
+                    <span>{node.serieId}</span>
+                    <strong>{xAxis.label}: {xAxis?.format ? xAxis.format(node.formattedX) : node.formattedX}</strong>
+                    <strong>{yAxis.label}: {yAxis?.format ? yAxis.format(node.formattedY) : node.formattedY}</strong>
                   </div>
                 </div>
               )}
-              // legends={[
-              //     {
-              //         anchor: 'bottom-right',
-              //         direction: 'column',
-              //         justify: false,
-              //         translateX: 130,
-              //         translateY: 0,
-              //         itemWidth: 100,
-              //         itemHeight: 12,
-              //         itemsSpacing: 5,
-              //         itemDirection: 'left-to-right',
-              //         symbolSize: 12,
-              //         symbolShape: 'circle',
-              //         effects: [
-              //             {
-              //                 on: 'hover',
-              //                 style: {
-              //                     itemOpacity: 1
-              //                 }
-              //             }
-              //         ]
-              //     }
-              // ]}
             />
           </div>
           <div className="flex flex-row" style={{maxHeight: "10%", gap: "1rem", padding: "0 0.5rem"}} >
