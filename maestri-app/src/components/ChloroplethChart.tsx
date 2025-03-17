@@ -4,17 +4,19 @@ import { getColorPalette, getTheme } from "../utils/colorUtilities";
 import { getFeaturesArray } from "../utils/mapUtilities";
 import ChoroplethTooltip from "./ChloroplethTooltip";
 import ChoroplethGlobalTooltip from "./ChloroplethGlobalTooltip";
+import { data } from "react-router-dom";
 
 interface ChoroplethProps {
     mapData: MapDatum[];
     isGlobal: boolean;
-    
+    isCumulative: boolean;
+    country: string | null;
   }
 
 
-const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData, isGlobal }) => (
+const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData, isGlobal, isCumulative, country }) => (
     <ResponsiveChoropleth
-        data={mapData}
+        data={isCumulative? mapData:(isGlobal? mapData:mapData.filter((obj) => obj.id === country))}
         features={getFeaturesArray()}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         theme={getTheme()}
