@@ -43373,11 +43373,6 @@ const countryMappings: CountryDetails[] = [
     label: "Spain",
   },
   {
-    spotifyCode: "AR",
-    mapCode: "ARG",
-    label: "Argentina",
-  },
-  {
     spotifyCode: "AT",
     mapCode: "AUT",
     label: "Austria",

@@ -7,12 +7,11 @@ import {Artist, NetworkNode, Track} from '../utils/interfaces';
 import NetworkChart from '../components/NetworkChart';
 import { DataScroller } from 'primereact/datascroller';
 import { Panel } from 'primereact/panel';
-import { Chip } from 'primereact/chip';
 import { Tooltip } from 'primereact/tooltip';
 import { getColorPalette } from '../utils/colorUtilities';
 import {contributionLabels} from "../utils/dataUtilities.ts";
 import {SelectButton} from "primereact/selectbutton";
-
+import ArtistChip from "../components/ArtistChip.tsx";
 
 
 function Network(props: { readonly model: DataModel }) {
@@ -23,7 +22,7 @@ function Network(props: { readonly model: DataModel }) {
     const [artist, setArtist] = useState(props.model.getArtist(searchParams.get("id") || "1405"));
     const [history, setHistory] = useState<string[]>([]);
     const [contributionsFilter, setContributionsFilter] = useState<string | null>(null);
-
+    const [comparisonPickList, setComparisonPickList] = useState<Array<Artist>>([]);
 
     const filteredArtistIds = useMemo(() => {
       if (contributionsFilter == null) return null;
@@ -35,9 +34,9 @@ function Network(props: { readonly model: DataModel }) {
         const collaborator: Artist = props.model.getArtist(collaboratorId)
         const collaborationsIdSet = new Set(props.model.getCollaborations(artist, collaborator))
 
-        collaborator.contributions
-          .some(c => collaborationsIdSet.has(String(c.song_id)) && c.type == contributionsFilter)
-        && filteredIds.push(collaboratorId)
+        if (collaborator.contributions.some((c) => collaborationsIdSet.has(String(c.song_id)) && c.type == contributionsFilter)) {
+            filteredIds.push(collaboratorId);
+        }
       }
 
       return filteredIds
@@ -56,7 +55,6 @@ function Network(props: { readonly model: DataModel }) {
     ]
 
 
-
     const artistItemTemplate = (node: NetworkNode) => {
         const collaborator = props.model.getArtist(node.id)
         const collaboratorImageLink = collaborator.image_url
@@ -68,13 +66,19 @@ function Network(props: { readonly model: DataModel }) {
         const contributionTypesCountsMainArtist = Array.from(artist.contributions.filter((c) => collaborationsIdSet.has(String(c.song_id))).map((c) => c.type).reduce((acc, e) => (acc.set(e, 1 + (acc.get(e) || 0))), new Map<string, number>).entries())
 
 
-        const header = <>
+        const header = 
           <div className='flex items-center flex-row' style={{ gap: '1rem' }}>
             <div style={{ height: "4.5rem", width: "4.5rem" }}>
               <img src={collaboratorImageLink} style={{ height: "100%", width: "100%", objectFit: "cover", borderRadius: "5%" }} alt={collaborator.name}></img>
             </div>
             <div className="flex flex-col" style={{ gap: '0.5rem' }}>
-              <a className="artist-name-link" style={{fontSize: "120%"}} onClick={() => selectArtist(collaborator.artist_id)}>{collaborator.name}</a>
+               <div className="flex flex-row items-center" style={{gap: '0.5rem'}}>
+                <a className="artist-name-link" style={{fontSize: "120%"}} onClick={() => selectArtist(collaborator.artist_id)}>{collaborator.name}</a>
+                <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} 
+                    onClick={() => addArtistToPickList(collaborator)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "bottom", showOnDisabled: true}} 
+                    tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add To Compare List"} 
+                    disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === collaborator.artist_id)}/>
+                </div>
               <span className='flex flex-row' style={{ gap: "0.375rem", flexWrap: "wrap"}}>
                   {
                     contributionTypesCounts.map(([type, count]: [string, number]) => {
@@ -97,23 +101,21 @@ function Network(props: { readonly model: DataModel }) {
                     })
                   }
               </span>
-
             </div>
-
           </div>
-        </>
+
 
         return (
-          <Panel header={ header } toggleable collapsed={true} pt={{
+          <Panel key={artist.artist_id} header={ header } toggleable collapsed={true} pt={{
             title: {
               style: {
-                'font-weight': 'normal'
+                'fontWeight': 'normal'
               },
             },
             header: {
               style: {
-                'user-select': 'none',
-                'border-radius': '0',
+                'userSelect': 'none',
+                'borderRadius': '0',
                 'padding': '1rem'
               },
 
@@ -121,7 +123,7 @@ function Network(props: { readonly model: DataModel }) {
              content:
                {
                  style: {
-                   'user-select': 'none',
+                   'userSelect': 'none',
                    'background': "#101827",
                    'gap': '1rem',
                    'overflow-y': 'scroll',
@@ -129,7 +131,7 @@ function Network(props: { readonly model: DataModel }) {
                    'padding': '2rem 1rem',
                    'display': 'flex',
                    'flex-direction': 'column',
-                   'border-radius': '0',
+                   'borderRadius': '0',
                  },
 
              },
@@ -140,49 +142,23 @@ function Network(props: { readonly model: DataModel }) {
     }
 
     useEffect(() => {
-      // console.log("ID", searchParams.get("id"))
       setArtist(props.model.getArtist(searchParams.get("id") || "1405"))
     }, [searchParams.get("id")]);
 
     useEffect(() => {
-      // console.log("history", searchParams.get("history"))
       setHistory((searchParams.get("history") == "" ? undefined : searchParams.get("history"))?.split(",") || []);
     }, [searchParams.get("history")]);
 
+    useEffect(() => {
+        const idsList = (searchParams.get("compare") == "" ? undefined : searchParams.get("compare"))?.split(",") || [];
+        setComparisonPickList(idsList.map((id) => props.model.getArtist(id)));
+      }, [searchParams.get("compare")]);
+
     const historyCards = useMemo(() => {
-        console.log("Cards", history, artist.artist_id)
         return [...history, artist.artist_id]
           .map(id  => props.model.getArtist(id))
           .map((artistInfo, idx)=> {
-              const artistImageLink = artistInfo.image_url || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg";
-
-              // const style = {
-              //     width: "1.65rem",
-              //     maxWidth: '1.65rem',
-              //     minWidth: '1.65rem',
-              //     height: '1rem',
-              //     marginRight: '0rem',
-              //     marginLeft: '0.75rem'
-              // }
-
-              const content = (
-                <>
-                    <span data-id={idx} style={{cursor: "pointer", display: "flex", alignItems: "center"}} onClick={(e    ) => backTrackToIdx(Number(e.currentTarget.dataset.id))}>
-                        <span style={{height: "2.5rem", width: "2.5rem"}}>
-                          <img style={{height: "100%", width: "100%", objectFit: "cover"}} src={artistImageLink}  alt={'Asd'}/>
-                        </span>
-                        <span className="whitespace-nowrap font-medium">{artistInfo.name}</span>
-                    </span>
-                    {/*<Button className="rounded-lg" style={style} onClick={() => navigate('/artist?id=' + artistInfo.artist_id)} outlined icon="pi pi-user" tooltipOptions={{position: "bottom"}} tooltip="View Artist"/>*/}
-                </>
-              );
-
-              const chipStyle = {
-                  borderRadius: "22px",
-                  border: idx === history.length ? "2px solid rgb(196, 149, 27)" : "2px solid #111827"
-              }
-
-              return <Chip style={chipStyle} template={content} />
+              return <ArtistChip key={artistInfo.artist_id} artist={artistInfo} idx={idx} onClick={backTrackToIdx} onRemove={() => {}} current={idx === history.length}></ArtistChip>
           }).reduce(((previousValue, currentValue) =>  {
               return (
                 <>
@@ -199,6 +175,7 @@ function Network(props: { readonly model: DataModel }) {
 
         setSearchParams(prev => {
             prev.delete("history");
+            prev.delete("compare");
             prev.set("id", e.value.artist_id);
             return prev;
         });
@@ -216,6 +193,32 @@ function Network(props: { readonly model: DataModel }) {
       });
     }
 
+    function addArtistToPickList(art: Artist) {
+        if (comparisonPickList.find((a) => a.artist_id === art.artist_id)) return;
+        const newList = [...comparisonPickList, art];
+        setSearchParams(prev => {
+            prev.set("compare", newList.map((a) => a.artist_id).join(","));
+            return prev;
+        });
+    }
+
+    function removeArtistFromPickList(art: Artist) {
+        if (!comparisonPickList.find((a) => a.artist_id === art.artist_id)) return;
+        const newList = [...comparisonPickList.filter((a) => a.artist_id !== art.artist_id)];
+        setSearchParams(prev => {
+            if (newList.length > 0) prev.set("compare", newList.map((a) => a.artist_id).join(","));
+            else prev.delete("compare");
+            return prev;
+        });
+    }
+
+    function clearPickList() {
+        setSearchParams(prev => {
+            prev.delete("compare");
+            return prev;
+        });
+    }
+
     function backTrackToIdx(idx: number) {
         //? selected current artist
         if (idx === history.length) return;
@@ -228,6 +231,30 @@ function Network(props: { readonly model: DataModel }) {
         });
     }
 
+    function pickList() {
+        if (comparisonPickList.length === 0) return null;
+        return (<div className="flex flex-row items-center" style={{overflowX: 'scroll', gap: '0.75rem', padding: "0.25rem 0.5rem", borderRadius: '5px', borderLeft: "1px solid #424b57", borderRight: "1px solid #424b57"}}>
+                { comparisonPickList.map((a, idx) => {
+                    return <ArtistChip artist={a} idx={idx} removable onRemove={removeArtistFromPickList} onClick={() => {}}></ArtistChip>
+                }) }
+                <span className="flex items-center"> <i className="pi pi-arrow-right"></i></span>
+                <div>
+                    <Button 
+                        outlined className="rounded-lg" icon="pi pi-users"
+                        onClick={() => navigate('/comparison?ids=' + comparisonPickList.map((a) => a.artist_id))} 
+                        style={{ width: '2rem', minWidth: '2rem', height: '2rem' }}
+                        tooltipOptions={{position: "bottom"}} tooltip="Compare Artists"/>
+                </div>
+                <div>
+                    <Button 
+                        outlined className="rounded-lg" icon="pi pi-times-circle"
+                        onClick={() => clearPickList()} 
+                        style={{ width: '2rem', minWidth: '2rem', height: '2rem' }}
+                        tooltipOptions={{position: "bottom"}} tooltip="Clear Comparison List"/>
+                </div>
+            </div>)
+    }
+
     function trackDisplay(track: Track, focusedArtist: Artist, collaborator: Artist) {
         const focusedArtistContributions = focusedArtist.contributions.filter((cont) => cont.song_id.toString() === track.track_id);
         const collaboratorContributions = collaborator.contributions.filter((cont) => cont.song_id.toString() === track.track_id);
@@ -235,9 +262,11 @@ function Network(props: { readonly model: DataModel }) {
         const primaryArtists = track.credits
             .filter(c => c.contribution_type === "primary")
             .map(c => {
-                return <>
-                    <a className="artist-name-link" onClick={() => selectArtist(c.artist_id)}> {props.model.getArtist(String(c.artist_id)).name}</a>
-                </>
+                return <a 
+                    key={c.artist_id}
+                    className="artist-name-link" 
+                    onClick={() => selectArtist(c.artist_id)}> {props.model.getArtist(String(c.artist_id)).name}
+                </a>
             })
             .reduce((acc, i) => {
                 return <>
@@ -279,15 +308,14 @@ function Network(props: { readonly model: DataModel }) {
     return (
       <div className='grid grid-cols-9'>
         <div className='flex flex-col col-span-6' style={{gap: '1rem', padding: '1rem'}}>
-          <br/>
-          <div className="flex flex-row" style={{overflowX: 'scroll', gap: '0.75rem', padding: "0.25rem 0.5rem", borderRadius: '5px', borderLeft: "1px solid #424b57", borderRight: "1px solid #424b57"}}>
-            { historyCards }
-          </div>
-          <NetworkChart model={props.model} artist={artist} clickedNode={selectArtist} filteredArtistIds={filteredArtistIds}></NetworkChart>
+            <div className="flex flex-row" style={{overflowX: 'scroll', gap: '0.75rem', padding: "0.25rem 0.5rem", borderRadius: '5px', borderLeft: "1px solid #424b57", borderRight: "1px solid #424b57"}}>
+                { historyCards }
+            </div>
+            <NetworkChart model={props.model} artist={artist} clickedNode={selectArtist} filteredArtistIds={filteredArtistIds}></NetworkChart>
+            { pickList() }
         </div>
 
         <div className='flex flex-col col-span-3' style={{gap: '1rem',padding: '1rem'}}>
-          <br/>
           <Dropdown value={null}  onChange={setNewArtist} options={allArtists.filter((art) => art.artist_id !== artist.artist_id)} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
           <div className="flex flex-row" style={{gap: '1rem', alignItems: 'center', justifyContent: "space-between"}}>
             <h1 className="flex flex-row" style={{paddingLeft: '0.75rem', gap: '1.5rem', alignItems: 'center'}}>
@@ -298,7 +326,10 @@ function Network(props: { readonly model: DataModel }) {
             </h1>
             <div className="flex flex-row" style={{gap: '0.5rem'}}>
               <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/artist?id=' + artist.artist_id)} outlined icon="pi pi-user" tooltipOptions={{position: "bottom"}} tooltip="View Artist"/>
-              <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/comparison?ids=' + artist.artist_id)} outlined icon="pi pi-users" tooltipOptions={{position: "bottom"}} tooltip="Compare Artists"/>
+              <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} 
+                onClick={() => addArtistToPickList(artist)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "left", showOnDisabled: true}} 
+                tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add To Compare List"} 
+                disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === artist.artist_id)}/>
             </div>
           </div>
 
@@ -307,21 +338,21 @@ function Network(props: { readonly model: DataModel }) {
             <SelectButton value={contributionsFilter} onChange={(e) => setContributionsFilter(e.value)} optionLabel="label" options={filteringOptions} pt={{
               label: {
                 style: {
-                  "font-weight": "500"
+                  fontWeight: "500"
                 }
               },
               // @ts-ignore
               button: ({ context }) => ({
                 style: {
                   "background": context.selected && "#887369",
-                  "border-color": context.selected && "#887369",
+                  borderColor: context.selected && "#887369",
                   "padding": "0.5rem 1rem"
                 }
               }),
             }}/>
           </div>
 
-          <DataScroller value={collaboratorNodes.sort((a, b) => -(a.num_collaborations - b.num_collaborations))} itemTemplate={artistItemTemplate} rows={5} lazy={true} inline scrollHeight="667px" pt={{
+          <DataScroller value={collaboratorNodes.sort((a, b) => -(a.num_collaborations - b.num_collaborations))} itemTemplate={artistItemTemplate} rows={5} lazy={true} inline scrollHeight="58vh" pt={{
             content: {
               style: {
                 'padding': 0

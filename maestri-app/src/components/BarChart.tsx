@@ -23,7 +23,7 @@ function BarChart(props: BarChartProps) {
     legendData.reverse(); // reverse to follow stacking order 
 
     return (
-    <div style={{ height: '43vh', width: '100%'}}>
+    <div style={{ height: '50vh', width: '100%'}}>
     <ResponsiveBar
         data={props.data}
         // layout="horizontal"

@@ -36,6 +36,7 @@ function Comparison(props: { readonly model: DataModel }) {
                     <ChordChart artists={currentArtists} model={props.model}></ChordChart>
                 </div>
             </div>
+            <br></br>
             <SelectButton style={{marginLeft: '10px'}} invalid value={detailedBreakdown} onChange={(e) => setdetailedBreakdown(e.value)} options={options} />
             { dataDisplay() }
         </>
@@ -116,7 +117,7 @@ function Comparison(props: { readonly model: DataModel }) {
             for (let i = 0; i < numCards; i++) {
                 cards.push(
                     <Card key={'add-card' + i} className="margin-10 justify-items-center content-center" header={header}>
-                        <Dropdown value={null} onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select an Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
+                        <Dropdown value={null} onChange={addArtist} options={availableArtists} optionLabel="name" placeholder="Select Artist" filter virtualScrollerOptions={{ itemSize: 38 }}/>
                     </Card>
                 );
             }
