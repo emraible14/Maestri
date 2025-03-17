@@ -16,8 +16,9 @@ import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings, getMapData } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
-import {contributionLabels} from "../utils/dataUtilities.ts";
+import {contributionLabels, getBarKeyLabelsFromType} from "../utils/dataUtilities.ts";
 import {Tooltip} from "primereact/tooltip";
+import BarChart from '../components/BarChart.tsx';
 
 
 interface ArtistProps {
@@ -130,11 +131,11 @@ function Artist(props: ArtistProps) {
   
     return (
         <div className="flex flex-col" style={{padding: "1rem", gap: "1.25rem"}}>
-            <div className='grid grid-cols-5'>
-                <div className='col-span-2'>
-                    <div style={{ margin: '10px 20px 0px 10px'}}>
+            <div className='grid grid-cols-6'>
+                <div className='col-span-1'>
+                    <div style={{ margin: '10px 10px 0px 10px'}}>
                         <Dropdown
-                          style={{ width: '50%'}}
+                          style={{ width: '100%'}}
                           value={currentArtist}
                           onChange={selectArtist}
                           options={props.model.getArtists()} //hardcoded just to test shifting artist
@@ -146,10 +147,20 @@ function Artist(props: ArtistProps) {
                           virtualScrollerOptions={{ itemSize: 38 }}
                         />
                     </div>
-                    <div className='grid grid-cols-2'>
-                        <div>
-                            <SingleArtistCard  artist={currentArtist} comparable networkable ></SingleArtistCard>
-                        </div>
+                    <div>
+                        <SingleArtistCard  artist={currentArtist} comparable networkable ></SingleArtistCard>
+                    </div>
+                </div>
+                <div className='col col-span-5'>
+                    <div className="flex justify-around">
+                        <BarChart data={props.model.getBarData([currentArtist], "artist", "# charting tracks")} 
+                            keys={getBarKeyLabelsFromType("# charting tracks")} indexKey={"artist"} type={"# charting tracks"}></BarChart>
+                        <BarChart data={props.model.getBarData([currentArtist], "artist", "avg. team size")} 
+                            keys={getBarKeyLabelsFromType("avg. team size")} indexKey={"artist"} type={"avg. team size"}></BarChart>
+                        <BarChart data={props.model.getBarData([currentArtist], "artist", "total samples/interpolations used")} 
+                            keys={getBarKeyLabelsFromType("total samples/interpolations used")} indexKey={"artist"} type={"total samples/interpolations used"}></BarChart>
+                        <BarChart data={props.model.getBarData([currentArtist], "artist", "#1 tracks")} 
+                            keys={getBarKeyLabelsFromType("#1 tracks")} indexKey={"artist"} type={"#1 tracks"}></BarChart>
                     </div>
                 </div>
             </div>

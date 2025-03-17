@@ -1,5 +1,5 @@
 import { ResponsiveBar } from '@nivo/bar'
-import { getTheme } from '../utils/colorUtilities';
+import { getTheme, nivoDarkColorPalette } from '../utils/colorUtilities';
 import { Datum } from '@nivo/legends';
 
 interface BarChartProps {
@@ -12,12 +12,12 @@ interface BarChartProps {
 function BarChart(props: BarChartProps) {
 
     const legendData: Array<Datum> = []
-    const grayColors = ['#333333', '#777777', '#bbbbbb','#ffffff']
+    const legendColors = props.data.length > 1 ? ['#333333', '#777777', '#bbbbbb','#ffffff'] : nivoDarkColorPalette['#1b9e77'];
     props.keys.forEach((key, idx) => {
         legendData.push({
             id: key,
             label: key,
-            color: grayColors[idx]
+            color: legendColors[idx]
         })
     })
     legendData.reverse(); // reverse to follow stacking order 
@@ -31,7 +31,7 @@ function BarChart(props: BarChartProps) {
         // enableGridX={true}
         keys={props.keys}
         indexBy={props.indexKey}
-        margin={{ top: 35, right: 30, bottom: 150, left: 50 }}
+        margin={{ top: 35, right: 20, bottom: 150, left: 60 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}
