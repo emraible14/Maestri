@@ -280,7 +280,7 @@ function Artist(props: ArtistProps) {
 
         
         // @ts-expect-error
-        return <LineChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)}/>
+        return <LineChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)} maxValue={200} dates={dates}/>
     }
 
     function selectArtist(e: DropdownChangeEvent) {

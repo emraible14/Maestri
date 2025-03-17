@@ -35,6 +35,7 @@ function ScatterPlot(props: { currentTracks: Array<Track>, onClickHandler: (node
 
           return Math.max(...Array.from(streamsPerWeek.values()))/ 1000;
         },
+        // @ts-expect-error
         format: value => value + "K"
       },
       {

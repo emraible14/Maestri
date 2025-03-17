@@ -1,4 +1,3 @@
-import {Button} from "primereact/button";
 import {getColorPalette} from "../utils/colorUtilities.ts";
 
 function About() {//
@@ -6,41 +5,41 @@ function About() {//
     {
       firstName: "Meya",
       lastName: "Vikner",
-      imageUrl: "/pics/daniel.jpg",
+      imageUrl: "/public/crop-meya.jpg",
       linkedin: "https://www.google.it",
-      email: "balanica@kth.se"
+      email: "meya@kth.se"
     },
     {
       firstName: "Ludwig",
       lastName: "Estling",
-      imageUrl: "/pics/daniel.jpg",
+      imageUrl: "/public/ludwig.png",
       linkedin: "https://www.google.it",
       email: "balanica@kth.se"
     },
     {
       firstName: "Isak",
       lastName: "Larsson",
-      imageUrl: "/pics/daniel.jpg",
+      imageUrl: "/public/crop-isak.jpg",
       linkedin: "https://www.google.it",
       email: "balanica@kth.se"
     },
     {
       firstName: "Emma",
       lastName: "Raible",
-      imageUrl: "/pics/daniel.jpg",
+      imageUrl: "/public/crop-emma.jpg",
       linkedin: "https://www.google.it",
       email: "balanica@kth.se"
     },
     {
       firstName: "A. Daniel",
       lastName: "Balanica",
-      imageUrl: "/pics/daniel.jpg",
+      imageUrl: "/public/crop-daniel.jpg",
       linkedin: "https://www.linkedin.com/in/andreidanielbalanica/",
       email: "balanica@kth.se"
     },
   ]
 
-  function getPersonCard(person) {
+  function getPersonCard(person: any) {
     return (
       <div style={{display: "flex", gap: "1rem", flexDirection:"row", alignItems: "start", border: "1px solid rgb(66, 75, 87)", padding: "1rem", borderRadius: "0.75rem", width: "15rem"}}>
         <div style={{ height: "6rem", minWidth: "6rem", width: "6rem"}}>
