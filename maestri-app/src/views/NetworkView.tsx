@@ -76,7 +76,7 @@ function Network(props: { readonly model: DataModel }) {
                 <a className="artist-name-link" style={{fontSize: "120%"}} onClick={() => selectArtist(collaborator.artist_id)}>{collaborator.name}</a>
                 <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} 
                     onClick={() => addArtistToPickList(collaborator)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "bottom", showOnDisabled: true}} 
-                    tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add for comparison"} 
+                    tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add To Compare List"} 
                     disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === collaborator.artist_id)}/>
                 </div>
               <span className='flex flex-row' style={{ gap: "0.375rem", flexWrap: "wrap"}}>
@@ -158,7 +158,7 @@ function Network(props: { readonly model: DataModel }) {
         return [...history, artist.artist_id]
           .map(id  => props.model.getArtist(id))
           .map((artistInfo, idx)=> {
-              return <ArtistChip key={artistInfo.artist_id} artist={artistInfo} idx={idx} onClick={backTrackToIdx} onRemove={() => {}}></ArtistChip>
+              return <ArtistChip key={artistInfo.artist_id} artist={artistInfo} idx={idx} onClick={backTrackToIdx} onRemove={() => {}} current={idx === history.length}></ArtistChip>
           }).reduce(((previousValue, currentValue) =>  {
               return (
                 <>
@@ -212,6 +212,13 @@ function Network(props: { readonly model: DataModel }) {
         });
     }
 
+    function clearPickList() {
+        setSearchParams(prev => {
+            prev.delete("compare");
+            return prev;
+        });
+    }
+
     function backTrackToIdx(idx: number) {
         //? selected current artist
         if (idx === history.length) return;
@@ -237,6 +244,13 @@ function Network(props: { readonly model: DataModel }) {
                         onClick={() => navigate('/comparison?ids=' + comparisonPickList.map((a) => a.artist_id))} 
                         style={{ width: '2rem', minWidth: '2rem', height: '2rem' }}
                         tooltipOptions={{position: "bottom"}} tooltip="Compare Artists"/>
+                </div>
+                <div>
+                    <Button 
+                        outlined className="rounded-lg" icon="pi pi-times-circle"
+                        onClick={() => clearPickList()} 
+                        style={{ width: '2rem', minWidth: '2rem', height: '2rem' }}
+                        tooltipOptions={{position: "bottom"}} tooltip="Clear Comparison List"/>
                 </div>
             </div>)
     }
@@ -313,8 +327,8 @@ function Network(props: { readonly model: DataModel }) {
             <div className="flex flex-row" style={{gap: '0.5rem'}}>
               <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/artist?id=' + artist.artist_id)} outlined icon="pi pi-user" tooltipOptions={{position: "bottom"}} tooltip="View Artist"/>
               <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} 
-                onClick={() => addArtistToPickList(artist)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "bottom", showOnDisabled: true}} 
-                tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add for comparison"} 
+                onClick={() => addArtistToPickList(artist)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "left", showOnDisabled: true}} 
+                tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add To Compare List"} 
                 disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === artist.artist_id)}/>
               {/* <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/comparison?ids=' + artist.artist_id)} outlined icon="pi pi-users" tooltipOptions={{position: "bottom"}} tooltip="Compare Artists"/> */}
             </div>

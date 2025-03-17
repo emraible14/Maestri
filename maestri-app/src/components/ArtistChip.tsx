@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 interface CreditChipProps {
     readonly idx: number
     readonly artist: Artist
+    readonly current?: boolean
     readonly removable?: boolean
     readonly onClick: (clickItem: any) => void
     readonly onRemove: (art: Artist) => void
@@ -40,7 +41,7 @@ function ArtistChip(props: CreditChipProps) {
 
       const chipStyle = {
           borderRadius: "22px",
-          border: props.idx === history.length ? "2px solid rgb(196, 149, 27)" : "2px solid #111827"
+          border: props.current ? "2px solid rgb(196, 149, 27)" : "2px solid #111827"
       }
 
       return <Chip style={chipStyle} template={content}/>
