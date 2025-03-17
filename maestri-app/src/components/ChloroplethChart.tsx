@@ -6,15 +6,21 @@ import ChoroplethTooltip from "./ChloroplethTooltip";
 
 interface ChoroplethProps {
     mapData: MapDatum[];
+    translation: [number, number];
+    scale: number;
+    
   }
-  
-const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
+
+
+const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData, scale, translation }) => (
     <ResponsiveChoropleth
         data={mapData}
         features={getFeaturesArray()}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         theme={getTheme()}
-        colors={['#00000','#fff7ec','#fee8c8','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#b30000','#7f0000']}
+        colors={(scale > 150? 
+            ['#00000','#fff7ec','#fee8c8','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#b30000','#7f0000']:
+            ['#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954', '#1DB954'])}
         domain={[ 0, 10 ]}
         unknownColor="#666666"
         label="properties.name"
@@ -30,13 +36,13 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
         onMouseLeave={() => {}}
         onClick={() => {}}
         role=''
-        projectionScale={370} // change to zoom in zoom out, effectively cutting the map
-        projectionTranslation={[ 0.77, 1.15 ]}
+        projectionScale={scale} // change to zoom in zoom out, effectively cutting the map
+        projectionTranslation={translation}
         projectionRotation={[ 0, 0, 0 ]}
         borderWidth={0.5}
-        borderColor={getColorPalette().amber}
+        borderColor={(scale > 150?getColorPalette().amber: '#000000')}
         tooltip={ChoroplethTooltip}
-        legends={[
+        legends={(scale > 150? [
             {
                 anchor: 'bottom-left',
                 direction: 'row',
@@ -50,15 +56,6 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
                 itemTextColor: getColorPalette().amber,
                 itemOpacity: 0.85,
                 symbolSize: 18,
-                effects: [
-                    {
-                        on: 'hover',
-                        style: {
-                            itemTextColor: '#000000',
-                            itemOpacity: 1
-                        }
-                    }
-                ],
                 data: [
                     { id: '0', label: '0', color: '#000000' },
                     { id: '1', label: '1', color: '#fff7ec' },
@@ -73,7 +70,26 @@ const ChoroplethChart: React.FC<ChoroplethProps> = ({ mapData }) => (
               ]
                 
             }
-        ]}
+        ]: [
+            {
+                anchor: 'bottom-left',
+                direction: 'row',
+                justify: false,
+                translateX: 0,
+                translateY: 0,
+                itemsSpacing: 0,
+                itemWidth: 18,
+                itemHeight: 18,
+                itemDirection: 'left-to-right',
+                itemTextColor: getColorPalette().amber,
+                itemOpacity: 0.85,
+                symbolSize: 18,
+                data: [
+                    { id: '0', label: 'Included in global data', color: '#1DB954' },
+              ]
+                
+            }
+        ])}
     />
 );
 

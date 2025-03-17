@@ -11,7 +11,7 @@ import SingleArtistCard from '../components/SingleArtistCard';
 import { Button } from 'primereact/button';
 import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
-import { countryMappings } from "../utils/mapUtilities.ts";
+import { countryMappings, getMapData } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
 import {contributionLabels} from "../utils/dataUtilities.ts";
 import {Tooltip} from "primereact/tooltip";
@@ -228,7 +228,9 @@ function Artist(props: ArtistProps) {
                     <div className='grid grid-cols-5' style={{gap: "2rem"}}>
                         <div className='col-span-3 flex flex-col' style={{gap: "1.25rem"}}>
                           <div className='clipped'>
-                            <ChoroplethChart mapData={mapData} />
+                            <ChoroplethChart mapData={selectedCountry.label !== 'Global'? mapData:getMapData()}
+                                             scale={selectedCountry.label !== 'Global'? 320:120} 
+                                             translation={selectedCountry.label !== 'Global'? [ 0.77, 1.15 ]:[0.5, 0.6]} />
                           </div>
                           <div style={{height: "35rem", width: "100%"}}>
                             {BumpChartRender()}
