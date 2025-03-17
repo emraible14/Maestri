@@ -42,7 +42,7 @@ function NetworkChart(props: NetworkChartProps) {
 
 
     return (
-        <div ref={scrollRef} id={"networkGraph"} style={{height: "768px", width: "100%", overflowX: "scroll", overflowY:"scroll"}}>
+        <div ref={scrollRef} id={"networkGraph"} style={{height: "72vh", width: "100%", overflowX: "scroll", overflowY:"scroll"}}>
             <ResponsiveNetwork
                 data={artistNetwork}
                 // @ts-expect-error

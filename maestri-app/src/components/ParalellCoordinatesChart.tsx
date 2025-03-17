@@ -71,7 +71,7 @@ function ParallelCoordinatesChart(props: { readonly artists: Array<Artist>, read
                     }
                 ]}
                 margin={{ top: 30, right: 230, bottom: 30, left: 250 }}
-                lineWidth={10}
+                lineWidth={7}
                 lineOpacity={1}
                 theme={getTheme()}
                 colors={{ scheme: NIVO_DARK }}

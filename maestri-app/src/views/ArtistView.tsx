@@ -1,4 +1,4 @@
-import {useState, useEffect, useMemo, useRef,} from 'react';
+import { useState, useEffect, useMemo, } from 'react';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { Slider, SliderChangeEvent } from "primereact/slider";
 import { getColorPalette } from '../utils/colorUtilities';
@@ -13,8 +13,10 @@ import HeatMapBar from '../components/HeatMapBar';
 import ScatterPlot from '../components/ScatterPlot';
 import { countryMappings, getMapData } from "../utils/mapUtilities.ts";
 import RankScatterPlot from "../components/RankScatterplot.tsx";
-import {contributionLabels} from "../utils/dataUtilities.ts";
-import {Tooltip} from "primereact/tooltip";
+// import BarChart from "../components/BarChart";
+// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
+// import BarChart from "../components/BarChart";
+// import { getBarKeyLabelsFromType } from "../utils/dataUtilities";
 
 
 interface ArtistProps {
@@ -29,15 +31,9 @@ function Artist(props: ArtistProps) {
     const [isPaused, setIsPaused] = useState(true);
     const [currentArtist, setCurrentArtist] = useState(props.model.getArtist(searchParams.get("id") || '45'));
     const [mapData, setMapData] = useState(props.model.generateMapDataForWeek(props.model.allWeeks[0], currentArtist.artist_id));
-
+    // @ts-expect-error
     const [chartingTracks, setChartingTracks] = useState<Track[]>([]);
     const [selectedCountry, setSelectedCountry] = useState(countryMappings[0]);
-
-
-    const songsStatsSongRef = useRef(new Map<string, HTMLDivElement>());
-    const handleNodeClick = node => {
-      songsStatsSongRef.current.get(node.serieId)?.scrollIntoView({ behavior: "smooth", block: "nearest"});
-    }
 
     function getFilteredChartingForSelectedCountryAndWeek(country: string | null, week: string | null) {
         return props.model.getTracksForArtist(currentArtist.artist_id)
@@ -168,7 +164,7 @@ function Artist(props: ArtistProps) {
                             />
                         </div>
                         <div style={{height: '50vh'}}>
-                            <ScatterPlot currentTracks={ chartingsAllWeeks } onClickHandler={handleNodeClick} ></ScatterPlot>
+                            <ScatterPlot currentTracks={ chartingsAllWeeks } ></ScatterPlot>
                         </div>
                     </div>
                     <div className='col-span-2'>
@@ -178,7 +174,7 @@ function Artist(props: ArtistProps) {
                                 { chartingsAllWeeks.length === 0 ? (
                                   <p>No tracks found for this selection</p>
                                 ) : (
-                                  chartingsAllWeeks.map(v => trackDisplay(v, true))
+                                  chartingsAllWeeks.map(trackDisplay)
                                 )}
                             </div>
                         </div>
@@ -240,9 +236,6 @@ function Artist(props: ArtistProps) {
                                              isCumulative={selectedCountry.label === 'Cumulative'}
                                              country={selectedCountry.mapCode}/>
                           </div>
-                          <div style={{height: "35rem", width: "100%"}}>
-                            {BumpChartRender()}
-                          </div>
                         </div>
                         <div className='col-span-2 flex flex-col' style={{gap: "1.25rem"}}>
                             <div className='clipped flex flex-col'>
@@ -251,12 +244,18 @@ function Artist(props: ArtistProps) {
                                     { chartingsOneWeek.length === 0 ? (
                                       <p>No charting tracks during this week</p>
                                     ) : (
-                                      chartingsOneWeek.map(v => trackDisplay(v))
+                                      chartingsOneWeek.map(trackDisplay)
                                     )}
                                 </div>
                             </div>
-                            <div style={{width: "100%"}}>
-                              <RankScatterPlot artist={currentArtist} tracksForArtist={
+                        </div>
+                    </div>
+                    <div className='flex flex-row'>
+                        <div style={{width: "100vh"}}>
+                            {BumpChartRender()}
+                        </div>
+                        <div style={{width: "100vh"}}>
+                            <RankScatterPlot artist={currentArtist} tracksForArtist={
                                 props.model.getTracksForArtist(currentArtist.artist_id)
                               } currentWeek={props.model.allWeeks[currentIndex]} dataSelection={selectedCountry}></RankScatterPlot>
                             </div>
@@ -264,7 +263,6 @@ function Artist(props: ArtistProps) {
                     </div>
                 </div>
             </div>
-        </div>
     );
 
     function BumpChartRender() {
@@ -294,7 +292,7 @@ function Artist(props: ArtistProps) {
         setCurrentArtist(e.value)
     }
 
-    function trackDisplay(track: Track, isScrollableTo: boolean = false) {
+    function trackDisplay(track: Track) {
         const contributions = currentArtist.contributions.filter((cont) => cont.song_id.toString() === track.track_id);
 
         const primaryArtists = track.credits
@@ -313,9 +311,7 @@ function Artist(props: ArtistProps) {
           })
 
         return (
-            <div key={track.name} ref={(el) => {
-              if (isScrollableTo && el) songsStatsSongRef.current.set(track.name, el);
-            }} className='flex items-center flex-row' style={{gap: '0.875rem'}}>
+            <div key={track.track_id} className='flex items-center flex-row' style={{gap: '0.875rem'}}>
                 <div style={{height: "4.5rem", width: "4.5rem"}}>
                     <img src={track.image_url} style={{height: "100%", width: "100%", objectFit: "cover", borderRadius: "5%"}}></img>
                 </div>
@@ -324,10 +320,9 @@ function Artist(props: ArtistProps) {
                     <span style={{ fontSize: "80%"}}>{primaryArtists}</span>
                     <span className='flex' style={{gap: "0.375rem"}}>
                         { contributions.map((cont) => {
-                            return <>
-                              <span className={`chip-${cont.type}-${currentArtist.artist_id}`} style={{ backgroundColor: "#424b57", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "70%" }}>{contributionLabels[cont.type].acronym}</span>
-                              <Tooltip target={`.chip-${cont.type}-${currentArtist.artist_id}`} content={`${currentArtist.name} is a ${contributionLabels[cont.type].text} on this track`} pt={{text: {style: {boxShadow: "none", fontSize: "80%"}}}}/>
-                            </>
+                            return (
+                              <span style={{backgroundColor: "#424b57", borderRadius: "20px", padding: "0.25rem 0.5rem", fontSize: "80%"}}>{cont.type}</span>
+                            )
                         })}
                     </span>
                 </div>

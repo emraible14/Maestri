@@ -10,6 +10,7 @@ export class DataModel {
     networkData: {[key: string]: Network } = {};
     isLoaded: boolean = false;
     maxGlobalContributions: number = 0;
+    comparisonPickList: Array<Artist> = [];
 
     async loadData() {
         try {
@@ -101,6 +102,17 @@ export class DataModel {
     getTracksForArtist(artistId: string) {
         const contributionIds = [...new Set(this.artists[artistId].contributions.map((cont) => { return cont.song_id.toString() }))];
         return this.getSpecificTracks(contributionIds);
+    }
+
+    getComparisonPickList() {
+        return [...this.comparisonPickList];
+    }
+
+    addArtistForComparison(artist: Artist) {
+        if (!this.comparisonPickList.find((a) => a.artist_id === artist.artist_id)) {
+            this.comparisonPickList.push(artist);
+            console.log('here')
+        }
     }
 
     generateMapDataForWeek(week: string, artistId: string) {
