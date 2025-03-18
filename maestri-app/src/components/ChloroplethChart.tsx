@@ -4,7 +4,6 @@ import { getColorPalette, getTheme } from "../utils/colorUtilities";
 import { getFeaturesArray } from "../utils/mapUtilities";
 import ChoroplethTooltip from "./ChloroplethTooltip";
 import ChoroplethGlobalTooltip from "./ChloroplethGlobalTooltip";
-import { data } from "react-router-dom";
 
 interface ChoroplethProps {
     mapData: MapDatum[];

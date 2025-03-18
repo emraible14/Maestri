@@ -77,7 +77,7 @@ function Network(props: { readonly model: DataModel }) {
                 <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} 
                     onClick={() => addArtistToPickList(collaborator)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "bottom", showOnDisabled: true}} 
                     tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add To Compare List"} 
-                    disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === collaborator.artist_id)}/>
+                    disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === collaborator.artist_id) !== undefined}/>
                 </div>
               <span className='flex flex-row' style={{ gap: "0.375rem", flexWrap: "wrap"}}>
                   {
@@ -337,7 +337,7 @@ function Network(props: { readonly model: DataModel }) {
               <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} 
                 onClick={() => addArtistToPickList(artist)} outlined icon="pi pi-user-plus" tooltipOptions={{position: "left", showOnDisabled: true}} 
                 tooltip={comparisonPickList.length === 5 ? "Cannot pick more than 5 artists for comparison" : "Add To Compare List"} 
-                disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === artist.artist_id)}/>
+                disabled={comparisonPickList.length === 5 || comparisonPickList.find((a) => a.artist_id === artist.artist_id) !== undefined}/>
             </div>
           </div>
 

@@ -37,7 +37,7 @@ function Navbar() {
   const end = (
     <div>
       <Button label="About us" severity="secondary" onClick={() => setVisible(true)} />
-      <Dialog header="The Maestri Project" visible={visible} className='w-2/3' onHide={() => {if (!visible) return; setVisible(false); }}>
+      <Dialog header="The Maestri Project" visible={visible} className='w-2/3' onHide={() => {if (!visible) return; setVisible(false); }} draggable={false}>
           {About()}
       </Dialog>
     </div>

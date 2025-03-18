@@ -44,9 +44,9 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
         "id": track.name,
         "data": [
           {
-            "x": track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis).rank) : 1000*1000,
+            "x": track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis)?.rank) : 1000*1000,
             "y": props.dataSelection.spotifyCode? 
-            (track.chartings.find(chart => chart.country === yAxis) ? (track.chartings.find(chart => chart.country === yAxis).rank) : 1000*1000) 
+            (track.chartings.find(chart => chart.country === yAxis) ? (track.chartings.find(chart => chart.country === yAxis)?.rank) : 1000*1000) 
             : Math.min(...track.chartings.map(chart => chart.rank), 1000*1000),
 
           }
@@ -60,6 +60,7 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
 
     useEffect(() => {
         const data = buildRanksData()
+        // @ts-ignore
         setData(data)
     }, [xAxis, yAxis, props.dataSelection, props.artist, props.currentWeek]);
 
