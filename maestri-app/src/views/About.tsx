@@ -49,8 +49,8 @@ function About() {//
           <div>{person.firstName}</div>
           <div style={{fontWeight: "700"}}>{person.lastName}</div>
           <div style={{display: "flex", gap: "0.75rem", flexDirection:"row"}}>
-            <i className="pi pi-linkedin" style={{ fontSize: '1.5rem', color: getColorPalette().amber, cursor: "pointer"}} onClick={() => window.location.href = person.linkedin}></i>
-            <i className="pi pi-envelope" style={{ fontSize: '1.5rem', color: getColorPalette().amber, cursor: "pointer"}} onClick={() => window.location.href = `mailto:${person.email}`}></i>
+            <i className="pi pi-linkedin" style={{ fontSize: '1.375rem', color: getColorPalette().amber, cursor: "pointer"}} onClick={() => window.location.href = person.linkedin}></i>
+            <i className="pi pi-envelope" style={{ fontSize: '1.375rem', color: getColorPalette().amber, cursor: "pointer"}} onClick={() => window.location.href = `mailto:${person.email}`}></i>
           </div>
         </div>
       </div>
