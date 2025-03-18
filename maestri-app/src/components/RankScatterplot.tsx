@@ -29,7 +29,7 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
         const chartingInCountries = track.chartings
           .filter(chart => chart.week === props.currentWeek);
       
-      const chartingInBoth = chartingInCountries.some(chart => chart.country === yAxis);
+      const chartingInBoth = chartingInCountries.some(chart => chart.country === xAxis);
 
       //if it is not charting in the countries we want, we set it to null and filter it away
         return chartingInBoth ? {... track, chartings: chartingInCountries} : null;
@@ -44,10 +44,11 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
         "id": track.name,
         "data": [
           {
-            "x": track.chartings?.find(chart => chart.country === xAxis)?.rank ?? 1000 * 1000,
-            "y": props.dataSelection.spotifyCode
-              ? (track.chartings?.find(chart => chart.country === yAxis)?.rank ?? 1000 * 1000)
-              : Math.min(...track.chartings.map(chart => chart.rank), 1000*1000),
+            "x": track.chartings.find(chart => chart.country === xAxis) ? (track.chartings.find(chart => chart.country === xAxis).rank) : 1000*1000,
+            "y": props.dataSelection.spotifyCode? 
+            (track.chartings.find(chart => chart.country === yAxis) ? (track.chartings.find(chart => chart.country === yAxis).rank) : 1000*1000) 
+            : Math.min(...track.chartings.map(chart => chart.rank), 1000*1000),
+
           }
         ]
       }))      
@@ -59,9 +60,6 @@ function RankScatterPlot(props: {artist: Artist, tracksForArtist: Array<Track>, 
 
     useEffect(() => {
         const data = buildRanksData()
-
-        //console.log("hadsgj", data)
-
         setData(data)
     }, [xAxis, yAxis, props.dataSelection, props.artist, props.currentWeek]);
 
