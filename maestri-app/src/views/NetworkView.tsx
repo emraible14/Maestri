@@ -282,7 +282,9 @@ function Network(props: { readonly model: DataModel }) {
                     <img src={track.image_url} style={{ height: "100%", width: "100%", objectFit: "cover", borderRadius: "5%" }}></img>
                 </div>
                 <div className="flex flex-col" style={{ gap: '0.25rem' }}>
-                    <span style={{ color: getColorPalette().amber, fontWeight: 800 }}>{track.name}</span>
+                    <span style={{ color: getColorPalette().amber, fontWeight: 800 }}>
+                        {track.name}
+                    </span>
                     <span style={{ fontSize: "80%" }}>{primaryArtists}</span>
                     <span className='flex' style={{ gap: "0.375rem" }}>
                         {collaboratorContributions.map((cont) => {
@@ -322,7 +324,13 @@ function Network(props: { readonly model: DataModel }) {
               <div style={{ height: "5rem", minWidth: "5rem", width: "5rem"}}>
                 <img src={artist.image_url} style={{ height: "100%", width: "100%", objectFit: "cover", border: "2px solid rgb(196, 149, 27)", borderRadius: "50%" }}></img>
               </div>
-              <div>{artist.name}</div>
+              <div className="flex items-center">
+                {artist.name}
+                <Tooltip target=".custom-info-icon" />
+                <i className="custom-info-icon pi pi-info-circle p-text-secondary p-overlay-badge" style={{ fontSize: '1rem', marginLeft: '5px', color: '#7b889e' }}
+                    data-pr-tooltip="Nodes are distanced based how many collaborations they've had with the central artist. Node size is determined by how many total contributions an artist has. Collaborators are also listed below." 
+                    data-pr-position="right" data-pr-at="right+5 top+10" data-pr-my="left center-2"></i>
+              </div>
             </h1>
             <div className="flex flex-row" style={{gap: '0.5rem'}}>
               <Button className="rounded-lg" style={{ width: '2rem', minWidth: '2rem', height: '2rem' }} onClick={() => navigate('/artist?id=' + artist.artist_id)} outlined icon="pi pi-user" tooltipOptions={{position: "bottom"}} tooltip="View Artist"/>

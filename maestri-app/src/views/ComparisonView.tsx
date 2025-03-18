@@ -10,6 +10,7 @@ import ParallelCoordinatesChart from "../components/ParalellCoordinatesChart";
 import ChordChart from "../components/ChordChart";
 import { SelectButton } from "primereact/selectbutton";
 import SingleArtistCard from "../components/SingleArtistCard";
+import { Tooltip } from "primereact/tooltip";
 
 function Comparison(props: { readonly model: DataModel }) {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -32,7 +33,12 @@ function Comparison(props: { readonly model: DataModel }) {
                 { currentArtists.map(singleArtist) }
                 { addArtistCard() }
                 <div key={'comparison-chart'} className="col-span-2">
-                    <h2 style={{marginLeft: '10px'}}>Collaborations:</h2>
+                    <h2 style={{marginLeft: '10px'}}>Collaborations
+                        <Tooltip target=".custom-info-icon" />
+                        <i className="custom-info-icon pi pi-info-circle p-text-secondary p-overlay-badge" style={{ fontSize: '1rem', marginLeft: '5px', color: '#7b889e' }}
+                            data-pr-tooltip="Collaborations between selected artists are shown below. Arc size is based on total contributions while ribbons between artists show number of collaborations." 
+                            data-pr-position="right" data-pr-at="right+5 top" data-pr-my="left center-2"></i>
+                    </h2>
                     <ChordChart artists={currentArtists} model={props.model}></ChordChart>
                 </div>
             </div>

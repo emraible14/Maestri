@@ -165,7 +165,12 @@ function Artist(props: ArtistProps) {
                 </div>
             </div>
             <div>
-                <h1>Songs Stats</h1>
+                <h1>Song Stats
+                    <Tooltip target=".custom-info-icon" />
+                    <i className="custom-info-icon pi pi-info-circle p-text-secondary p-overlay-badge" style={{ fontSize: '1rem', marginLeft: '5px', color: '#7b889e' }}
+                        data-pr-tooltip="Cumulative is the sum of charts for our 30 selected countries, while Global charts are based on all 184 countries in the Spotify dataset." 
+                        data-pr-position="right" data-pr-at="right+5 top+10" data-pr-my="left center-2"></i>
+                </h1>
                 <div className='grid grid-cols-5' style={{gap: "1rem"}}>
                     <div className='col-span-3'>
                         <div className="flex flex-row" style={{gap: "1rem", alignItems: "center"}}>
@@ -202,7 +207,13 @@ function Artist(props: ArtistProps) {
                 </div>
             </div>
             <div>
-                <h1>Charts</h1>
+                <h1>
+                    Charts
+                    <Tooltip target=".custom-info-icon" />
+                    <i className="custom-info-icon pi pi-info-circle p-text-secondary p-overlay-badge" style={{ fontSize: '1rem', marginLeft: '5px', color: '#7b889e' }}
+                        data-pr-tooltip="Cumulative is the sum of charts for our 30 selected countries, while Global charts are based on all 184 countries in the Spotify dataset." 
+                        data-pr-position="right" data-pr-at="right+5 top+10" data-pr-my="left center-2"></i>
+                </h1>
                 <div className="flex flex-col" style={{gap: "2rem"}}>
                     <div className='flex flex-col' style={{gap: "1.25rem"}}>
                       <div className="flex flex-row" style={{gap: "1rem", alignItems: "center"}}>
@@ -297,7 +308,6 @@ function Artist(props: ArtistProps) {
             dates.push(new Date(d).toLocaleDateString("en-CA"));
         }
 
-        
         // @ts-expect-error
         return <LineChart data={props.model.getBumpData(currentArtist, selectedCountry.spotifyCode, dates)} maxValue={200} dates={dates}/>
     }
