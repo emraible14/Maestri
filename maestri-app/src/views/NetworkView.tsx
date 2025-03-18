@@ -25,7 +25,7 @@ function Network(props: { readonly model: DataModel }) {
     const [comparisonPickList, setComparisonPickList] = useState<Array<Artist>>([]);
 
     const filteredArtistIds = useMemo(() => {
-      if (!contributionsFilter) return null;
+      if (contributionsFilter == null) return null;
 
       const filteredIds = [artist.artist_id]
       for (const { id: collaboratorId } of props.model.networkData[artist.artist_id]["nodes"]) {
@@ -40,12 +40,12 @@ function Network(props: { readonly model: DataModel }) {
       }
 
       return filteredIds
-    }, [artist, contributionsFilter, props.model])
+    }, [artist, contributionsFilter])
 
     const collaboratorNodes = useMemo(() => {
       return props.model.networkData[artist.artist_id]["nodes"]
-        .filter(n => n.id != artist.artist_id && (!filteredArtistIds || filteredArtistIds.includes(n.id)))
-    }, [artist, filteredArtistIds, props.model.networkData])
+        .filter(n => n.id != artist.artist_id && (filteredArtistIds == null || filteredArtistIds.includes(n.id)))
+    }, [artist, filteredArtistIds])
 
     const filteringOptions = [
       {label: 'All', value: null},
