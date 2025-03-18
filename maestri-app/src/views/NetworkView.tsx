@@ -360,7 +360,7 @@ function Network(props: { readonly model: DataModel }) {
             }}/>
           </div>
 
-          <DataScroller value={collaboratorNodes.sort((a, b) => -(a.num_collaborations - b.num_collaborations))} itemTemplate={artistItemTemplate} rows={5} lazy={true} inline scrollHeight="58vh" pt={{
+          <DataScroller value={collaboratorNodes.sort((a, b) => -(a.num_collaborations - b.num_collaborations))} itemTemplate={artistItemTemplate} rows={5} lazy={false} inline scrollHeight="58vh" pt={{
             content: {
               style: {
                 'padding': 0

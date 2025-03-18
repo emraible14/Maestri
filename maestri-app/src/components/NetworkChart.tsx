@@ -80,16 +80,10 @@ function NetworkChart(props: NetworkChartProps) {
                 "color": nivoDarkColorPalette["#1b9e77"][0]
             },
             {
-                "id": "PR",
-                "label": "primary",
+                "id": "PF",
+                "label": "performer",
                 "value": (contributionTypesCounts.get("primary") || 0),
                 "color": nivoDarkColorPalette["#d95f02"][0]
-            },
-            {
-                "id": "FT",
-                "label": "feature",
-                "value": (contributionTypesCounts.get("feature") || 0),
-                "color": nivoDarkColorPalette["#7570b3"][0]
             },
             {
                 "id": "WR",
@@ -143,8 +137,7 @@ function NetworkChart(props: NetworkChartProps) {
                             <img src={artist.image_url} style={{ height: "100%", width: "100%", objectFit: "cover", borderRadius: "5%" }} alt={artist.name}></img>
                         </div>
                         {<><a style={{ fontSize: "80%" }}>PD - producer credit</a>
-                            <a style={{ fontSize: "80%" }}>PR - primary artist</a>
-                            <a style={{ fontSize: "80%" }}>FT - featured artist</a>
+                            <a style={{ fontSize: "80%" }}>PF - performer credit</a>
                             <a style={{ fontSize: "80%" }}>WR - writer credit</a>
                         </>}
                     </div>
