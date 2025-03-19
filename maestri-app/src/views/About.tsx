@@ -78,7 +78,14 @@ function About() {//
             course <a href="https://www.kth.se/student/kurser/kurs/DH2321?l=en">DH2321 Information Visualization</a> as part of the MSc in 
             Computer Science.
           </p>
-          <p>Insert walkthrough video here</p>
+          <div>
+            <iframe width="560" height="315"
+                    src="https://www.youtube-nocookie.com/embed/ypSKImYMXbk?si=F0htRmi_9WXItBez"
+                    title="YouTube video player" frameBorder="0"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen></iframe>
+          </div>
         </div>
         <div>
           <h1>The Data</h1>
